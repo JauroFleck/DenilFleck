@@ -1,0 +1,176 @@
+* { 
+    margin:0;
+    padding:0;
+}
+
+body, html {
+    height:100%;
+}
+
+.content-text h1 {
+    text-align:center;
+    padding:2%;
+    font-family: 'Questrial', sans-serif;
+}
+
+.content-text p {
+    width:920px;
+    text-align:center;
+    margin:auto;
+    font-family: 'Muli', sans-serif;
+    padding:0% 0% 2% 0%;
+    font-size:1.5em;
+}
+
+.content-one, .content-two, .content-three{
+    height:100%;
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position:center;
+    opacity:0.8;
+    position:relative;
+}
+
+.content-one {
+    background-image:url(../Images/background.jpg);
+}
+
+.content-two {
+    background-image:url(../Images/background1.jpg);
+}
+
+.load {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 30%;
+    left: 45%;
+    color: blue;
+}
+
+#menu {
+    width:700px;
+    height:80px;
+    margin:auto;
+    background:;
+}
+
+ul {
+    text-decoration: none;
+    list-style-type: none;
+}
+
+li{
+    float:left;
+    font-size:2.5em;
+    font-family: 'Indie Flower', cursive;
+    margin-left:1.8em;
+    line-height: 80px;
+    cursor:pointer;
+    font-weight: 500;
+}
+
+li:hover {
+    color: linear-gradient(to right, white, purple);
+    transition: 1s;
+    transform: scale(1.5);
+    font-weight: 600;
+}
+
+#logo  {
+    width:500px;
+    height:200px;
+    background:url(../Images/logo.png);
+    margin:auto;
+    margin-top:7%;
+}
+
+#buttons {
+    width:600px;
+    height:80px;
+    background:;
+    margin:auto;
+    margin-top:8%;
+}
+
+#buttons button {
+    width:280px;
+    height:80px;
+    margin-left:15px;
+    font-size:2em;
+    font-family: 'Open Sans Condensed', sans-serif;
+    border-radius:10px;
+    cursor:pointer;
+    -webkit-box-shadow: 10px 10px 5px -4px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 5px -4px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px -4px rgba(0,0,0,0.75);
+    border:none;
+}
+
+#buttons #blue {
+    background:url(../Images/blue-to-green.png) no-repeat left bottom;
+    color:white;
+}
+
+#buttons #blue:hover {
+    background:url(../Images/blue-to-green.png) no-repeat right bottom;
+    transition:1s;
+    transform: scale(1.1);
+}
+
+#buttons #green {
+    background:url(../Images/green-to-blue.png) no-repeat right bottom;
+    color:white;
+}
+
+#buttons #green:hover {
+    background:url(../Images/green-to-blue.png) no-repeat left bottom;
+    transition:1s;
+    transform: scale(1.1);
+}
+
+#background-movies {
+    width:920px;
+    height:300px;
+    position:absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.content-two>h1 {
+    text-align:center;
+    font-family: 'Questrial', sans-serif;
+    padding:5%;
+    font-size:3em;
+}
+
+#action-slick {
+    width:800px;
+    height:300px;
+    margin:auto;
+}
+
+#arrow-prev {
+    color: white;
+    font-size: 50px;
+    float:left;
+    margin-top:15%;
+    cursor:pointer;
+  }
+  
+  #arrow-next {
+    color: white;
+    font-size: 50px;
+    float:right;
+    margin-top:15%;
+    cursor:pointer;
+  }
+
+  .video {
+      float:left;
+      margin-left:3px;
+      border-radius:10px;
+  }
+
