@@ -1,4 +1,19 @@
-// DenilFleck Roleplay
+/*														DENILFLECK ROLEPLAY vBETA
+
+			INFORMAÇÕES IMPORTANTES
+	- Fórmula para TOTAL de experiência conforme o nível: T(n) = (n³/6 + n²/2 + n/3)*100
+	- Fórmula para experiência de CADA nível: F(n) = (n²+n)*50
+	- Virtual Worlds: 0 - Mundo RP | 0 ~ MAX_BUSINESS-1 - Empresas | MAX_BUSINESS ~ MAX_BUSINESS+MAX_HOUSES-1 - Casas
+
+			LEMBRETES
+	- Setar > Casas, veículos, empresas e parâmetros de player (interior, vw, life, armor, score, money, BRL)
+	- Kick, Ban, Spec
+	- Sistema veicular (Ao deixar veículo ligado, chave fica na ignição | SetVehicleToRespawn - XYZA + interior + vw)
+	- GPS no celular (Ao invés de Waze, Wize)
+	- Sotaques na fala
+	- /Inventario
+
+																																		*/
 
 #include <	a_samp		>
 #include <	zcmd		>
@@ -21,13 +36,15 @@
 
 #define CP_NONE					0
 #define CP_BUS_ROUTE			1
+#define CP_AVAUTO				2
 
-#define Player 					0
-#define Ajudante				1
-#define Fiscalizador			2
-#define Administrador			3
-#define Senior 					4
-#define Fundador				5
+#define Player  				0
+#define Plantonista				1
+#define Ajudante				2
+#define Fiscalizador			3
+#define Administrador			4
+#define Senior 					5
+#define Fundador				6
 
 main() {}
 
@@ -53,28 +70,83 @@ enum PLAYER_INFO {
 	pLogged,
 	pAdmin,
 	pSkin,
-	pUSECMD_motor
+	pUSECMD_motor,
+	pUSECMD_anim,
+	pXP,
+	pLevel,
+	pAtd,
+	pDuty,
+	pAnim,
+	pComprovante,
+	pTDSelect,
+	pDialogParam[3],
+	pHab
 };
 
 new pInfo[MAX_PLAYERS][PLAYER_INFO];
 
-// TextDraws
+#define MAX_ATENDIMENTOS		5
+
+new SolAtd[MAX_ATENDIMENTOS];
+
+new GPS[MAX_PLAYERS];
+new Policial[MAX_PLAYERS];
+static const AnimsEnum[][] = {
+    "AIRPORT",      "Attractors",   "BAR",          "BASEBALL",     "BD_FIRE",
+    "BEACH",        "benchpress",   "BF_injection", "BIKED",        "BIKEH",
+    "BIKELEAP",     "BIKES",        "BIKEV",        "BIKE_DBZ",     "BLOWJOBZ",
+    "BMX",          "BOMBER",       "BOX",          "BSKTBALL",     "BUDDY",
+    "BUS",          "CAMERA",       "CAR",          "CARRY",        "CAR_CHAT",
+    "CASINO",       "CHAINSAW",     "CHOPPA",       "CLOTHES",      "COACH",
+    "COLT45",       "COP_AMBIENT",  "COP_DVBYZ",    "CRACK",        "CRIB",
+    "DAM_JUMP",     "DANCING",      "DEALER",       "DILDO",        "DODGE",
+    "DOZER",        "DRIVEBYS",     "FAT",          "FIGHT_B",      "FIGHT_C",
+    "FIGHT_D",      "FIGHT_E",      "FINALE",       "FINALE2",      "FLAME",
+    "Flowers",      "FOOD",         "Freeweights",  "GANGS",        "GHANDS",
+    "GHETTO_DB",    "goggles",      "GRAFFITI",     "GRAVEYARD",    "GRENADE",
+    "GYMNASIUM",    "HAIRCUTS",     "HEIST9",       "INT_HOUSE",    "INT_OFFICE",
+    "INT_SHOP",     "JST_BUISNESS", "KART",         "KISSING",      "KNIFE",
+    "LAPDAN1",      "LAPDAN2",      "LAPDAN3",      "LOWRIDER",     "MD_CHASE",
+    "MD_END",       "MEDIC",        "MISC",         "MTB",          "MUSCULAR",
+    "NEVADA",       "ON_LOOKERS",   "OTB",          "PARACHUTE",    "PARK",
+    "PAULNMAC",     "ped",          "PLAYER_DVBYS", "PLAYIDLES",    "POLICE",
+    "POOL",         "POOR",         "PYTHON",       "QUAD",         "QUAD_DBZ",
+    "RAPPING",      "RIFLE",        "RIOT",         "ROB_BANK",     "ROCKET",
+    "RUSTLER",      "RYDER",        "SCRATCHING",   "SHAMAL",       "SHOP",
+    "SHOTGUN",      "SILENCED",     "SKATE",        "SMOKING",      "SNIPER",
+    "SPRAYCAN",     "STRIP",        "SUNBATHE",     "SWAT",         "SWEET",
+    "SWIM",         "SWORD",        "TANK",         "TATTOOS",      "TEC",
+    "TRAIN",        "TRUCK",        "UZI",          "VAN",          "VENDING",
+    "VORTEX",       "WAYFARER",     "WEAPONS",      "WUZI"
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// TEXTDRAWS ///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 new Text:TDLogin[2];
 new Text:TDGas[3];
+new Text:TDManager[29];
 new PlayerText:TDGasolina[MAX_PLAYERS];
 new PlayerText:TDVelocidade[MAX_PLAYERS];
+new PlayerText:PTDManager[MAX_PLAYERS][70];
 
-// Systems
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// SYSTEMS /////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../systems/sql.pwn"
 #include "../systems/time.pwn"
 #include "../systems/vehicle.pwn"
 #include "../systems/admin.pwn"
+#include "../systems/animations.pwn"
 #include "../systems/business.pwn"
 #include "../systems/bus.pwn"
-#include "../systems/postodegasolina.pwn"
+#include "../systems/posto.pwn"
 #include "../systems/refinaria.pwn"
+#include "../systems/bancopalomino.pwn"
+#include "../systems/casa.pwn"
+#include "../systems/autoescola.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
@@ -82,16 +154,111 @@ stock ResetVars(playerid) {
 	pInfo[playerid][pSpawnado] = 0;
 	pInfo[playerid][pLogged] = 0;
 	pInfo[playerid][pAdmin] = 0;
+	pInfo[playerid][pAtd] = 0;
+	pInfo[playerid][pXP] = 0;
+	pInfo[playerid][pLevel] = 0;
+	pInfo[playerid][pSkin] = 0;
+	pInfo[playerid][pCP] = 0;
+	pInfo[playerid][pAnim] = 0;
+	pInfo[playerid][pUSECMD_anim] = 0;
+	pInfo[playerid][pComprovante] = 0;
+	pInfo[playerid][pTDSelect] = 0;
+	pInfo[playerid][pDialogParam][0] = 0;
+	pInfo[playerid][pDialogParam][1] = 0;
+	pInfo[playerid][pDialogParam][2] = 0;
 	bIDV[playerid] = 0;
-	sbBombaMG[playerid] = 0;
+	sbBomba[playerid] = 0;
+	ClearParametersACB(playerid);
+	ClearParametrosCFR(playerid);
+	for(new i = 0; i < MAX_ATENDIMENTOS; i++) {
+		if(SolAtd[i] == playerid+1) { SolAtd[i] = 0; }
+	}
+	for(new i = 0; i < MAX_FICHAS; i++) {
+		if(fInfo[i][fID] == playerid+1) { fInfo[i][fID] = 0; }
+	}
+	if(GPS[playerid]) { KillTimer(GPS[playerid]); }
+	GPS[playerid] = 0;
 	return 1;
 }
 
-//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// COMANDOS ////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CMD:dardinheiro(playerid, params[]) {
+CMD:entrar(playerid) {
+	if(IsPlayerInRangeOfPoint(playerid, 1.0, 214.2, -155.5, 1.6)) return SetPlayerPos(playerid, 212.9, -155.5, 1.7);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 210.2, -151.4, 1.6)) return SetPlayerPos(playerid, 210.2, -152.7, 1.7);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 511.9594,204.2914,1049.9912)) return SetPlayerPos(playerid, 511.9066,203.0040,1049.9912);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 663.7539,-552.2118,16.3359)) return SetPlayerPos(playerid, 663.8229,-553.7640,16.3184);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 661.3217,-573.4470,16.3359)) return SetPlayerPos(playerid, 662.6781,-573.4605,16.3359);
+	for(new i = 0; i < MAX_BUSINESS; i++) { // É necessário passar pelas empresas para setar o VirtualWorld
+		if(!bInfo[i][bSQL]) continue;
+		for(new j = 0; j < MAX_ENTRADAS; j++) {
+			if(!bInfo[i][bEntradas][j]) continue;
+			if(IsPlayerInRangeOfPoint(playerid, 2.5, eInfo[i][j][eP][0], eInfo[i][j][eP][1], eInfo[i][j][eP][2])) {
+				SetPlayerFacingAngle(playerid, eInfo[i][j][sP][3]);
+				SetPlayerInterior(playerid, eInfo[i][j][sInt]);
+				SetPlayerVirtualWorld(playerid, i);
+				Streamer_UpdateEx(playerid, eInfo[i][j][sP][0], eInfo[i][j][sP][1], eInfo[i][j][sP][2], i, eInfo[i][j][sInt], -1, 1500);
+				return 1;
+			}
+		}
+	}
+	for(new i = 0; i < MAX_HOUSES; i++) {
+		if(!hInfo[i][hSQL]) continue;
+		if(IsPlayerInRangeOfPoint(playerid, 2.0, hInfo[i][hP][0], hInfo[i][hP][1], hInfo[i][hP][2])) {
+			if(!hInfo[i][hInterior]) return Advert(playerid, "Essa casa não foi configurada interiormente.");
+			if(hInfo[i][hLock]) return Advert(playerid, "Casa trancada.");
+			SetPlayerInterior(playerid, hData[hInfo[i][hInterior]-1][hdInt]);
+			SetPlayerFacingAngle(playerid, hData[hInfo[i][hInterior]-1][hdP][3]);
+			SetPlayerVirtualWorld(playerid, i+MAX_BUSINESS);
+			Streamer_UpdateEx(playerid, hData[hInfo[i][hInterior]-1][hdP][0], hData[hInfo[i][hInterior]-1][hdP][1], hData[hInfo[i][hInterior]-1][hdP][2], -1, -1, -1, 1500);
+			return 1;
+		}
+	}
+	return 1;
+}
+
+CMD:sair(playerid) {
+	if(IsPlayerInRangeOfPoint(playerid, 1.0, 212.9, -155.5, 1.7)) return SetPlayerPos(playerid, 214.2, -155.5, 1.6);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 210.2, -152.7, 1.7)) return SetPlayerPos(playerid, 210.2, -151.4, 1.6);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 511.9066,203.0040,1049.9912)) return SetPlayerPos(playerid, 511.9594,204.2914,1049.9912);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 663.8229,-553.7640,16.3184)) return SetPlayerPos(playerid, 663.7539,-552.2118,16.3359);
+	else if(IsPlayerInRangeOfPoint(playerid, 1.0, 662.6781,-573.4605,16.3359)) return SetPlayerPos(playerid, 661.3217,-573.4470,16.3359);
+	new i = GetPlayerVirtualWorld(playerid);
+	if(i >= 0 && i < MAX_BUSINESS) {
+		if(bInfo[i][bSQL]) {
+			for(new j = 0; j < MAX_ENTRADAS; j++) {
+				if(!bInfo[i][bEntradas][j]) continue;
+				if(IsPlayerInRangeOfPoint(playerid, 2.5, eInfo[i][j][sP][0], eInfo[i][j][sP][1], eInfo[i][j][sP][2])) {
+					SetPlayerFacingAngle(playerid, eInfo[i][j][eP][3]);
+					SetPlayerInterior(playerid, 0);
+					SetPlayerVirtualWorld(playerid, 0);
+					Streamer_UpdateEx(playerid, eInfo[i][j][eP][0], eInfo[i][j][eP][1], eInfo[i][j][eP][2], 0, 0, -1, 1500);
+					return 1;
+				}
+			}
+		}
+	} else if(i >= MAX_BUSINESS && i < MAX_BUSINESS+MAX_HOUSES) {
+		i -= MAX_BUSINESS;
+		if(hInfo[i][hSQL]) {
+			if(!hInfo[i][hInterior]) return Advert(playerid, "Algum staff troll te bugou manito. Solicita atendimento ae.");
+			if(IsPlayerInRangeOfPoint(playerid, 2.0, hData[hInfo[i][hInterior]-1][hdP][0], hData[hInfo[i][hInterior]-1][hdP][1], hData[hInfo[i][hInterior]-1][hdP][2])) {
+				if(hInfo[i][hLock]) return Advert(playerid, "Casa trancada.");
+				SetPlayerVirtualWorld(playerid, 0);
+				SetPlayerInterior(playerid, 0);
+				SetPlayerFacingAngle(playerid, hInfo[i][hP][3]);
+				Streamer_UpdateEx(playerid, hInfo[i][hP][0], hInfo[i][hP][1], hInfo[i][hP][2], -1, -1, -1, 1500);
+				return 1;
+			}
+		}
+	}
+	return 1;
+}
+
+CMD:pagar(playerid, params[]) {
 	new id, mon;
-	if(sscanf(params, "ii", id, mon)) return AdvertCMD(playerid, "/DarDinheiro [ID] [Dinheiro]");
+	if(sscanf(params, "ii", id, mon)) return AdvertCMD(playerid, "/Pagar [ID] [Dinheiro]");
 	if(!IsPlayerConnected(id)) return Advert(playerid, "Player desconectado.");
 	if(mon < 1 || mon > GetPlayerMoney(playerid)) return Advert(playerid, "Quantia inválida de dinheiro.");
 	new Float:P[3];
@@ -107,46 +274,6 @@ CMD:dardinheiro(playerid, params[]) {
 	return 1;
 }
 
-CMD:entrar(playerid) {
-	if(IsPlayerInRangeOfPoint(playerid, 1.0, 214.2, -155.5, 1.6)) return SetPlayerPos(playerid, 212.9, -155.5, 1.7);
-	if(IsPlayerInRangeOfPoint(playerid, 1.0, 210.2, -151.4, 1.6)) return SetPlayerPos(playerid, 210.2, -152.7, 1.7);
-	for(new i = 0; i < MAX_BUSINESS; i++) { // É necessário passar pelas empresas para setar o VirtualWorld
-		if(!bInfo[i][bSQL]) continue;
-		for(new j = 0; j < MAX_ENTRADAS; j++) {
-			if(!bInfo[i][bEntradas][j]) continue;
-			if(IsPlayerInRangeOfPoint(playerid, 2.5, eInfo[i][j][eP][0], eInfo[i][j][eP][1], eInfo[i][j][eP][2])) {
-				SetPlayerPos(playerid, eInfo[i][j][sP][0], eInfo[i][j][sP][1], eInfo[i][j][sP][2]);
-				SetPlayerFacingAngle(playerid, eInfo[i][j][sP][3]);
-				SetPlayerInterior(playerid, eInfo[i][j][sInt]);
-				SetPlayerVirtualWorld(playerid, i);
-				Streamer_UpdateEx(playerid, eInfo[i][j][sP][0], eInfo[i][j][sP][1], eInfo[i][j][sP][2], i, eInfo[i][j][sInt]);
-				return 1;
-			}
-		}
-	}
-	return 1;
-}
-
-CMD:sair(playerid) {
-	if(IsPlayerInRangeOfPoint(playerid, 1.0, 212.9, -155.5, 1.7)) return SetPlayerPos(playerid, 214.2, -155.5, 1.6);
-	if(IsPlayerInRangeOfPoint(playerid, 1.0, 210.2, -152.7, 1.7)) return SetPlayerPos(playerid, 210.2, -151.4, 1.6);
-	new i = GetPlayerVirtualWorld(playerid);
-	if(bInfo[i][bSQL]) {
-		for(new j = 0; j < MAX_ENTRADAS; j++) {
-			if(!bInfo[i][bEntradas][j]) continue;
-			if(IsPlayerInRangeOfPoint(playerid, 2.5, eInfo[i][j][sP][0], eInfo[i][j][sP][1], eInfo[i][j][sP][2])) {
-				SetPlayerPos(playerid, eInfo[i][j][eP][0], eInfo[i][j][eP][1], eInfo[i][j][eP][2]);
-				SetPlayerFacingAngle(playerid, eInfo[i][j][eP][3]);
-				SetPlayerInterior(playerid, 0);
-				SetPlayerVirtualWorld(playerid, 0);
-				Streamer_UpdateEx(playerid, eInfo[i][j][eP][0], eInfo[i][j][eP][1], eInfo[i][j][eP][2], 0, 0);
-				return 1;
-			}
-		}
-	}
-	return 1;
-}
-
 CMD:me(playerid, params[]) {
 	if(isnull(params)) return AdvertCMD(playerid, "/Me [Ação]");
 	Act(playerid, params);
@@ -157,27 +284,156 @@ CMD:do(playerid, params[]) {
 	if(isnull(params)) return AdvertCMD(playerid, "/Do [Ação]");
 	new str[144], Float:P[3];
 	GetPlayerPos(playerid, P[0], P[1], P[2]);
-	format(str, 144, "%s (( %s ))", params, pName(playerid));
+	format(str, 144, "%s "BRANCO"(( %s ))", params, pName(playerid));
 	Amb(P[0], P[1], P[2], str);
 	return 1;
 }
 
+CMD:b(playerid, params[]) {
+	if(isnull(params)) return AdvertCMD(playerid, "/B [Mensagem OOC]");
+	new str[144], Float:P[3];
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	format(str, 144, "(( ID %02i: %s ))", playerid, params);
+	SendRangedMessage(Branco, str, ACTION_RANGE, P[0], P[1], P[2]);
+	return 1;
+}
+
+CMD:ajuda(playerid) {
+	new i = 0;
+	for(; i < MAX_ATENDIMENTOS; i++) { if(SolAtd[i] == playerid+1) { break; } }
+	new str[100];
+	format(str, 100, BRANCO"Nível\nProfissão\n%s", (i == MAX_ATENDIMENTOS) ? (AMARELO"Solicitar atendimento") : (VERMELHO"Cancelar solicitação"));
+	Dialog_Show(playerid, "DialogAjuda", DIALOG_STYLE_LIST, "AJUDA", str, "Selecionar", "Cancelar");
+	return 1;
+}
+
+CMD:pegarchave(playerid, params[]) {
+	if(pInfo[playerid][pBus] == -1) {
+		//if(emcasa) ...
+		Advert(playerid, "Você é desempregado.");
+	} else if(bInfo[pInfo[playerid][pBus]][bType] == BUSINESS_BUS) {
+		if(!IsPlayerInRangeOfPoint(playerid, 2.0, 1490.7517,1308.0670,1093.2891)) return Advert(playerid, "As chaves dos ônibus ficam na secretaria da estação.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/PegarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		if(vInfo[vid][vChave] != CLOC_EDOBB) {
+			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
+		} else {
+			Act(playerid, "retira de dentro da gaveta uma chave.");
+			vInfo[vid][vChave] = pInfo[playerid][pSQL];
+		}
+	} else if(bInfo[pInfo[playerid][pBus]][bType] == BUSINESS_AUTO) {
+		if(!IsPlayerInRangeOfPoint(playerid, 2.0, 361.4470,198.5358,1084.1685)) return Advert(playerid, "As chaves dos veículos ficam na secretaria da autoescola.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/PegarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		if(vInfo[vid][vChave] != CLOC_AUTO) {
+			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
+		} else {
+			Act(playerid, "retira de dentro da gaveta uma chave.");
+			vInfo[vid][vChave] = pInfo[playerid][pSQL];
+		}
+	}
+	return 1;
+}
+
+CMD:guardarchave(playerid, params[]) {
+	if(pInfo[playerid][pBus] == -1) {
+		//if(emcasa) ...
+		Advert(playerid, "Você é desempregado.");
+	} else if(bInfo[pInfo[playerid][pBus]][bType] == BUSINESS_BUS) {
+		if(!IsPlayerInRangeOfPoint(playerid, 2.0, 1490.7517,1308.0670,1093.2891)) return Advert(playerid, "As chaves dos ônibus devem ser guardadas na secretaria da estação.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/GuardarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Chave inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Chave não registrada no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Essa chave não pertence a sua empresa.");
+		if(vInfo[vid][vChave] != pInfo[playerid][pSQL]) {
+			Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO" para checar quais você tem.");
+		} else {
+			Act(playerid, "guarda uma chave dentro da gaveta.");
+			vInfo[vid][vChave] = CLOC_EDOBB;
+		}
+	} else if(bInfo[pInfo[playerid][pBus]][bType] == BUSINESS_AUTO) {
+		if(!IsPlayerInRangeOfPoint(playerid, 2.0, 361.4470,198.5358,1084.1685)) return Advert(playerid, "As chaves dos veículos ficam na secretaria da autoescola.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/GuardarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Chave inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Chave não registrada no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Essa chave não pertence a sua empresa.");
+		if(vInfo[vid][vChave] != pInfo[playerid][pSQL]) {
+			Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO" para checar quais você tem.");
+		} else {
+			Act(playerid, "guarda uma chave dentro da gaveta.");
+			vInfo[vid][vChave] = CLOC_AUTO;
+		}
+	}
+	return 1;
+}
+
+CMD:entregarchave(playerid, params[]) {
+	new id, key;
+	if(sscanf(params, "ii", id, key)) return AdvertCMD(playerid, "/EntregarChave [ID] [IDV da chave]");
+	if(!IsPlayerConnected(id) || id == playerid) return Advert(playerid, "ID inválido.");
+	if(!IsValidVehicle(key)) return Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO".");
+	if(!vInfo[key][vSQL] || vInfo[key][vChave] != pInfo[playerid][pSQL]) return Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO".");
+	new Float:P[3];
+	GetPlayerPos(id, P[0], P[1], P[2]);
+	if(!IsPlayerInRangeOfPoint(playerid, 3.0, P[0], P[1], P[2]) || GetPlayerInterior(playerid) != GetPlayerInterior(id) || GetPlayerVirtualWorld(playerid) != GetPlayerVirtualWorld(id)) return Advert(playerid, "Você deve estar próximo a quem deseja entregar a chave.");
+	vInfo[key][vChave] = pInfo[id][pSQL];
+	new str[144];
+	format(str, 144, "entrega uma chave para %s.", pName(id));
+	Act(playerid, str);
+	return 1;
+}
+
 CMD:gps(playerid) {
-	static gps[MAX_PLAYERS];
-	if(!gps[playerid]) {
-		for(new i = 0; i < MAX_PLAYERS; i++) {
-			if(!IsPlayerConnected(i)) continue;
-			SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFFFF);
-			Info(playerid, "GPS ligado.");
-		}
-		gps[playerid] = 1;
+	if(!Policial[playerid]) return Advert(playerid, "Apenas policiais podem usar o /GPS.");
+	if(!GPS[playerid]) {
+		GPS[playerid] = SetTimerEx("TGPS", 250, true, "i", playerid);
+		Info(playerid, "GPS ligado");
 	} else {
-		for(new i = 0; i < MAX_PLAYERS; i++) {
-			if(!IsPlayerConnected(i)) continue;
-			SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
-			Info(playerid, "GPS desligado.");
-		}
-		gps[playerid] = 0;
+		Info(playerid, "GPS desligado");
+		KillTimer(GPS[playerid]);
+		GPS[playerid] = 0;
+	}
+	return 1;
+}
+
+CMD:policial(playerid) {
+	if(Policial[playerid]) {
+		Info(playerid, "Ladrão >:)");
+		Policial[playerid] = 0;
+	} else {
+		Info(playerid, "Policial :)");
+		Policial[playerid] = 1;
+	}
+	return 1;
+}
+
+CMD:m4(playerid) {
+	if(Policial[playerid]) {
+		GivePlayerWeapon(playerid, 31, 999999);
 	}
 	return 1;
 }
@@ -204,6 +460,40 @@ CMD:padrao(playerid) {
 
 CMD:cotovelada(playerid) {
 	SetPlayerFightingStyle(playerid, 16);
+	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////// DIALOGS ////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Dialog:DialogAjuda(playerid, response, listitem, inputtext[]) {
+	if(!response) return 1;
+	if(listitem == 0) { //				Nível
+		new str[250];
+		format(str, 250, "A cada 10 minutos você ganha 10 XP, ações no servidor contabilizam XP extra para você.\n100 XP = Nível 1; 200 XP = Nível 2; assim subsequentemente.\n- Experiência: %i/%iXP\n- Nível: %i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]), pInfo[playerid][pLevel]);
+		Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "Nível", str, "Fechar", "");
+	} else if(listitem == 1) { //		Profissão
+		if(pInfo[playerid][pBus] == -1) return Info(playerid, "Você é desempregado.");
+		new str[150], i = 0;
+		for(; i < MAX_CARGOS; i++) {
+			if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) continue;
+			else if(strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], pName(playerid), true)) continue;
+			else break;
+		}
+		if(i == MAX_CARGOS) return Advert(playerid, "Informe da administração sobre essa mensagem de erro. [COD 011]");
+		format(str, 150, "Você trabalha para a empresa %s no cargo de %s.", bInfo[pInfo[playerid][pBus]][bName], cInfo[pInfo[playerid][pBus]][i][cName]);
+		Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "PROFISSÃO", str, "Fechar", "");
+	} else if(listitem == 2) { //		Solicitar atendimento / Cancelar solicitação
+		new i = 0;
+		for(; i < MAX_ATENDIMENTOS; i++) { if(SolAtd[i] == playerid+1) { break; } }
+		if(i == MAX_ATENDIMENTOS) {
+			Dialog_Show(playerid, "SolicitarAtd", DIALOG_STYLE_MSGBOX, "Solicitar Atendimento", "Ao clicar em 'Solicitar' você estará enviando um pedido de atendimento particular para a STAFF.", "Solicitar", "Cancelar");
+		} else {
+			SolAtd[i] = 0;
+			Info(playerid, "Solicitação de atendimento cancelada.");
+		}
+	}
 	return 1;
 }
 
@@ -271,6 +561,10 @@ Dialog:DialogLogin(playerid, response, listitem, inputtext[]) {
 	return 1;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// PUBLICS /////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 public OnGameModeInit() {
 
 	CallLocalFunction("OnGameModeInit@sql", "");
@@ -280,20 +574,27 @@ public OnGameModeInit() {
 	CallLocalFunction("OnGameModeInit@bus", "");
 	CallLocalFunction("OnGameModeInit@posto", "");
 	CallLocalFunction("OnGameModeInit@refinaria", "");
+	CallLocalFunction("OnGameModeInit@casa", "");
 
 	// MAPAS
 
 	print("Carregando mapas...");
 	#include "../maps/bus.pwn"
 	#include "../maps/newbiespawn.pwn"
-	#include "../maps/postodegasolina.pwn"
+	#include "../maps/postomg.pwn"
+	#include "../maps/postodm.pwn"
 	#include "../maps/refinaria.pwn"
+	#include "../maps/bancopalomino.pwn"
+	#include "../maps/palomino.pwn"
+	#include "../maps/interiores.pwn"
+	#include "../maps/autoescola.pwn"
 	print("Mapas carregados com sucesso.");
 
 	// TEXTDRAWS
 
 	#include "../textdraws/login.pwn"
 	#include "../textdraws/gas.pwn"
+	#include "../textdraws/manager.pwn"
 
 	//
 
@@ -303,6 +604,7 @@ public OnGameModeInit() {
 
 	EnableStuntBonusForAll(0);
 	ShowNameTags(0);
+	ShowPlayerMarkers(PLAYER_MARKERS_MODE_OFF);
 
 	return 1;
 }
@@ -333,27 +635,74 @@ public OnPlayerConnect(playerid) {
 	ResetVars(playerid);
 	CallLocalFunction("OnPlayerConnect@refinaria", "i", playerid);
 	CallLocalFunction("OnPlayerConnect@bus", "i", playerid);
+	CallLocalFunction("OnPlayerConnect@posto", "i", playerid);
+	CallLocalFunction("OnPlayerConnect@autoescola", "i", playerid);
 	#include "../textdraws/pgas.pwn"
+	#include "../textdraws/pmanager.pwn"
 	SetTimerEx("SpawnarPlayer", 200, false, "i", playerid);
 
-	for(new i = 0; i < MAX_PLAYERS; i++) {
-		if(!IsPlayerConnected(i)) continue;
-		SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
-	}
+	// Casa 1
+	RemoveBuildingForPlayer(playerid, 14528, 2531.2891, -1676.7344, 1004.7344, 0.25);
+	RemoveBuildingForPlayer(playerid, 14493, 2535.8516, -1671.5703, 1016.7969, 0.25);
+	// Casa da cerca bugada (Palomino)
+	RemoveBuildingForPlayer(playerid, 1419, 2213.9063, 106.3906, 26.0078, 0.25);
+	RemoveBuildingForPlayer(playerid, 1419, 242.8281, -121.5469, 1.1016, 0.25);
 
 	return 1;
 }
+
+public OnPlayerText(playerid, text[]) {
+	new p;
+	p = CallLocalFunction("OnPlayerText@admin", "is", playerid, text);
+	if(p) {
+		new Float:P[6], str[144];
+		GetPlayerPos(playerid, P[0], P[1], P[2]);
+		for(new i = 0; i < MAX_PLAYERS; i++) {
+			if(!IsPlayerConnected(i)) continue;
+			GetPlayerPos(i, P[3], P[4], P[5]);
+			new Float:D = VectorSize(P[0]-P[3], P[1]-P[4], P[2]-P[5]);
+			if(D > ACTION_RANGE) continue;
+			new color = floatround(255.0 - 153.0*D/ACTION_RANGE);
+			color = (color*0x1000000 + color*0x10000 + color*0x100 + 0xAA);
+			format(str, 144, "- %s fala: "BRANCO"%s", pName(playerid), text);
+			SendClientMessage(i, color, str);
+		}
+	}
+	return 0;
+}		
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
 	CallLocalFunction("OnPlayerEnterVehicle@admin", "iii", playerid, vehicleid, ispassenger);
 	return 1;
 }
 
+public OnPlayerCommandReceived(playerid, cmdtext[]) {
+	if(pInfo[playerid][pLogged] != 1) return 0;
+	return 1;
+}
+
+public OnPlayerCommandPerformed(playerid, cmdtext[], success) {
+	if(!success) {
+		new str[144];
+		format(str, 144, "Comando inexistente - '"BEGE"%s"BRANCO"'.", cmdtext);
+		Advert(playerid, str);
+		return 1;
+	}
+	return 1;
+}
+
 public OnPlayerDisconnect(playerid, reason) {
+	if(pInfo[playerid][pLogged] != 1) return ResetVars(playerid);
 	CallLocalFunction("OnPlayerDisconnect@bus", "i", playerid);
+	CallLocalFunction("OnPlayerDisconnect@autoescola", "i", playerid);
 	CallLocalFunction("OnPlayerDisconnect@admin", "i", playerid);
 	SavePlayerData(playerid);
 	ResetVars(playerid);
+	return 1;
+}
+
+public OnPlayerDeath(playerid) {
+	pInfo[playerid][pSkin] = GetPlayerSkin(playerid);
 	return 1;
 }
 
@@ -367,6 +716,9 @@ public OnPlayerSpawn(playerid) {
 	}
 	if(!pInfo[playerid][pLogged]) {
 		pInfo[playerid][pSpawnado] = 1;
+		for(new i = 0; i < sizeof(AnimsEnum); i++) {
+			ApplyAnimation(playerid, AnimsEnum[i], "null", 4.0, 0, 0, 0, 0, 0, 1);
+		}
 		TogglePlayerSpectating(playerid, 1);
 		SetPlayerPos(playerid, 255.2, -163.7, 1.6);
 		SetPlayerCameraPos(playerid, 472.9, -156.9, 42.7);
@@ -375,7 +727,7 @@ public OnPlayerSpawn(playerid) {
 		InterpolateCameraLookAt(playerid, 380.4, -143.4, 7.4, 318.4, -198.2, 38.5, 60000, CAMERA_MOVE);
 		SetPlayerVirtualWorld(playerid, 1);
 		SetPlayerColor(playerid, 0xFFFFFFFF);
-		PlayAudioStreamForPlayer(playerid, "http://atentivo.com.br/login-music.mp3");
+		PlayAudioStreamForPlayer(playerid, "http://denilfleck.com.br/login-music.mp3");
 		LimparChat(playerid);
 		for(new i = 0; i < sizeof(TDLogin); i++) { TextDrawShowForPlayer(playerid, TDLogin[i]); }
 		for(new i = 0; i < MAX_PLAYERS; i++) {
@@ -412,12 +764,62 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 }
 
 public OnPlayerEnterCheckpoint(playerid) {
+	if(Policial[playerid]) return DisablePlayerCheckpoint(playerid);
 	CallLocalFunction("OnPlayerEnterCheckpoint@bus", "i", playerid);
+	CallLocalFunction("OnPlayerEnterCheckpoint@auto", "i", playerid);
 	return 1;
 }
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 	CallLocalFunction("OnPlayerKeyStateChange@vehicle", "iii", playerid, newkeys, oldkeys);
+	return 1;
+}
+
+public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid) {
+	if(!pInfo[playerid][pTDSelect]) return 1;
+	if(playertextid == PlayerText:INVALID_TEXT_DRAW) {
+		if(pInfo[playerid][pTDSelect]) {
+			SelectTextDraw(playerid, AmareloPalido);
+		}
+		return 1;
+	}
+	CallLocalFunction("OnPlayerClickPlayerTextDraw@bus", "ii", playerid, _:playertextid);
+	return 1;
+}
+
+public OnPlayerClickTextDraw(playerid, Text:clickedid) {
+	if(!pInfo[playerid][pTDSelect]) return 1;
+	if(clickedid == Text:INVALID_TEXT_DRAW) {
+		if(pInfo[playerid][pTDSelect]) {
+			SelectTextDraw(playerid, AmareloPalido);
+		}
+		return 1;
+	}
+	CallLocalFunction("OnPlayerClickTextDraw@bus", "ii", playerid, _:clickedid);
+	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// FORWARDS ////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+forward TGPS(playerid);
+public TGPS(playerid) {
+	if(!Policial[playerid]) {
+		Advert(playerid, "GPS desligado.");
+		KillTimer(GPS[playerid]);
+		GPS[playerid] = 0;
+		return 1;
+	}
+	new Float:P[3];
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	for(new i = 0; i < MAX_PLAYERS; i++) {
+		if(!IsPlayerConnected(i)) continue;
+		if(i == playerid) continue;
+		if(Policial[i]) {
+			SetPlayerCheckpoint(i, P[0], P[1], P[2], 2.0);
+		}
+	}
 	return 1;
 }
 
@@ -443,9 +845,10 @@ forward LoadPlayerData(playerid);
 public LoadPlayerData(playerid) {
 	TogglePlayerSpectating(playerid, 0);
 	pInfo[playerid][pLogged] = 2;
-	new score, money, skinid, Float:P[4], interiorid, vw;
+	new money, skinid, Float:P[4], interiorid, vw;
 	cache_get_value_name_int(0, "pbus", pInfo[playerid][pBus]);
-	cache_get_value_name_int(0, "score", score);
+	cache_get_value_name_int(0, "score", pInfo[playerid][pLevel]);
+	cache_get_value_name_int(0, "xp", pInfo[playerid][pXP]);
 	cache_get_value_name_int(0, "money", money);
 	cache_get_value_name_int(0, "skinid", skinid);
 	cache_get_value_name_int(0, "admin", pInfo[playerid][pAdmin]);
@@ -456,14 +859,16 @@ public LoadPlayerData(playerid) {
 	cache_get_value_name_int(0, "idv", bIDV[playerid]);
 	cache_get_value_name_int(0, "interior", interiorid);
 	cache_get_value_name_int(0, "vw", vw);
-	SetPlayerScore(playerid, score);
+	cache_get_value_name_int(0, "comp", pInfo[playerid][pComprovante]);
+	cache_get_value_name_int(0, "hab", pInfo[playerid][pHab]);
+	SetPlayerScore(playerid, pInfo[playerid][pLevel]);
 	GivePlayerMoney(playerid, money);
 	SetPlayerSkin(playerid, skinid);
 	SetPlayerPos(playerid, P[0], P[1], P[2]);
 	SetPlayerFacingAngle(playerid, P[3]);
 	SetPlayerInterior(playerid, interiorid);
 	SetPlayerVirtualWorld(playerid, vw);
-	Streamer_UpdateEx(playerid, P[0], P[1], P[2]);
+	Streamer_UpdateEx(playerid, P[0], P[1], P[2], vw, interiorid, -1, 1500);
 	if(pInfo[playerid][pAdmin] >= Fiscalizador) {
 		new query[150];
 		mysql_format(conn, query, 150, "SELECT * FROM vstaffinfo WHERE psqlid = %i", pInfo[playerid][pSQL]);
@@ -479,13 +884,17 @@ public LoadPlayerData(playerid) {
 forward TKickPlayer(playerid);
 public TKickPlayer(playerid) return Kick(playerid);
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////// STOCKS ///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 stock SavePlayerData(playerid) {
 	new Float:P[4];
 	GetPlayerPos(playerid, P[0], P[1], P[2]);
 	GetPlayerFacingAngle(playerid, P[3]);
 	new query[300];
-	mysql_format(conn, query, 300, "UPDATE `playerinfo` SET `interior` = %i, `vw` = %i, `idv` = %i, `admin` = %i, `score` = %i, `skinid` = %i, `money` = %i, `pbus` = %i, `sX` = %f, `sY` = %f, `sZ` = %f, `sA` = %f WHERE `sqlid` = %i",
-		GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid), bIDV[playerid], pInfo[playerid][pAdmin], GetPlayerScore(playerid), GetPlayerSkin(playerid), GetPlayerMoney(playerid), pInfo[playerid][pBus], P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
+	mysql_format(conn, query, 300, "UPDATE `playerinfo` SET `hab` = %i,`comp` = %i, `xp` = %i, `interior` = %i, `vw` = %i, `idv` = %i, `admin` = %i, `score` = %i, `skinid` = %i, `money` = %i, `pbus` = %i, `sX` = %f, `sY` = %f, `sZ` = %f, `sA` = %f WHERE `sqlid` = %i",
+		pInfo[playerid][pHab], pInfo[playerid][pComprovante], pInfo[playerid][pXP], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid), bIDV[playerid], pInfo[playerid][pAdmin], pInfo[playerid][pLevel], GetPlayerSkin(playerid), GetPlayerMoney(playerid), pInfo[playerid][pBus], P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
 	mysql_query(conn, query, false);
 	if(pInfo[playerid][pAdmin] >= Fiscalizador) {
 		if(vStaff[playerid][vsID]) {
@@ -613,5 +1022,75 @@ stock GetXYInFrontOfVehicle(vehicleid, Float:D, &Float:dX, &Float:dY) {
 	GetVehiclePos(vehicleid, P[0], P[1], P[2]);
 	GetVehicleZAngle(vehicleid, P[2]);
 	GetXYInFrontOfXY(P[0], P[1], D, P[2], dX, dY);
+	return 1;
+}
+
+stock GetXPNextLevel(level) {
+	new Float:l = level;
+	return (floatround(floatpower(l, 2) + l)*50);
+}
+
+stock TextEncoding(string[]) {
+	new original[50] = {192,193,194,196,198,199,200,201,202,203,204,205,206,207,210,211,212,214,217,218,219,220,223,224,225,226,228,230,231,232,233,234,235,236,237,238,239,242,243,244,246,249,250,251,252,209,241,191,161,176};
+	new fixed[50] = {128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,94,124};
+	new len = strlen(string);
+	for (new i; i < len; i++) {
+		for(new j;j < 50;j++) {
+			if(string[i] == original[j]) {
+				string[i] = fixed[j];
+				break;
+			}
+		}
+	}
+	return 1;
+}
+
+stock TextDecoding(string[]) {
+	new original[50] = {192,193,194,196,198,199,200,201,202,203,204,205,206,207,210,211,212,214,217,218,219,220,223,224,225,226,228,230,231,232,233,234,235,236,237,238,239,242,243,244,246,249,250,251,252,209,241,191,161,176};
+	new fixed[50] = {128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,94,124};
+	new len = strlen(string);
+	for (new i; i < len; i++) {
+		for(new j;j < 50;j++) {
+			if(string[i] == fixed[j]) {
+				string[i] = original[j];
+				break;
+			}
+		}
+	}
+	return 1;
+}
+
+stock UnderlineToSpace(string[]) {
+	new len = strlen(string);
+	for(new i = 0; i < len; i++) {
+		if(string[i] == '_') {
+			string[i] = ' ';
+		}
+	}
+	return 1;
+}
+
+stock SpaceToUnderline(string[]) {
+	new len = strlen(string);
+	for(new i = 0; i < len; i++) {
+		if(string[i] == ' ') {
+			string[i] = '_';
+		}
+	}
+	return 1;
+}
+
+stock ResetDialogParams(playerid) {
+	pInfo[playerid][pDialogParam][0] = 0;
+	pInfo[playerid][pDialogParam][1] = 0;
+	pInfo[playerid][pDialogParam][2] = 0;
+	return 1;
+}
+
+stock PlaySoundAround(soundid, Float:X, Float:Y, Float:Z) {
+	for(new i = 0; i < MAX_PLAYERS; i++) {
+		if(!IsPlayerConnected(i)) continue;
+		PlayerPlaySound(i, soundid, X, Y, Z);
+	}
 	return 1;
 }

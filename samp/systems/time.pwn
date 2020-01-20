@@ -71,6 +71,20 @@ public ServerTime() {
 	SetWorldTime(sTime[sHora]);
 	for(new i = 0; i < MAX_PLAYERS; i++) {
 		if(!IsPlayerConnected(i)) continue;
+		static quarterxp[MAX_PLAYERS];
+		quarterxp[i]++;
+		if(quarterxp[i] == 3) {
+			pInfo[i][pXP]++;
+			quarterxp[i] = 0;
+		}
+		pInfo[i][pLevel] = GetPlayerScore(i);
+		if(pInfo[i][pXP] >= GetXPNextLevel(pInfo[i][pLevel])) {
+			pInfo[i][pXP] -= GetXPNextLevel(pInfo[i][pLevel]);
+			pInfo[i][pLevel]++;
+			SetPlayerScore(i, pInfo[i][pLevel]);
+			if(pInfo[i][pLevel] > 1) { GameTextForPlayer(i, "~b~Level UP", 1000, 1); }
+			
+		}
 		SetPlayerTime(i, sTime[sHora], sTime[sMin]);
 	}
 	return 1;

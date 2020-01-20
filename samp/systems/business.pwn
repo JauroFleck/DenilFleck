@@ -2,12 +2,21 @@
 #define BUSINESS_BUS		1
 #define BUSINESS_GAS		2
 #define BUSINESS_REF		3
+#define BUSINESS_BANK		4
+#define BUSINESS_AUTO		5
+
+#define BUSID_BUSBB			0
+#define BUSID_PGMG			1
+#define BUSID_PGDM			2
+#define BUSID_REF			3
+#define BUSID_BANKPC		4
+#define BUSID_AUTO			5
 
 #define MAX_BUSINESS			10
-#define MAX_CARGOS				10
-#define MAX_PRODUTOS			10
-#define MAX_BUSINESS_VEHICLES	10
-#define MAX_ENTRADAS			2
+#define MAX_CARGOS				10 		// Lembre-se de mudar no banco de dados.
+#define MAX_PRODUTOS			10		// 					"
+#define MAX_BUSINESS_VEHICLES	10		// 					"
+#define MAX_ENTRADAS			3		//					"
 
 enum BUSINESS_INFO {
 	bSQL,
@@ -30,7 +39,6 @@ enum CARGOS_INFO {
 	cEmp[24],
 	cSal,
 	cHire,
-	cFire,
 	cPay,
 	cMon
 };
@@ -49,107 +57,154 @@ enum ENTRADAS_INFO {
 	sInt
 };
 
+enum GE_INFO {
+	geID,
+	PlayerText:geTDID
+};
+
+enum TDMP_INFO { tdmpValue[24] };
+
 new bInfo[MAX_BUSINESS][BUSINESS_INFO];
 new cInfo[MAX_BUSINESS][MAX_CARGOS][CARGOS_INFO];
 new prInfo[MAX_BUSINESS][MAX_PRODUTOS][PRODUTOS_INFO];
 new eInfo[MAX_BUSINESS][MAX_ENTRADAS][ENTRADAS_INFO];
+new TDMParams[MAX_PLAYERS][70][TDMP_INFO];
+new GerenciandoEmpresa[MAX_PLAYERS][GE_INFO];
 
-CMD:virardono(playerid) {
-	if(strcmp(pNick(playerid), "John_Black", false)) return SendClientMessage(playerid, -1, "Nananinan„o (:");
-	pInfo[playerid][pBus] = 0;
-	return 1;
-}
-
-CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25], id;
-		if(sscanf(params, "s[25]i", nomedocargo, id)) return SendClientMessage(playerid, -1, "Use /Contratar [Nome_do_Cargo] [ID].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
+CMD:servico(playerid) {
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Voc√™ √© desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] == BUSINESS_BANK) {
+		if(pInfo[playerid][pDuty]) {
+			pInfo[playerid][pDuty] = 0;
+			pInfo[playerid][pUSECMD_anim] = 0;
+		} else {
+			if(!IsPlayerInRangeOfPoint(playerid, 3.0, 2305.9309,-2.4660,26.7422)) return Advert(playerid, "Voc√™ deve estar na mesa de gerenciamento de contas banc√°rias.");
+			if(pInfo[playerid][pAnim] != ANIM_SIT4) return Advert(playerid, "Use "AMARELO"/Sentar 4"BRANCO" para entrar em servi√ßo.");
+			Info(playerid, "Voc√™ entrou em servi√ßo. Para se levantar use "AMARELO"/Servico"BRANCO" e "AMARELO"/Clear"BRANCO".");
+			pInfo[playerid][pDuty] = 1;
+			pInfo[playerid][pUSECMD_anim] = 1;
 		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(!isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo j· est· ocupado por outro funcion·rio.");
-		if(!IsPlayerConnected(id)) return SendClientMessage(playerid, -1, "ID inv·lido.");
-		new nameemp[24];
-		GetPlayerName(id, nameemp, 24);
-		for(new k = 0; k < 24; k++) { if(nameemp[k] == '_') { nameemp[k] = ' '; } }
-		for(new k = 0; k < MAX_CARGOS; k++) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][k][cEmp], nameemp, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este funcion·rio j· ocupa outro cargo nesta empresa.");
-		}
-		new Float:P[3], str2[24];
-		GetPlayerPos(playerid, P[0], P[1], P[2]);
-		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "VocÍ deve estar prÛximo ‡ pessoa que estiver contratando.");
-		format(str2, 24, "%s", pNick(id));
-		for(new k = 0; k < 24; k++) { if(str2[k] == '_') { str2[k] = ' '; } }
-		format(cInfo[pInfo[playerid][pBus]][i][cEmp], 24, "%s", str2);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = '%s' WHERE `sqlid` = %i", str2, cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-		pInfo[id][pBus] = pInfo[playerid][pBus];
-		new str[144];
-		format(str, 144, "VocÍ contratou %s para o cargo de %s.", pNick(id), nomedocargo);
-		SendClientMessage(playerid, -1, str);
-		format(str, 144, "%s contratou vocÍ para o cargo de %s.", pNick(playerid), nomedocargo);
-		SendClientMessage(id, -1, str);
-	} else {
-		new Name[24], p = 0;
-		GetPlayerName(playerid, Name, 24);
-		while(p < MAX_CARGOS) {
-			if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
-			else p++; }
-		if(!cInfo[pInfo[playerid][pBus]][p][cHire]) return SendClientMessage(playerid, -1, "VocÍ n„o tem permiss„o para contratar.");
-		new nomedocargo[25], id;
-		if(sscanf(params, "s[25]i", nomedocargo, id)) return SendClientMessage(playerid, -1, "Use /Contratar [Nome_do_Cargo] [ID].");
-		for(new i = 0; i < 25; i++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(!isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo j· est· ocupado por outro funcion·rio.");
-		if(!IsPlayerConnected(id)) return SendClientMessage(playerid, -1, "ID inv·lido.");
-		new nameemp[24];
-		GetPlayerName(id, nameemp, 24);
-		for(new k = 0; k < 24; k++) { if(nameemp[k] == '_') { nameemp[k] = ' '; } }
-		for(new k = 0; k < MAX_CARGOS; k++) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][k][cEmp], nameemp, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este funcion·rio j· ocupa outro cargo nesta empresa.");
-		}
-		new Float:P[3], str2[24];
-		GetPlayerPos(playerid, P[0], P[1], P[2]);
-		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "VocÍ deve estar prÛximo ‡ pessoa que estiver contratando.");
-		format(str2, 24, "%s", pNick(id));
-		for(new k = 0; k < 24; k++) { if(str2[k] == '_') { str2[k] = ' '; } }
-		format(cInfo[pInfo[playerid][pBus]][i][cEmp], 24, "%s", str2);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = '%s' WHERE `sqlid` = %i", str2, cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-		pInfo[id][pBus] = pInfo[playerid][pBus];
-		new str[128];
-		format(str, 128, "VocÍ contratou %s para o cargo de %s.", pNick(id), nomedocargo);
-		SendClientMessage(playerid, -1, str);
-		format(str, 128, "%s contratou vocÍ para o cargo de %s.", pNick(playerid), nomedocargo);
-		SendClientMessage(id, -1, str);
 	}
 	return 1;
 }
 
-CMD:demitir(playerid, params[]) { // /Demitir [Nome_Sobrenome] //////////////////////// MUDAR NA BASE DE DADOS DE IMEDIATO
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
+CMD:gerenciarempresa(playerid, params[]) {
+	if(pInfo[playerid][pTDSelect]) {
+		if(GerenciandoEmpresa[playerid][geID]) {
+			Info(playerid, "Clique em "AMARELO"salvar"BRANCO" ou "VERMELHO"cancelar"BRANCO" para sair do gerenciamento.");
+		} else {
+			Advert(playerid, "Comando indispon√≠vel para voc√™ nesse momento. Saia da sele√ß√£o.");
+		}
+		return 1;
+	}
+	new i, k, j;
+	for(; i < MAX_BUSINESS; i++) {
+		if(!bInfo[i][bSQL]) continue;
+		else if(strcmp(bInfo[i][bOwner], pNick(playerid), false)) continue;
+		else if(!k) { k = i+1; }
+		else break;
+	}
+	if(i == MAX_BUSINESS && !k) return Advert(playerid, "Apenas donos de empresas podem fazer isso.");
+	k--;
+	if(sscanf(params, "i", j)) {
+		if(i == MAX_BUSINESS) { // Dono de apenas uma empresa de ID = k.
+			BusinessManager(playerid, k);
+		} else {				// Dono de duas ou + empresas de ID = k e ID = i.
+			Advert(playerid, "Como voc√™ √© dono de mais que uma empresa, use "AMARELO"/GerenciarEmpresa [ID da empresa]"BRANCO".");
+		}
+	} else {
+		if(j < 0 || j >= MAX_BUSINESS) return Advert(playerid, "Empresa inv√°lida. Use "AMARELO"/Empresas"BRANCO".");
+		else if(!bInfo[j][bSQL]) return Advert(playerid, "Empresa inexistente. Use "AMARELO"/Empresas"BRANCO".");
+		else if(strcmp(bInfo[j][bOwner], pNick(playerid), false)) return Advert(playerid, "Apenas o dono da empresa pode fazer isso.");
+		else { BusinessManager(playerid, j); }
+	}
+	return 1;
+}
+
+CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]									DIALOG DE CONFIRMA√á√ÉO
+	new busid = -1;
+	if(IsPlayerInRangeOfPoint(playerid, 5.0, 1501.5955,1306.9298,1093.2891)) { busid = BUSID_BUSBB; }
+	else if(IsPlayerInRangeOfPoint(playerid, 5.0, -35.9441,-57.4258,1023.5469)) { busid = BUSID_PGMG; }
+	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 527.0273,197.9422,1049.9844)) { busid = BUSID_REF; }
+	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 2306.9746,-7.8869,26.7422)) { busid = BUSID_BANKPC; }
+	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 360.8137,197.5316,1084.1685)) { busid = BUSID_AUTO; }
+	else if(busid == -1) return Advert(playerid, "H√° lugares espec√≠ficos para contrata√ß√£o.");
+	new perm = 0;
+	if(!strcmp(bInfo[busid][bOwner], pNick(playerid), false)) {
+		perm = 1;
+	} else {
+		new Name[24], p = 0;
+		GetPlayerName(playerid, Name, 24);
+		UnderlineToSpace(Name);
+		for(; p < MAX_CARGOS; p++) {
+			if(!cInfo[busid][p][cSQL]) continue;
+			else if(strcmp(Name, cInfo[busid][p][cEmp], false)) continue;
+			else break;
+		}
+		if(!cInfo[busid][p][cHire]) return Advert(playerid, "Voc√™ n√£o tem permiss√£o para contratar.");
+		else { perm = 1; }
+	} if(perm) {
+		new nomedocargo[25], id;
+		if(sscanf(params, "s[25]i", nomedocargo, id)) return AdvertCMD(playerid, "/Contratar [Nome_do_Cargo] [ID]");
+		UnderlineToSpace(nomedocargo);
+		new i = 0;
+		for(; i < MAX_CARGOS; i++) {
+			if(!cInfo[busid][i][cSQL]) continue;
+			else if(strcmp(cInfo[busid][i][cName], nomedocargo, true)) continue;
+			else break;
+		}
+		if(i == MAX_CARGOS) return Advert(playerid, "N√£o existe um cargo com este nome.");
+		if(!isnull(cInfo[busid][i][cEmp])) return Advert(playerid, "Este cargo j√° est√° ocupado por outro funcion√°rio.");
+		if(!IsPlayerConnected(id)) return SendClientMessage(playerid, -1, "ID inv√°lido.");
+		new Float:P[3];
+		GetPlayerPos(playerid, P[0], P[1], P[2]);
+		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return Advert(playerid, "Voc√™ deve estar pr√≥ximo √† pessoa que estiver contratando.");
+		if(pInfo[id][pBus] != -1) return Advert(playerid, "Voc√™ n√£o pode contratar algu√©m que n√£o seja desempregado.");
+		format(cInfo[busid][i][cEmp], 24, "%s", pName(id));
+		new query[120];
+		mysql_format(conn, query, 120, "UPDATE `cargoinfo` SET `emp` = '%s' WHERE `sqlid` = %i", pName(id), cInfo[busid][i][cSQL]);
+		mysql_query(conn, query, false);
+		pInfo[id][pBus] = busid;
+		new str[200];
+		format(str, 144, "oferece um papel e uma caneta preta para %s a fim de assinar o contrato de trabalho.", pName(id));
+		Act(playerid, str);
+		format(str, 200, BRANCO"Assine abaixo para ser empregado na empresa "AMARELO"%s"BRANCO" com o cargo de %s.", bInfo[busid][bName], nomedocargo);
+		Dialog_Show(id, "DialogContratar", DIALOG_STYLE_MSGBOX, BRANCO"CONTRATO", str, "Assinar", "Recusar");
+		pInfo[id][pDialogParam][0] = funcidx("dialog_DialogContratar");
+		pInfo[id][pDialogParam][1] = busid;
+		pInfo[id][pDialogParam][2] = i;
+	}
+	return 1;
+}
+
+CMD:demitir(playerid, params[]) { // /Demitir [Nome_Sobrenome]
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Voc√™ √© desempregado.");
+	new perm = 0;
+	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false)) {
+		perm = 1;	
+	} else {
+		new Name[24], p = 0;
+		GetPlayerName(playerid, Name, 24);
+		UnderlineToSpace(Name);
+		for(; p < MAX_CARGOS; p++) {
+			if(!cInfo[pInfo[playerid][pBus]][p][cSQL]) continue;
+			else if(strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false)) continue;
+			else break;
+		}
+		if(!cInfo[pInfo[playerid][pBus]][p][cHire]) return Advert(playerid, "Voc√™ n√£o tem permiss√£o para demitir.");
+		else { perm = 1; }
+	}
+	if(perm) {
 		new nickname[24];
-		if(sscanf(params, "s", nickname)) return SendClientMessage(playerid, -1, "Use /Demitir [Nome_Sobrenome].");
+		if(sscanf(params, "s[24]", nickname)) return SendClientMessage(playerid, -1, "Use /Demitir [Nome_Sobrenome].");
 		new name[24];
 		for(new i = 0; i < 24; i++) { if(nickname[i] == '_') { name[i] = ' '; } else { name[i] = nickname[i]; } }
 		for(new i = 0; i < MAX_CARGOS; i++) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], name, false) && !isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) {
-				if(cInfo[pInfo[playerid][pBus]][i][cMon]) return SendClientMessage(playerid, -1, "VocÍ n„o pode demitir alguÈm com pagamento pendente.");
+			if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) continue;
+			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], name, false)) {
+				if(cInfo[pInfo[playerid][pBus]][i][cMon]) return SendClientMessage(playerid, -1, "Voc√™ n√£o pode demitir algu√©m com pagamento pendente.");
 				new str[128];
-				format(str, 128, "VocÍ demitiu %s do cargo de %s.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName]);
+				format(str, 128, "Voc√™ demitiu %s do cargo de %s.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName]);
 				SendClientMessage(playerid, -1, str);
 				new query[100];
 				mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = '' WHERE sqlid = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
@@ -159,309 +214,48 @@ CMD:demitir(playerid, params[]) { // /Demitir [Nome_Sobrenome] /////////////////
 				format(cInfo[pInfo[playerid][pBus]][i][cEmp], 24, "");
 				new id = GetPlayerIDByNickname(nickname);
 				if(id != -1) { // Connected
-					format(str, 128, "VocÍ foi demitido da sua empresa por %s.", pNick(playerid));
+					format(str, 128, "Voc√™ foi demitido da sua empresa por %s.", pNick(playerid));
 					SendClientMessage(id, -1, str);
 					pInfo[id][pBus] = -1;
 				}
 				return 1;
 			}
 		}
-		SendClientMessage(playerid, -1, "N„o h· um funcion·rio com este nome na sua empresa.");
-	} else {
-		new Name[24], p = 0;
-		GetPlayerName(playerid, Name, 24);
-		while(p < MAX_CARGOS) {
-			if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
-			else p++; }
-		if(!cInfo[pInfo[playerid][pBus]][p][cFire]) return SendClientMessage(playerid, -1, "VocÍ n„o tem permiss„o para demitir.");
-		new nickname[24];
-		if(sscanf(params, "s", nickname)) return SendClientMessage(playerid, -1, "Use /Demitir [Nome_Sobrenome].");
-		new name[24];
-		for(new i = 0; i < 24; i++) { if(nickname[i] == '_') { name[i] = ' '; } else { name[i] = nickname[i]; } }
-		for(new i = 0; i < MAX_CARGOS; i++) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], name, false) && !isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) {
-				if(cInfo[pInfo[playerid][pBus]][i][cMon]) return SendClientMessage(playerid, -1, "VocÍ n„o pode demitir alguÈm com pagamento pendente.");
-				new str[128];
-				format(str, 128, "VocÍ demitiu %s do cargo de %s.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName]);
-				SendClientMessage(playerid, -1, str);
-				new query[100];
-				mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = '' WHERE sqlid = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-				mysql_query(conn, query, false);
-				mysql_format(conn, query, 100, "UPDATE `playerinfo` SET `pbus` = -1 WHERE nickname = '%i'", nickname);
-				mysql_query(conn, query, false);
-				format(cInfo[pInfo[playerid][pBus]][i][cEmp], 24, "");
-				new id = GetPlayerIDByNickname(nickname);
-				if(id != -1) { // Connected
-					format(str, 128, "VocÍ foi demitido da sua empresa por %s.", pNick(playerid));
-					SendClientMessage(id, -1, str);
-					pInfo[id][pBus] = -1;
-				}
-				return 1;
-			}
-		}
-		SendClientMessage(playerid, -1, "N„o h· um funcion·rio com este nome na sua empresa.");
+		Advert(playerid, "N√£o h√° um funcion√°rio com este nome na sua empresa.");
 	}
 	return 1;
 }
 
-CMD:criarcargo(playerid, params[]) { // /CriarCargo [Nome_do_Cargo] [Sal·rio do Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false)) return SendClientMessage(playerid, -1, "Apenas o dono da empresa pode fazer isso.");
-	new nomedocargo[25], salariodocargo;
-	if(sscanf(params, "s[25]i", nomedocargo, salariodocargo)) return SendClientMessage(playerid, -1, "Use /CriarCargo [Nome_do_Cargo] [Sal·rio do Cargo].");
-	for(new i = 0; i < 25; i++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-	for(new i = 0; i < MAX_CARGOS; i++) {
-		if(!strcmp(nomedocargo, cInfo[pInfo[playerid][pBus]][i][cName], true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) {
-			SendClientMessage(playerid, -1, "J· existe um cargo com este nome, use outro.");
-			return 1;
-		} 
-	}
-	new i = 0;
-	while(i < MAX_CARGOS) {
-		if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) break;
-		else i++;
-	}
-	if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "Esta empresa j· atingiu o seu limite de cargos.");
-	if(salariodocargo < 1) return SendClientMessage(playerid, -1, "Sal·rio inv·lido.");
-	format(cInfo[pInfo[playerid][pBus]][i][cName], 25, "%s", nomedocargo);
-	cInfo[pInfo[playerid][pBus]][i][cSal] = salariodocargo;
-	new str[128];
-	format(str, 128, "Cargo criado: %s. Sal·rio: %i", nomedocargo, salariodocargo);
-	SendClientMessage(playerid, -1, str);
-	new query[150];
-	mysql_format(conn, query, 150, "INSERT INTO `cargoinfo` (`name`, `emp`, `sal`) VALUES ('%s', '', %i)", nomedocargo, salariodocargo);
-	new Cache:result = mysql_query(conn, query);
-	cInfo[pInfo[playerid][pBus]][i][cSQL] = cache_insert_id();
-	cache_delete(result);
-	format(str, 128, "cargo%i", i);
-	mysql_format(conn, query, 150, "UPDATE `businessinfo` SET `%s` = %i WHERE `sqlid` = %i", str, cInfo[pInfo[playerid][pBus]][i][cSQL], bInfo[pInfo[playerid][pBus]][bSQL]);
-	mysql_query(conn, query, false);
-	return 1;
-}
-
-CMD:excluircargo(playerid, params[]) { // /ExcluirCargo [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false)) return SendClientMessage(playerid, -1, "Apenas o dono da empresa pode fazer isso.");
-	new nomedocargo[25];
-	if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /ExcluirCargo [Nome_do_Cargo].");
-	for(new i = 0; i < 25; i++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-	for(new i = 0; i < MAX_CARGOS; i++) {
-		if(!strcmp(nomedocargo, cInfo[pInfo[playerid][pBus]][i][cName], true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) {
-			if(!isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "VocÍ n„o pode excluir um cargo que tenha funcion·rio contratado.");
-			format(cInfo[pInfo[playerid][pBus]][i][cName], 25, "");
-			cInfo[pInfo[playerid][pBus]][i][cSal] = 0;
-			SendClientMessage(playerid, -1, "Cargo excluÌdo com sucesso.");
-			new query[150], str[10];
-			mysql_format(conn, query, 150, "DELETE FROM `cargoinfo` WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-			mysql_query(conn, query, false);
-			format(str, 10, "cargo%i", i);
-			mysql_format(conn, query, 150, "UPDATE `businessinfo` SET `%s` = 0 WHERE `sqlid` = %i", str, bInfo[pInfo[playerid][pBus]][bSQL]);
-			mysql_query(conn, query, false);
-			cInfo[pInfo[playerid][pBus]][i][cSQL] = 0;
-			return 1;
-		}
-	}
-	SendClientMessage(playerid, -1, "Este cargo nem mesmo existe.");
-	return 1;
-}
-
-CMD:pcontratar(playerid, params[]) { // /pContratar [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /pContratar [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cHire] == 1) return SendClientMessage(playerid, -1, "Este cargo j· possui permiss„o de contratar.");
-		cInfo[pInfo[playerid][pBus]][i][cHire] = 1;
-		new str[128];
-		format(str, 128, "VocÍ deu permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa contratar.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `hire` = 1 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:ppagar(playerid, params[]) { // /pPagar [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /pPagar [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cPay] == 1) return SendClientMessage(playerid, -1, "Este cargo j· possui permiss„o de pagar sal·rio.");
-		cInfo[pInfo[playerid][pBus]][i][cPay] = 1;
-		new str[144];
-		format(str, 144, "VocÍ deu permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa pagar sal·rio.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `pay` = 1 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:pdemitir(playerid, params[]) { // /pDemitir [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /pDemitir [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cFire] == 1) return SendClientMessage(playerid, -1, "Este cargo j· possui permiss„o de demitir.");
-		cInfo[pInfo[playerid][pBus]][i][cFire] = 1;
-		new str[128];
-		format(str, 128, "VocÍ deu permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa demitir.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `fire` = 1 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:rpcontratar(playerid, params[]) { // /rpContratar [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /rpContratar [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cHire] == 0) return SendClientMessage(playerid, -1, "Este cargo n„o possui permiss„o de contratar.");
-		cInfo[pInfo[playerid][pBus]][i][cHire] = 0;
-		new str[128];
-		format(str, 128, "VocÍ retirou a permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa contratar.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `hire` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:rppagar(playerid, params[]) { // /rpPagar [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /rpPagar [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cPay] == 0) return SendClientMessage(playerid, -1, "Este cargo n„o possui permiss„o de pagar sal·rio.");
-		cInfo[pInfo[playerid][pBus]][i][cPay] = 0;
-		new str[128];
-		format(str, 128, "VocÍ retirou a permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa pagar sal·rio.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `pay` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:rpdemitir(playerid, params[]) { // /rpDemitir [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /rpDemitir [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(cInfo[pInfo[playerid][pBus]][i][cFire] == 0) return SendClientMessage(playerid, -1, "Este cargo n„o possui permiss„o de demitir.");
-		cInfo[pInfo[playerid][pBus]][i][cFire] = 0;
-		new str[128];
-		format(str, 128, "VocÍ retirou a permiss„o para qualquer funcion·rio que ocupe o cargo de %s possa demitir.", cInfo[pInfo[playerid][pBus]][i][cName]);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `fire` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:msalario(playerid, params[]) { // /mSalario [Nome_do_Cargo] [Sal·rio]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
-		new nomedocargo[25], sal;
-		if(sscanf(params, "s[25]i", nomedocargo, sal)) return SendClientMessage(playerid, -1, "Use /mSalario [Nome_do_Cargo] [Sal·rio].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(sal < 1) return SendClientMessage(playerid, -1, "Sal·rio inv·lido.");
-		cInfo[pInfo[playerid][pBus]][i][cSal] = sal;
-		new str[128];
-		format(str, 128, "VocÍ modificou o sal·rio do cargo %s para $%i", cInfo[pInfo[playerid][pBus]][i][cName], sal);
-		SendClientMessage(playerid, -1, str);
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `sal` = %i WHERE `sqlid` = %i", sal, cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
-	return 1;
-}
-
-CMD:precoproduto(playerid, params[]) { // /PrecoProduto [Nome_do_Produto] [Novo preÁo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
+CMD:precoproduto(playerid, params[]) { // /PrecoProduto [Nome_do_Produto] [Novo pre√ßo]
+	for(new b = 0; b < MAX_BUSINESS; b++) {
+		if(!bInfo[b][bSQL]) continue;
+		if(strcmp(bInfo[b][bOwner], pNick(playerid), false)) continue;
 		new produto[25], Float:preco;
-		if(sscanf(params, "s[25]f", produto, preco)) return SendClientMessage(playerid, -1, "Use /PrecoProduto [Nome_do_Produto] [Novo preÁo].");
+		if(sscanf(params, "s[25]f", produto, preco)) return SendClientMessage(playerid, -1, "Use /PrecoProduto [Nome_do_Produto] [Novo pre√ßo].");
 		for(new i = 0; i < 25; i++) { if(produto[i] == '_') { produto[i] = ' '; } }
 		new i = 0;
 		while(i < MAX_PRODUTOS) {
-			if(!strcmp(prInfo[pInfo[playerid][pBus]][i][prName], produto, true) && !isnull(prInfo[pInfo[playerid][pBus]][i][prName])) break;
+			if(!strcmp(prInfo[b][i][prName], produto, true) && !isnull(prInfo[b][i][prName])) break;
 			else i++;
 		}
-		if(i == MAX_PRODUTOS) return SendClientMessage(playerid, -1, "N„o existe um produto com este nome.");
-		if(preco <= 0.0) return SendClientMessage(playerid, -1, "PreÁo inv·lido.");
-		prInfo[pInfo[playerid][pBus]][i][prPrice] = preco;
+		if(i == MAX_PRODUTOS) return SendClientMessage(playerid, -1, "N√£o existe um produto com este nome.");
+		if(preco <= 0.0) return SendClientMessage(playerid, -1, "Pre√ßo inv√°lido.");
+		prInfo[b][i][prPrice] = preco;
 		new str[128];
-		format(str, 128, "VocÍ estabeleceu o preÁo do produto %s para $%.2f.", prInfo[pInfo[playerid][pBus]][i][prName], preco);
+		format(str, 128, "Voc√™ estabeleceu o pre√ßo do produto %s para $%.2f.", prInfo[b][i][prName], preco);
 		SendClientMessage(playerid, -1, str);
 		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `produtoinfo` SET `price` = %.2f WHERE `sqlid` = %i", preco, prInfo[pInfo[playerid][pBus]][i][prSQL]);
+		mysql_format(conn, query, 100, "UPDATE `produtoinfo` SET `price` = %.2f WHERE `sqlid` = %i", preco, prInfo[b][i][prSQL]);
 		mysql_query(conn, query, false);
-	} else { SendClientMessage(playerid, -1, "Apenas o dono da empresa pode usar este comando."); }
+	}
 	return 1;
 }
 
 CMD:adicionarveiculo(playerid, params[]) { // /AdicionarVeiculo [Empresa ID]
-	if(strcmp(pNick(playerid), "John_Black", false)) return SendClientMessage(playerid, -1, "Nananinan„o (:");
-	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um veÌculo para usar este comando corretamente.");
+	if(pInfo[playerid][pAdmin] < Senior) return SendClientMessage(playerid, -1, "Nananinan√£o (:");
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um ve√≠culo para usar este comando corretamente.");
 	new vid = GetPlayerVehicleID(playerid);
-	if(vInfo[vid][vModel] == 0) return SendClientMessage(playerid, -1, "VeÌculo n„o atribuÌdo ‡ base de dados.");
+	if(vInfo[vid][vModel] == 0) return SendClientMessage(playerid, -1, "Ve√≠culo n√£o atribu√≠do √† base de dados.");
 	new eid;
 	if(sscanf(params, "i", eid)) return SendClientMessage(playerid, -1, "Use /AdicionarVeiculo [Empresa ID].");
 	if(eid < 0 || eid >= MAX_BUSINESS) return SendClientMessage(playerid, -1, "Ta querendo crashar o server?");
@@ -470,14 +264,14 @@ CMD:adicionarveiculo(playerid, params[]) { // /AdicionarVeiculo [Empresa ID]
 		if(!bInfo[eid][bVehicles][i]) break;
 		i++;
 	}
-	if(i == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Esta empresa n„o pode ter mais veÌculos.");
-	if(!bInfo[eid][bSQL]) return SendClientMessage(playerid, -1, "N„o existe empresa com este ID.");
+	if(i == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Esta empresa n√£o pode ter mais ve√≠culos.");
+	if(!bInfo[eid][bSQL]) return SendClientMessage(playerid, -1, "N√£o existe empresa com este ID.");
 	bInfo[eid][bVehicles][i] = vInfo[vid][vSQL];
 	format(vInfo[vid][vOwner], 24, "%s", bInfo[eid][bOwner]);
 	GetVehiclePos(vid, vInfo[vid][vSpawn][0], vInfo[vid][vSpawn][1], vInfo[vid][vSpawn][2]);
 	GetVehicleZAngle(vid, vInfo[vid][vSpawn][3]);
 	new str[128];
-	format(str, 128, "VeÌculo [%i] adicionado ‡ empresa de nome %s, com dono %s.", vid, bInfo[eid][bName], bInfo[eid][bOwner]);
+	format(str, 128, "Ve√≠culo [%i] adicionado √† empresa de nome %s, com dono %s.", vid, bInfo[eid][bName], bInfo[eid][bOwner]);
 	SendClientMessage(playerid, -1, str);
 	new query[150];
 	format(str, 10, "veiculo%i", i);
@@ -487,10 +281,10 @@ CMD:adicionarveiculo(playerid, params[]) { // /AdicionarVeiculo [Empresa ID]
 }
 
 CMD:removerveiculo(playerid) {
-	if(strcmp(pNick(playerid), "John_Black", false)) return SendClientMessage(playerid, -1, "Nananinan„o (:");
-	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um veÌculo para usar este comando corretamente.");
+	if(pInfo[playerid][pAdmin] < Senior) return SendClientMessage(playerid, -1, "Nananinan√£o (:");
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um ve√≠culo para usar este comando corretamente.");
 	new vid = GetPlayerVehicleID(playerid);
-	if(!vInfo[vid][vSQL]) return SendClientMessage(playerid, -1, "VeÌculo n„o atribuÌdo ‡ base de dados.");
+	if(!vInfo[vid][vSQL]) return SendClientMessage(playerid, -1, "Ve√≠culo n√£o atribu√≠do √† base de dados.");
 	new i = 0, j = 0;
 	while(i < MAX_BUSINESS) {
 		while(j < MAX_BUSINESS_VEHICLES) {
@@ -500,110 +294,112 @@ CMD:removerveiculo(playerid) {
 				mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `%s` = '0' WHERE `sqlid` = %i", str, bInfo[i][bSQL]);
 				mysql_query(conn, query, false);
 				bInfo[i][bVehicles][j] = 0;
-				format(str, 144, "VeÌculo [%i] removido da empresa %s de dono %s.", vid, bInfo[i][bName], bInfo[i][bOwner]);
+				format(str, 144, "Ve√≠culo [%i] removido da empresa %s de dono %s.", vid, bInfo[i][bName], bInfo[i][bOwner]);
 				SendClientMessage(playerid, -1, str);
-				SendClientMessage(playerid, -1, "Lembre-se: o veÌculo continua na base de dados, mas n„o pertence mais a esta empresa.");
-				SendClientMessage(playerid, -1, "Para remover o veÌculo da base de dados, use /DeletarVeiculo.");
+				SendClientMessage(playerid, -1, "Lembre-se: o ve√≠culo continua na base de dados, mas n√£o pertence mais a esta empresa.");
+				SendClientMessage(playerid, -1, "Para remover o ve√≠culo da base de dados, use /DeletarVeiculo.");
 				return 1;
 			}
 			j++;
 		}
 		i++;
 	}
-	if(i == MAX_BUSINESS) return SendClientMessage(playerid, -1, "Este veÌculo n„o pertence a nenhuma empresa.");
+	if(i == MAX_BUSINESS) return SendClientMessage(playerid, -1, "Este ve√≠culo n√£o pertence a nenhuma empresa.");
 	return 1;
 }
 
 CMD:pagarsalario(playerid, params[]) { // /PagarSalario [Nome_do_Cargo]
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "VocÍ È desempregado.");
-	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false) && !isnull(bInfo[pInfo[playerid][pBus]][bOwner])) {
+	for(new b = 0; b < MAX_BUSINESS; b++) {
+		if(!bInfo[b][bSQL]) continue;
+		if(strcmp(bInfo[b][bOwner], pNick(playerid), false)) continue;
 		new nomedocargo[25];
 		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
 		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
 		new i = 0;
 		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
+			if(!strcmp(cInfo[b][i][cName], nomedocargo, true) && !isnull(cInfo[b][i][cName])) break;
 			else i++;
 		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo est· desocupado.");
+		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N√£o existe um cargo com este nome.");
+		if(isnull(cInfo[b][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo est√° desocupado.");
 
 		new nickname[24];
-		format(nickname, 24, "%s", cInfo[pInfo[playerid][pBus]][i][cEmp]);
+		format(nickname, 24, "%s", cInfo[b][i][cEmp]);
 		for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
 		new id = GetPlayerIDByNickname(nickname);
-		if(id == -1) return SendClientMessage(playerid, -1, "O funcion·rio que ocupa este cargo est· desconectado.");
+		if(id == -1) return SendClientMessage(playerid, -1, "O funcion√°rio que ocupa este cargo est√° desconectado.");
 		new Float:P[3];
 		GetPlayerPos(playerid, P[0], P[1], P[2]);
-		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "VocÍ deve estar prÛximo ‡ pessoa que estiver pagando.");
-		if(cInfo[pInfo[playerid][pBus]][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcion·rio n„o tem nada a receber.");
-		if(bInfo[pInfo[playerid][pBus]][bReceita] < cInfo[pInfo[playerid][pBus]][i][cMon]) {
+		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "Voc√™ deve estar pr√≥ximo √† pessoa que estiver pagando.");
+		if(cInfo[b][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcion√°rio n√£o tem nada a receber.");
+		if(bInfo[b][bReceita] < cInfo[b][i][cMon]) {
 			new str[128];
-			format(str, 128, "Os fundos da empresa ($%i) n„o s„o suficientes para pagar o sal·rio deste funcion·rio ($%i)", bInfo[pInfo[playerid][pBus]][bReceita], cInfo[pInfo[playerid][pBus]][i][cMon]);
+			format(str, 128, "Os fundos da empresa ($%i) n√£o s√£o suficientes para pagar o sal√°rio deste funcion√°rio ($%i)", bInfo[b][bReceita], cInfo[b][i][cMon]);
 			SendClientMessage(playerid, -1, str);
 			return 1;
 		}
 		new str[128];
-		format(str, 128, "O funcion·rio %s de cargo %s foi pago em $%i pelos seus serviÁos.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName], cInfo[pInfo[playerid][pBus]][i][cMon]);
+		format(str, 128, "O funcion√°rio %s de cargo %s foi pago em $%i pelos seus servi√ßos.", cInfo[b][i][cEmp], cInfo[b][i][cName], cInfo[b][i][cMon]);
 		SendClientMessage(playerid, -1, str);
-		format(str, 128, "VocÍ foi pago por %s na quantia de $%i pelos serviÁos prestados.", pNick(playerid), cInfo[pInfo[playerid][pBus]][i][cMon]);
+		format(str, 128, "Voc√™ foi pago por %s na quantia de $%i pelos servi√ßos prestados.", pNick(playerid), cInfo[b][i][cMon]);
 		SendClientMessage(id, -1, str);
-		GivePlayerMoney(id, cInfo[pInfo[playerid][pBus]][i][cMon]);
-		bInfo[pInfo[playerid][pBus]][bReceita] -= cInfo[pInfo[playerid][pBus]][i][cMon];
-		cInfo[pInfo[playerid][pBus]][i][cMon] = 0;
+		GivePlayerMoney(id, cInfo[b][i][cMon]);
+		bInfo[b][bReceita] -= cInfo[b][i][cMon];
+		cInfo[b][i][cMon] = 0;
 		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[pInfo[playerid][pBus]][bReceita], bInfo[pInfo[playerid][pBus]][bSQL]);
+		mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[b][bReceita], bInfo[b][bSQL]);
 		mysql_query(conn, query, false);
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-		mysql_query(conn, query, false);
-
-	} else {
-		new Name[24], p = 0;
-		GetPlayerName(playerid, Name, 24);
-		while(p < MAX_CARGOS) {
-			if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
-			else p++; }
-		if(!cInfo[pInfo[playerid][pBus]][p][cPay]) return SendClientMessage(playerid, -1, "VocÍ n„o tem permiss„o para pagar sal·rio.");
-		new nomedocargo[25];
-		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
-		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-		new i = 0;
-		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-			else i++;
-		}
-		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N„o existe um cargo com este nome.");
-		if(isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo est· desocupado.");
-
-		new nickname[24];
-		format(nickname, 24, "%s", cInfo[pInfo[playerid][pBus]][i][cEmp]);
-		for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
-		new id = GetPlayerIDByNickname(nickname);
-		if(id == -1) return SendClientMessage(playerid, -1, "O funcion·rio que ocupa este cargo est· desconectado.");
-		new Float:P[3];
-		GetPlayerPos(playerid, P[0], P[1], P[2]);
-		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "VocÍ deve estar prÛximo ‡ pessoa que estiver pagando.");
-		if(cInfo[pInfo[playerid][pBus]][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcion·rio n„o tem nada a receber.");
-		if(bInfo[pInfo[playerid][pBus]][bReceita] < cInfo[pInfo[playerid][pBus]][i][cMon]) {
-			new str[128];
-			format(str, 128, "Os fundos da empresa ($%i) n„o s„o suficientes para pagar o sal·rio deste funcion·rio ($%i)", bInfo[pInfo[playerid][pBus]][bReceita], cInfo[pInfo[playerid][pBus]][i][cMon]);
-			SendClientMessage(playerid, -1, str);
-			return 1;
-		}
-		new str[128];
-		format(str, 128, "O funcion·rio %s de cargo %s foi pago em $%i pelos seus serviÁos.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName], cInfo[pInfo[playerid][pBus]][i][cMon]);
-		SendClientMessage(playerid, -1, str);
-		format(str, 128, "VocÍ foi pago por %s na quantia de $%i pelos serviÁos prestados.", pNick(playerid), cInfo[pInfo[playerid][pBus]][i][cMon]);
-		SendClientMessage(id, -1, str);
-		GivePlayerMoney(id, cInfo[pInfo[playerid][pBus]][i][cMon]);
-		bInfo[pInfo[playerid][pBus]][bReceita] -= cInfo[pInfo[playerid][pBus]][i][cMon];
-		cInfo[pInfo[playerid][pBus]][i][cMon] = 0;
-		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[pInfo[playerid][pBus]][bReceita], bInfo[pInfo[playerid][pBus]][bSQL]);
-		mysql_query(conn, query, false);
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
+		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[b][i][cSQL]);
 		mysql_query(conn, query, false);
 	}
+	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Voc√™ √© desempregado.");
+	new Name[24], p = 0;
+	GetPlayerName(playerid, Name, 24);
+	for(new j = 0; j < 24; j ++) { if(Name[j] == '_') { Name[j] = ' '; } }
+	while(p < MAX_CARGOS) {
+		if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
+		else p++;
+	}
+	if(!cInfo[pInfo[playerid][pBus]][p][cPay]) return SendClientMessage(playerid, -1, "Voc√™ n√£o tem permiss√£o para pagar sal√°rio.");
+	new nomedocargo[25];
+	if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
+	for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
+	new i = 0;
+	while(i < MAX_CARGOS) {
+		if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
+		else i++;
+	}
+	if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "N√£o existe um cargo com este nome.");
+	if(isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo est√° desocupado.");
+
+	new nickname[24];
+	format(nickname, 24, "%s", cInfo[pInfo[playerid][pBus]][i][cEmp]);
+	for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
+	new id = GetPlayerIDByNickname(nickname);
+	if(id == -1) return SendClientMessage(playerid, -1, "O funcion√°rio que ocupa este cargo est√° desconectado.");
+	new Float:P[3];
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "Voc√™ deve estar pr√≥ximo √† pessoa que estiver pagando.");
+	if(cInfo[pInfo[playerid][pBus]][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcion√°rio n√£o tem nada a receber.");
+	if(bInfo[pInfo[playerid][pBus]][bReceita] < cInfo[pInfo[playerid][pBus]][i][cMon]) {
+		new str[128];
+		format(str, 128, "Os fundos da empresa ($%i) n√£o s√£o suficientes para pagar o sal√°rio deste funcion√°rio ($%i)", bInfo[pInfo[playerid][pBus]][bReceita], cInfo[pInfo[playerid][pBus]][i][cMon]);
+		SendClientMessage(playerid, -1, str);
+		return 1;
+	}
+	new str[128];
+	format(str, 128, "O funcion√°rio %s de cargo %s foi pago em $%i pelos seus servi√ßos.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName], cInfo[pInfo[playerid][pBus]][i][cMon]);
+	SendClientMessage(playerid, -1, str);
+	format(str, 128, "Voc√™ foi pago por %s na quantia de $%i pelos servi√ßos prestados.", pNick(playerid), cInfo[pInfo[playerid][pBus]][i][cMon]);
+	SendClientMessage(id, -1, str);
+	GivePlayerMoney(id, cInfo[pInfo[playerid][pBus]][i][cMon]);
+	bInfo[pInfo[playerid][pBus]][bReceita] -= cInfo[pInfo[playerid][pBus]][i][cMon];
+	cInfo[pInfo[playerid][pBus]][i][cMon] = 0;
+	new query[100];
+	mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[pInfo[playerid][pBus]][bReceita], bInfo[pInfo[playerid][pBus]][bSQL]);
+	mysql_query(conn, query, false);
+	mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
+	mysql_query(conn, query, false);
 	return 1;
 }
 
@@ -612,7 +408,7 @@ CMD:empresas(playerid) {
 	for(new i = 0; i < MAX_BUSINESS; i++) {
 		if(bInfo[i][bSQL]) { format(str, 500, "%s\n[%02i] %s - Dono: %s", str, i, bInfo[i][bName], bInfo[i][bOwner]); }
 	}
-	if(isnull(str)) return Info(playerid, "N„o h· existem empresas criadas.");
+	if(isnull(str)) return Info(playerid, "N√£o existem empresas criadas.");
 	format(str, 500, "\t{FFFF00}Empresas:{FFFFFF}\n%s", str);
 	Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "{FFFFFF}Empresas", str, "Fechar", "");
 	return 1;
@@ -706,22 +502,26 @@ public LoadCargoData() {
 	cache_get_row_count(row);
 	for(new i = 0; i < row; i++) {
 
-		new j = 0, y = 0, x = 0;
+		new y = 0, x = 0;
 
 		cache_get_value_index_int(i, 0, x);
+		printf("Cargo SQL %03i detectado. Row: %02i", x, i);
 
-		for(; j < MAX_BUSINESS; j++) {
-			if(!bInfo[j][bSQL]) continue;
+		for(new j = 0; j < MAX_BUSINESS; j++) {
+			if(!bInfo[j][bSQL]) {
+				printf("Pulando empresa %02i", j);
+				continue;
+			}
 			for(new k = 0; k < MAX_CARGOS; k++) {
 				if(bInfo[j][bCargos][k] == x) {
+					printf("Atribuindo cargo SQL %03i a empresa ID %02i [SLOT %02i]", x, j, k);
 					cInfo[j][k][cSQL] = x;
 					cache_get_value_name(i, "name", str);
-					format(cInfo[j][k][cName], 25, "%s", str);
+					if(strcmp(str, "NULL", true)) { format(cInfo[j][k][cName], 25, "%s", str); }
 					cache_get_value_name(i, "emp", str);
-					format(cInfo[j][k][cEmp], 25, "%s", str);
+					if(strcmp(str, "NULL", true)) { format(cInfo[j][k][cEmp], 25, "%s", str); }
 					cache_get_value_name_int(i, "sal", cInfo[j][k][cSal]);
 					cache_get_value_name_int(i, "hire", cInfo[j][k][cHire]);
-					cache_get_value_name_int(i, "fire", cInfo[j][k][cFire]);
 					cache_get_value_name_int(i, "pay", cInfo[j][k][cPay]);
 					cache_get_value_name_int(i, "mon", cInfo[j][k][cMon]);
 					y = 1;
@@ -730,8 +530,6 @@ public LoadCargoData() {
 			}
 			if(y) { break; }
 		}
-
-
 	}
 	return 1;
 }
@@ -767,6 +565,298 @@ public LoadEntradaData() {
 			if(y) { break; }
 		}
 
+	}
+	return 1;
+}
+
+forward OnPlayerClickTextDraw@bus(playerid, Text:clickedid);
+public OnPlayerClickTextDraw@bus(playerid, Text:clickedid) {
+	if(clickedid == TDManager[28]) { // Salvar
+		new query[200];
+		BusinessManager(playerid, -1);
+		for(new i = 0; i < 10; i++) {
+			if(!strcmp(TDMParams[playerid][(i*7) + 0][tdmpValue], "Criar Cargo", false)) {
+				if(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]) {
+					mysql_format(conn, query, 200, "DELETE FROM cargoinfo WHERE sqlid = %i", cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]);
+					mysql_query(conn, query, false);
+					mysql_format(conn, query, 200, "UPDATE businessinfo SET `cargo%i` = 0 WHERE sqlid = %i", i, bInfo[GerenciandoEmpresa[playerid][geID]-1][bSQL]);
+					mysql_query(conn, query, false);
+					format(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName], 20, "");
+					format(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cEmp], 20, "");
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL] = 0;
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSal] = 0;
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cHire] = 0;
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cPay] = 0;
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cMon] = 0;
+				}
+			} else {
+				format(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName], 20, "%s", TDMParams[playerid][(i*7) + 0][tdmpValue]);
+				if(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]) {
+					TextDecoding(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName]);
+					mysql_format(conn, query, 200, "UPDATE cargoinfo SET name = '%s' WHERE sqlid = %i", cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName], cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]);
+					mysql_query(conn, query, false);
+				} else {
+					new Cache:result;
+					TextDecoding(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName]);
+					mysql_format(conn, query, 200, "INSERT INTO cargoinfo (name) VALUES ('%s')", cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName]);
+					result = mysql_query(conn, query, true);
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL] = cache_insert_id();
+					cache_delete(result);
+				}
+				mysql_format(conn, query, 200, "UPDATE businessinfo SET `cargo%i` = %i WHERE sqlid = %i", i, cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL], bInfo[GerenciandoEmpresa[playerid][geID]-1][bSQL]);
+				mysql_query(conn, query, false);
+			} if(!strlen(TDMParams[playerid][(i*7) + 2][tdmpValue])) {
+				cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSal] = 0;
+			} else {
+				cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSal] = strval(TDMParams[playerid][(i*7) + 2][tdmpValue][1]);
+				mysql_format(conn, query, 200, "UPDATE cargoinfo SET sal = %i WHERE sqlid = %i", cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSal], cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]);
+				mysql_query(conn, query, false);
+			}
+		}
+	} else if(clickedid == TDManager[27]) { // Cancelar
+		BusinessManager(playerid, -1);
+		Info(playerid, "Gerenciamento de empresa cancelado.");
+	}
+	return 1;
+}
+
+forward OnPlayerClickPlayerTextDraw@bus(playerid, PlayerText:playertextid);
+public OnPlayerClickPlayerTextDraw@bus(playerid, PlayerText:playertextid) {
+	if(!GerenciandoEmpresa[playerid][geID]) return 1;
+	GerenciandoEmpresa[playerid][geTDID] = playertextid;
+	for(new j = 0; j < 10; j++) {
+		if(playertextid == PTDManager[playerid][(j*7) + 0]) { 								// 	- Cargo
+			if(!strlen(TDMParams[playerid][(j*7) + 0][tdmpValue])) return 1;
+			if(!strcmp(TDMParams[playerid][(j*7) + 0][tdmpValue], "Criar Cargo", false)) {  // > Criar Cargo
+				Dialog_Show(playerid, "DialogCCargo", DIALOG_STYLE_INPUT, "Criar Cargo", "Insira abaixo o nome do cargo que deseja criar.", "Criar", "Cancelar");
+			} else {																		// > Cargo existente
+				Dialog_Show(playerid, "DialogECargo", DIALOG_STYLE_MSGBOX, "Excluir Cargo", "Deseja excluir esse cargo?", "Sim", "N√£o");
+			}
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 1]) { 						//	- Funcion√°rio
+			if(!strlen(TDMParams[playerid][(j*7) + 1][tdmpValue])) return 1;
+			Dialog_Show(playerid, "DialogDemitir", DIALOG_STYLE_MSGBOX, "Demitir Funcion√°rio", "Deseja demitir esse funcion√°rio?", "Sim", "N√£o");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 2]) { 						//	- Sal√°rio
+			if(!strlen(TDMParams[playerid][(j*7) + 2][tdmpValue])) return 1;
+			Dialog_Show(playerid, "DialogMSalario", DIALOG_STYLE_INPUT, "Mudar Sal√°rio", "Insira abaixo o sal√°rio desse cargo.", "Definir", "Cancelar");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 3]) { 						//	- Permiss√£o 1
+			if(!strlen(TDMParams[playerid][(j*7) + 3][tdmpValue])) return 1;
+			Dialog_Show(playerid, "DialogPerm1", DIALOG_STYLE_LIST, "Permiss√£o 1", "Em desenvolvimento", "Permitir", "Cancelar");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 4]) { 						//	- Permiss√£o 2
+			if(!strlen(TDMParams[playerid][(j*7) + 4][tdmpValue])) return 1;
+			Dialog_Show(playerid, "DialogPerm2", DIALOG_STYLE_LIST, "Permiss√£o 2", "Em desenvolvimento", "Permitir", "Cancelar");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 5]) { 						//	- Permiss√£o 3
+			if(!strlen(TDMParams[playerid][(j*7) + 5][tdmpValue])) return 1;
+			Dialog_Show(playerid, "DialogPerm3", DIALOG_STYLE_LIST, "Permiss√£o 3", "Em desenvolvimento", "Permitir", "Cancelar");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		} else if(playertextid == PTDManager[playerid][(j*7) + 6]) { 						//	- Ficha Pessoal
+			if(!strlen(TDMParams[playerid][(j*7) + 6][tdmpValue])) return 1;
+			new str[200];
+			format(str, 200, "Total a receber: "VERDEMONEY"$%i"BRANCO".\nConta banc√°ria, documentos etc", cInfo[GerenciandoEmpresa[playerid][geID]-1][j][cMon]);
+			Dialog_Show(playerid, "DialogFPessoal", DIALOG_STYLE_MSGBOX, "Ficha Pessoal", str, "Fechar", "");
+			pInfo[playerid][pTDSelect] = 0;
+			CancelSelectTextDraw(playerid);
+			break;
+		}
+	}
+	return 1;
+}
+
+Dialog:DialogContratar(playerid, response, listitem, inputtext[]) {
+	if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_DialogContratar")) {
+		Advert(playerid, "Informe essa mensagem de erro para a administra√ß√£o. [COD 010]");
+	} else if(!response) {
+		Act(playerid, "recusa a assinar, devolvendo o contrato e a caneta de volta.");
+	} else {
+		Act(playerid, "assina o contrato de trabalho e devolve a caneta de volta.");
+		pInfo[playerid][pBus] = pInfo[playerid][pDialogParam][1];
+		format(cInfo[pInfo[playerid][pBus]][pInfo[playerid][pDialogParam][2]][cEmp], 24, "%s", pName(playerid));
+	}
+	ResetDialogParams(playerid);
+	return 1;
+}
+
+Dialog:DialogFPessoal(playerid, response, listitem, inputtext[]) {
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogPerm1(playerid, response, listitem, inputtext[]) {
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogPerm2(playerid, response, listitem, inputtext[]) {
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogPerm3(playerid, response, listitem, inputtext[]) {
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogMSalario(playerid, response, listitem, inputtext[]) {
+	if(response) {
+		new value = strval(inputtext);
+		if(value < 1 || value > 100000) {
+			Advert(playerid, "Valor de sal√°rio inv√°lido.");
+		} else {
+			for(new j = 0; j < 10; j++) {
+				if(GerenciandoEmpresa[playerid][geTDID] == PTDManager[playerid][(7*j) + 2]) {
+					format(TDMParams[playerid][(7*j) + 2][tdmpValue], 20, "$%i", value);
+					TextEncoding(TDMParams[playerid][(7*j) + 2][tdmpValue]);
+					PlayerTextDrawSetString(playerid, PTDManager[playerid][(7*j) + 2], TDMParams[playerid][(7*j) + 2][tdmpValue]);
+					break;
+				}
+			}
+		}
+	}
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogCCargo(playerid, response, listitem, inputtext[]) {
+	if(response) {
+		if(strlen(inputtext) < 1 || strlen(inputtext) > 19) {
+			Advert(playerid, "Nome para cargo inv√°lido.");
+		} else {
+			new i = 0;
+			for(; i < MAX_CARGOS; i++) {
+				if(!cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL]) continue;
+				if(strcmp(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName], inputtext, true)) continue;
+				else break;
+			}
+			if(i < MAX_CARGOS) {
+				Advert(playerid, "J√° existe um cargo com esse nome.");
+			} else {
+				for(new j = 0; j < 10; j++) {
+					if(GerenciandoEmpresa[playerid][geTDID] == PTDManager[playerid][(7*j) + 0]) {
+						format(TDMParams[playerid][(7*j) + 0][tdmpValue], 20, "%s", inputtext);
+						format(TDMParams[playerid][(7*j) + 2][tdmpValue], 10, "$0");
+						TextEncoding(TDMParams[playerid][(7*j) + 0][tdmpValue]);
+						TextEncoding(TDMParams[playerid][(7*j) + 2][tdmpValue]);
+						PlayerTextDrawSetString(playerid, PTDManager[playerid][(7*j) + 0], TDMParams[playerid][(7*j) + 0][tdmpValue]);
+						PlayerTextDrawSetString(playerid, PTDManager[playerid][(7*j) + 2], TDMParams[playerid][(7*j) + 2][tdmpValue]);
+						break;
+					}
+				}
+			}
+		}
+	}
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogECargo(playerid, response, listitem, inputtext[]) {
+	if(response) {
+		for(new j = 0; j < 10; j++) {
+			if(GerenciandoEmpresa[playerid][geTDID] == PTDManager[playerid][(7*j) + 0]) {
+				if(strlen(TDMParams[playerid][(7*j) + 1][tdmpValue])) {
+					Advert(playerid, "Voc√™ n√£o pode excluir um cargo que esteja sendo ocupado por um funcion√°rio.");
+				} else {
+					format(TDMParams[playerid][(7*j) + 0][tdmpValue], 20, "Criar Cargo");
+					format(TDMParams[playerid][(7*j) + 2][tdmpValue], 2, "");
+					PlayerTextDrawSetString(playerid, PTDManager[playerid][(7*j) + 0], TDMParams[playerid][(7*j) + 0][tdmpValue]);
+					PlayerTextDrawSetString(playerid, PTDManager[playerid][(7*j) + 2], TDMParams[playerid][(7*j) + 2][tdmpValue]);
+				}
+				break;
+			}
+		}
+	}
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+Dialog:DialogDemitir(playerid, response, listitem, inputtext[]) {
+	if(response) {
+		Advert(playerid, "Voc√™ n√£o pode demitir algu√©m por meio dessa interface. Use "AMARELO"/Demitir"BRANCO".");
+	}
+	SelectTextDraw(playerid, AmareloPalido);
+	pInfo[playerid][pTDSelect] = 1;
+	return 1;
+}
+
+stock BusinessManager(playerid, businessid) {
+	if(businessid == -1) {
+		for(new i = 0; i < 70; i++) {
+			PlayerTextDrawHide(playerid, PTDManager[playerid][i]);
+		}
+		for(new i = 0; i < sizeof(TDManager); i++) {
+			TextDrawHideForPlayer(playerid, TDManager[i]);
+		}
+		pInfo[playerid][pTDSelect] = 0;
+		CancelSelectTextDraw(playerid);
+		return 1;
+	}
+	LimparChat(playerid);
+	pInfo[playerid][pTDSelect] = 1;
+	SelectTextDraw(playerid, AmareloPalido);
+	GerenciandoEmpresa[playerid][geID] = businessid+1;
+	for(new i = 0; i < sizeof(TDManager); i++) { TextDrawShowForPlayer(playerid, TDManager[i]); } // Estrutura
+	for(new i = 0; i < 7; i++) { // Coluna
+		for(new j = 0; j < 10; j++) { // Linha
+			if(i == 0) { // Cargo
+				if(!cInfo[businessid][j][cSQL]) {
+					format(TDMParams[playerid][(j*7) + 0][tdmpValue], 24, "Criar Cargo");
+				} else {
+					format(TDMParams[playerid][(j*7) + 0][tdmpValue], 24, "%s", cInfo[businessid][j][cName]);
+					TextEncoding(TDMParams[playerid][(j*7) + 0][tdmpValue]);
+				}
+			} else if(i == 1) { // Funcion√°rio
+				if(!cInfo[businessid][j][cSQL]) {
+					format(TDMParams[playerid][(j*7) + 1][tdmpValue], 24, "");
+				} else {
+					format(TDMParams[playerid][(j*7) + 1][tdmpValue], 24, "%s", cInfo[businessid][j][cEmp]);
+					TextEncoding(TDMParams[playerid][(j*7) + 1][tdmpValue]);
+				}
+			} else if(i == 2) { // Sal√°rio
+				if(!cInfo[businessid][j][cSQL]) {
+					format(TDMParams[playerid][(j*7) + 2][tdmpValue], 24, "");
+				} else {
+					format(TDMParams[playerid][(j*7) + 2][tdmpValue], 24, "$%i", cInfo[businessid][j][cSal]);
+				}
+			} else if(i == 3) { // Permiss√£o 1
+				format(TDMParams[playerid][(j*7) + 3][tdmpValue], 24, "Desenvolvendo");
+			} else if(i == 4) { // Permiss√£o 2
+				format(TDMParams[playerid][(j*7) + 4][tdmpValue], 24, "Desenvolvendo");
+			} else if(i == 5) { // Permiss√£o 3
+				format(TDMParams[playerid][(j*7) + 5][tdmpValue], 24, "Desenvolvendo");
+			} else if(i == 6) { // Ficha Pessoal
+				if(isnull(cInfo[businessid][j][cEmp])) {
+					format(TDMParams[playerid][(j*7) + 6][tdmpValue][0], 24, "");
+				} else {
+					format(TDMParams[playerid][(j*7) + 6][tdmpValue][0], 24, "Ficha Pessoal");
+				}
+			}
+		}
+	}
+	for(new i = 0; i < 70; i++) {
+		PlayerTextDrawSetString(playerid, PTDManager[playerid][i], TDMParams[playerid][i][tdmpValue]);
+		PlayerTextDrawShow(playerid, PTDManager[playerid][i]);
 	}
 	return 1;
 }

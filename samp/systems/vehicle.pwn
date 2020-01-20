@@ -1,5 +1,8 @@
 #define LOCK_RANGE			(20.0)
 
+#define CLOC_EDOBB			-1
+#define CLOC_AUTO			-2
+
 enum VEHICLE_INFO {
 	vSQL,
 	vOwner[24],
@@ -313,22 +316,6 @@ CMD:estacionar(playerid) {
 	return 1;
 }
 
-CMD:entregarchave(playerid, params[]) {
-	new id, key;
-	if(sscanf(params, "ii", id, key)) return AdvertCMD(playerid, "/EntregarChave [ID] [IDV da chave]");
-	if(!IsPlayerConnected(id) || id == playerid) return Advert(playerid, "ID inválido.");
-	if(!IsValidVehicle(key)) return Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO".");
-	if(!vInfo[key][vSQL] || vInfo[key][vChave] != pInfo[playerid][pSQL]) return Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO".");
-	new Float:P[3];
-	GetPlayerPos(id, P[0], P[1], P[2]);
-	if(!IsPlayerInRangeOfPoint(playerid, 3.0, P[0], P[1], P[2]) || GetPlayerInterior(playerid) != GetPlayerInterior(id) || GetPlayerVirtualWorld(playerid) != GetPlayerVirtualWorld(id)) return Advert(playerid, "Você deve estar próximo a quem deseja entregar a chave.");
-	vInfo[key][vChave] = pInfo[id][pSQL];
-	new str[144];
-	format(str, 144, "entrega uma chave para %s.", pName(id));
-	Act(playerid, str);
-	return 1;
-}
-
 stock GetVehicleIDBySQL(sqlid) {
 	new i;
 	for(; i < MAX_VEHICLES; i++) {
@@ -452,7 +439,7 @@ public OnPlayerKeyStateChange@vehicle(playerid, newkeys, oldkeys) {
 			cmd_motor(playerid);
 		}
 	}
-	if(newkeys & KEY_FIRE) {
+	if((newkeys & KEY_FIRE) && !(oldkeys & KEY_FIRE)) {
 		if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) {
 			cmd_luzes(playerid);
 		}

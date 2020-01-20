@@ -1,0 +1,2 @@
+
+ApplyAnimation(playerid, "FOOD", "FF_SIT_IN", 4.1, false, false, false, true, 0, false); // sit4

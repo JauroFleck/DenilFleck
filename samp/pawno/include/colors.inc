@@ -6,6 +6,7 @@
 #define Verde          			0x00BA2AAA
 #define VerdeLima 				0x9CFF00AA
 #define VerdeFraco 				0xB6FA85AA
+#define VerdeMoney				0x00A705AA
 #define Azul 					0x0069FFAA
 #define AzulPiscina 			0x58FCC1AA
 #define AzulEscuro   			0x211ED8AA
@@ -21,8 +22,13 @@
 #define Salmao    				0xEB9E9EAA
 #define RosaGay       			0xFF77FBAA
 #define RosaShock 				0xFF0048AA
-#define NaoSei1      			0x277570AA
-#define NaoSei2      			0xFF2C5FAA
+#define Bege					0xEADA95AA
+#define CFundador				0xFF0900AA
+#define CSenior 				0x259609AA
+#define CAdministrador			0x007BFFAA
+#define CAjudante				0x089CFFAA
+#define CPlantonista			0xEB7900AA
+#define CPlayer 				0x707070AA
 
 #define BRANCO 					"{FFFFFF}"
 #define PRETO 					"{000000}"
@@ -32,11 +38,12 @@
 #define VERDE          			"{00BA2A}"
 #define VERDELIMA 				"{9CFF00}"
 #define VERDEFRACO 				"{B6FA85}"
+#define VERDEMONEY 				"{00A705}"
 #define AZUL 					"{0069FF}"
 #define AZULPISCINA 			"{58FCC1}"
 #define AZULESCURO    			"{211ED8}"
 #define LILAS 					"{9E67FE}"
-#define LARANJAAVERMELHADO 	"{FF9900}"
+#define LARANJAAVERMELHADO 		"{FF9900}"
 #define CINZA 					"{525053}"
 #define CINZAESVERDEADO 		"{3C493E}"
 #define CINZAAZULADO			"{B6EDEE}"
@@ -45,7 +52,12 @@
 #define ROXO           			"{A042FF}"
 #define ROXOCLARO 				"{6B3DE1}"
 #define SALMAO         			"{EB9E9E}"
-#define ROSAGAY       			"{FF77FB}"
+#define ROSAGAY					"{FF77FB}"
 #define ROSASHOCK 				"{FF0048}"
-#define NAOSEI1      			"{277570}"
-#define NAOSEI2      			"{FF2C5F}"
+#define BEGE 					"{EADA95}"
+#define CFUNDADOR				"{FF0900}"
+#define CSENIOR 				"{259609}"
+#define CADMINISTRADOR			"{007BFF}"
+#define CAJUDANTE				"{089CFF}"
+#define CPLANTONISTA			"{EB7900}"
+#define CPLAYER 				"{707070}"
