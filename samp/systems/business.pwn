@@ -4,6 +4,7 @@
 #define BUSINESS_REF		3
 #define BUSINESS_BANK		4
 #define BUSINESS_AUTO		5
+#define BUSINESS_CONC		6
 
 #define BUSID_BUSBB			0
 #define BUSID_PGMG			1
@@ -11,8 +12,9 @@
 #define BUSID_REF			3
 #define BUSID_BANKPC		4
 #define BUSID_AUTO			5
+#define BUSID_CONC			6
 
-#define MAX_BUSINESS			10
+#define MAX_BUSINESS			15
 #define MAX_CARGOS				10 		// Lembre-se de mudar no banco de dados.
 #define MAX_PRODUTOS			10		// 					"
 #define MAX_BUSINESS_VEHICLES	10		// 					"
@@ -47,7 +49,8 @@ enum PRODUTOS_INFO {
 	prSQL,
 	prName[25],
 	Float:prPrice,
-	prQuant
+	prQuant,
+	prModel
 };
 
 enum ENTRADAS_INFO {
@@ -128,6 +131,7 @@ CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]									D
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 527.0273,197.9422,1049.9844)) { busid = BUSID_REF; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 2306.9746,-7.8869,26.7422)) { busid = BUSID_BANKPC; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 360.8137,197.5316,1084.1685)) { busid = BUSID_AUTO; }
+	else if(IsPlayerInRangeOfPoint(playerid, 5.0, -1941.2062,260.6828,1196.4410)) { busid = BUSID_CONC; }
 	else if(busid == -1) return Advert(playerid, "Há lugares específicos para contratação.");
 	new perm = 0;
 	if(!strcmp(bInfo[busid][bOwner], pNick(playerid), false)) {
@@ -485,6 +489,7 @@ public LoadProductData() {
 					format(prInfo[j][k][prName], 25, "%s", str);
 					cache_get_value_name_float(i, "price", prInfo[j][k][prPrice]);
 					cache_get_value_name_int(i, "quant", prInfo[j][k][prQuant]);
+					cache_get_value_name_int(i, "model", prInfo[j][k][prModel]);
 					y = 1;
 					break;
 				}

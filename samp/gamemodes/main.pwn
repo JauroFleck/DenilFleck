@@ -1,5 +1,13 @@
 /*														DENILFLECK ROLEPLAY vBETA
 
+
+
+													JAMAIS ESQUEÇA DE EFETUAR BACKUPS
+														DO SERVIDOR E DA DATABASE
+
+
+
+
 			INFORMAÇÕES IMPORTANTES
 	- Fórmula para TOTAL de experiência conforme o nível: T(n) = (n³/6 + n²/2 + n/3)*100
 	- Fórmula para experiência de CADA nível: F(n) = (n²+n)*50
@@ -12,6 +20,7 @@
 	- GPS no celular (Ao invés de Waze, Wize)
 	- Sotaques na fala
 	- /Inventario
+	- /Punir (ADM) + /Despunir
 
 																																		*/
 
@@ -26,7 +35,7 @@
 #define GameMode
 
 #undef MAX_PLAYERS
-#define MAX_PLAYERS 50
+#define MAX_PLAYERS 100
 #undef MAX_VEHICLES
 #define MAX_VEHICLES 200
 
@@ -80,7 +89,11 @@ enum PLAYER_INFO {
 	pComprovante,
 	pTDSelect,
 	pDialogParam[3],
-	pHab
+	pHab,
+	Float:pVoltar[3],
+	pVoltarInt,
+	pVoltarVW,
+	pSpec
 };
 
 new pInfo[MAX_PLAYERS][PLAYER_INFO];
@@ -89,8 +102,6 @@ new pInfo[MAX_PLAYERS][PLAYER_INFO];
 
 new SolAtd[MAX_ATENDIMENTOS];
 
-new GPS[MAX_PLAYERS];
-new Policial[MAX_PLAYERS];
 static const AnimsEnum[][] = {
     "AIRPORT",      "Attractors",   "BAR",          "BASEBALL",     "BD_FIRE",
     "BEACH",        "benchpress",   "BF_injection", "BIKED",        "BIKEH",
@@ -135,6 +146,7 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 //////////////////////////////////////////////////////////// SYSTEMS /////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../systems/als.pwn"
 #include "../systems/sql.pwn"
 #include "../systems/time.pwn"
 #include "../systems/vehicle.pwn"
@@ -147,6 +159,7 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 #include "../systems/bancopalomino.pwn"
 #include "../systems/casa.pwn"
 #include "../systems/autoescola.pwn"
+#include "../systems/concessionaria.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
@@ -166,6 +179,12 @@ stock ResetVars(playerid) {
 	pInfo[playerid][pDialogParam][0] = 0;
 	pInfo[playerid][pDialogParam][1] = 0;
 	pInfo[playerid][pDialogParam][2] = 0;
+	pInfo[playerid][pVoltar][0] = 0.0;
+	pInfo[playerid][pVoltar][1] = 0.0;
+	pInfo[playerid][pVoltar][2] = 0.0;
+	pInfo[playerid][pVoltarInt] = 0;
+	pInfo[playerid][pVoltarVW] = 0;
+	pInfo[playerid][pSpec] = 0;
 	bIDV[playerid] = 0;
 	sbBomba[playerid] = 0;
 	ClearParametersACB(playerid);
@@ -176,8 +195,6 @@ stock ResetVars(playerid) {
 	for(new i = 0; i < MAX_FICHAS; i++) {
 		if(fInfo[i][fID] == playerid+1) { fInfo[i][fID] = 0; }
 	}
-	if(GPS[playerid]) { KillTimer(GPS[playerid]); }
-	GPS[playerid] = 0;
 	return 1;
 }
 
@@ -407,37 +424,6 @@ CMD:entregarchave(playerid, params[]) {
 	return 1;
 }
 
-CMD:gps(playerid) {
-	if(!Policial[playerid]) return Advert(playerid, "Apenas policiais podem usar o /GPS.");
-	if(!GPS[playerid]) {
-		GPS[playerid] = SetTimerEx("TGPS", 250, true, "i", playerid);
-		Info(playerid, "GPS ligado");
-	} else {
-		Info(playerid, "GPS desligado");
-		KillTimer(GPS[playerid]);
-		GPS[playerid] = 0;
-	}
-	return 1;
-}
-
-CMD:policial(playerid) {
-	if(Policial[playerid]) {
-		Info(playerid, "Ladrão >:)");
-		Policial[playerid] = 0;
-	} else {
-		Info(playerid, "Policial :)");
-		Policial[playerid] = 1;
-	}
-	return 1;
-}
-
-CMD:m4(playerid) {
-	if(Policial[playerid]) {
-		GivePlayerWeapon(playerid, 31, 999999);
-	}
-	return 1;
-}
-
 CMD:box(playerid) {
 	SetPlayerFightingStyle(playerid, 5);
 	return 1;
@@ -575,6 +561,7 @@ public OnGameModeInit() {
 	CallLocalFunction("OnGameModeInit@posto", "");
 	CallLocalFunction("OnGameModeInit@refinaria", "");
 	CallLocalFunction("OnGameModeInit@casa", "");
+	CallLocalFunction("OnGameModeInit@admin", "");
 
 	// MAPAS
 
@@ -588,6 +575,7 @@ public OnGameModeInit() {
 	#include "../maps/palomino.pwn"
 	#include "../maps/interiores.pwn"
 	#include "../maps/autoescola.pwn"
+	#include "../maps/concessionaria.pwn"
 	print("Mapas carregados com sucesso.");
 
 	// TEXTDRAWS
@@ -622,6 +610,14 @@ public OnGameModeExit() {
 }
 
 public OnPlayerConnect(playerid) {
+	if(playerid >= MAX_PLAYERS) {
+		Advert(playerid, "Notifique a administração sobre essa mensagem de erro imediatamente! [COD000]");
+		KickPlayer(playerid);
+		return 1;
+	}
+	new query[150];
+	mysql_format(conn, query, 150, "SELECT * FROM kickbans WHERE name = '%s'", pNick(playerid));
+	mysql_tquery(conn, query, "Kickbans", "i", playerid);
 	new Name[24], k;
 	GetPlayerName(playerid, Name, 24);
 	for(new i = 0; i < 24; i++) { if(Name[i] == '_') { k++; } }
@@ -669,7 +665,7 @@ public OnPlayerText(playerid, text[]) {
 		}
 	}
 	return 0;
-}		
+}
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
 	CallLocalFunction("OnPlayerEnterVehicle@admin", "iii", playerid, vehicleid, ispassenger);
@@ -707,14 +703,13 @@ public OnPlayerDeath(playerid) {
 }
 
 public OnPlayerSpawn(playerid) {
-	if(pInfo[playerid][pLogged] == 2) {
+	if(pInfo[playerid][pLogged] == 2) { // Logou-se com sucesso
 		for(new i = 0; i < sizeof(TDLogin); i++) { TextDrawHideForPlayer(playerid, TDLogin[i]); }
 		StopAudioStreamForPlayer(playerid);
 		SetPlayerVirtualWorld(playerid, 0);
 		pInfo[playerid][pLogged] = 1;
 		return 1;
-	}
-	if(!pInfo[playerid][pLogged]) {
+	} else if(!pInfo[playerid][pLogged]) { // Conectou-se ao servidor
 		pInfo[playerid][pSpawnado] = 1;
 		for(new i = 0; i < sizeof(AnimsEnum); i++) {
 			ApplyAnimation(playerid, AnimsEnum[i], "null", 4.0, 0, 0, 0, 0, 0, 1);
@@ -749,7 +744,14 @@ public OnPlayerSpawn(playerid) {
 			format(str, 300, BRANCO"%s, seja bem-vindo novamente ao servidor DenilFleck Roleplay.\nPodemos verificar em nosso banco de dados que esta conta já é cadastrada por aqui.\n\nAbaixo, insira a senha já cadastrada para sua conta.", pNick(playerid));
 			Dialog_Show(playerid, "DialogLogin", DIALOG_STYLE_PASSWORD, "LOGIN", str, "Entrar", "Cancelar");
 		}
-	} else {
+	} else if(pInfo[playerid][pSpec]) { // SpecOFF
+		Streamer_UpdateEx(playerid, pInfo[playerid][pVoltar][0], pInfo[playerid][pVoltar][1], pInfo[playerid][pVoltar][2], -1, -1, -1, 1500);
+		SetPlayerInterior(playerid, pInfo[playerid][pVoltarInt]);
+		SetPlayerVirtualWorld(playerid, pInfo[playerid][pVoltarVW]);
+		SetPlayerSkin(playerid, pInfo[playerid][pSkin]);
+		Info(playerid, "Modo spec desativado.");
+		pInfo[playerid][pSpec] = 0;
+	} else { // Morreu
 		SetPlayerPos(playerid, 1241.8, 327, 19.8);
 		SetPlayerFacingAngle(playerid, 25);
 		SetPlayerSkin(playerid, pInfo[playerid][pSkin]);
@@ -760,11 +762,11 @@ public OnPlayerSpawn(playerid) {
 
 public OnPlayerStateChange(playerid, newstate, oldstate) {
 	CallLocalFunction("OnPlayerStateChange@vehicle", "iii", playerid, newstate, oldstate);
+	CallLocalFunction("OnPlayerStateChange@admin", "iii", playerid, newstate, oldstate);
 	return 1;
 }
 
 public OnPlayerEnterCheckpoint(playerid) {
-	if(Policial[playerid]) return DisablePlayerCheckpoint(playerid);
 	CallLocalFunction("OnPlayerEnterCheckpoint@bus", "i", playerid);
 	CallLocalFunction("OnPlayerEnterCheckpoint@auto", "i", playerid);
 	return 1;
@@ -799,25 +801,48 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 	return 1;
 }
 
+public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
+	CallLocalFunction("OnPlayerInteriorChange@admin", "iii", playerid, newinteriorid, oldinteriorid);
+	return 1;
+}
+
+public OnPlayerVirtualWorldChange(playerid, newworldid, oldworldid) {
+	CallLocalFunction("OnPlayerVirtualWorldChange@adm", "iii", playerid, newworldid, oldworldid);
+	return 1;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////// FORWARDS ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-forward TGPS(playerid);
-public TGPS(playerid) {
-	if(!Policial[playerid]) {
-		Advert(playerid, "GPS desligado.");
-		KillTimer(GPS[playerid]);
-		GPS[playerid] = 0;
-		return 1;
-	}
-	new Float:P[3];
-	GetPlayerPos(playerid, P[0], P[1], P[2]);
-	for(new i = 0; i < MAX_PLAYERS; i++) {
-		if(!IsPlayerConnected(i)) continue;
-		if(i == playerid) continue;
-		if(Policial[i]) {
-			SetPlayerCheckpoint(i, P[0], P[1], P[2], 2.0);
+forward Kickbans(playerid);
+public Kickbans(playerid) {
+	new r, t;
+	cache_get_row_count(r);
+	for(new i = 0; i < r; i++) {
+		cache_get_value_name_int(i, "time", t);
+		if(t > gettime()) {
+			new str[144], name[24], motivo[30];
+			cache_get_value_name(i, "staff", name);
+			cache_get_value_name(i, "motivo", motivo);
+			format(str, 144, "Você está expulso do servidor por mais %i segundos.", (t-gettime()));
+			Advert(playerid, str);
+			format(str, 144, "Staff: %s | Motivo: %s", name, motivo);
+			Info(playerid, str);
+			Info(playerid, "Caso queira discutir sobre a validade da sua expulsão, consulte em nosso fórum o tópico");
+			Info(playerid, "sobre expulsões, punições e banimentos em "AMARELOPALIDO"denilfleckrp.forumeiros.com");
+			KickPlayer(playerid);
+			break;
+		} else if(t == -1) {
+			new str[144], name[24], motivo[30];
+			cache_get_value_name(i, "staff", name);
+			cache_get_value_name(i, "motivo", motivo);
+			Advert(playerid, "Você está banido do servidor.");
+			format(str, 144, "Staff: %s | Motivo: %s", name, motivo);
+			Info(playerid, str);
+			Info(playerid, "Caso queira discutir sobre a validade da sua expulsão, consulte em nosso fórum o tópico");
+			Info(playerid, "sobre expulsões, punições e banimentos em "AMARELOPALIDO"denilfleckrp.forumeiros.com");
+			KickPlayer(playerid);
 		}
 	}
 	return 1;
@@ -974,6 +999,13 @@ stock Success(playerid, const msg[]) {
 	return 1;
 }
 
+stock Alert(playerid, const msg[]) {
+	new str[144];
+	format(str, 144, "[>] {FFFFFF}%s", msg);
+	SendClientMessage(playerid, LaranjaAvermelhado, str);
+	return 1;
+}
+
 stock Act(playerid, const msg[]) {
 	new Float:P[3], str[144];
 	GetPlayerPos(playerid, P[0], P[1], P[2]);
@@ -999,7 +1031,7 @@ stock SendRangedMessage(color, const msg[], Float:range, Float:X, Float:Y, Float
 }
 
 stock KickPlayer(playerid) {
-	SetTimerEx("TKickPlayer", 100, false, "i", playerid);
+	SetTimerEx("TKickPlayer", 250, false, "i", playerid);
 	return 1;
 }
 

@@ -474,28 +474,6 @@ public OnPlayerStateChange@vehicle(playerid, newstate, oldstate) {
 	return 1;
 }
 
-stock GetModelIDFromModelName(const name[]) {
-	if(isnull(name)) return 0;
-	for(new i = 0; i < 212; i++) {
-		if(!strcmp(vModels[i], name, true)) return (i+400);
-	}
-	return 0;
-}
-
-stock GetPlayerIDVehicleSeat(vehicleid, seatid) {
-	if(!GetVehicleModel(vehicleid)) return -1;
-	new id;
-	while(id < MAX_PLAYERS) {
-		if(IsPlayerConnected(id)) {
-			if(IsPlayerInVehicle(id, vehicleid)) {
-				if(GetPlayerVehicleSeat(id) == seatid) return id;
-			}
-		}
-		id++;
-	}
-	return -1;
-}
-
 forward Velocimetro(playerid);
 public Velocimetro(playerid) {
 	new vid = GetPlayerVehicleID(playerid);
@@ -530,4 +508,26 @@ public Gasolimetro(vehicleid) {
 		Motor(vid, 0);
 	}
 	return 1;
+}
+
+stock GetModelIDFromModelName(const name[]) {
+	if(isnull(name)) return 0;
+	for(new i = 0; i < 212; i++) {
+		if(!strcmp(vModels[i], name, true)) return (i+400);
+	}
+	return 0;
+}
+
+stock GetPlayerIDVehicleSeat(vehicleid, seatid) {
+	if(!GetVehicleModel(vehicleid)) return -1;
+	new id;
+	while(id < MAX_PLAYERS) {
+		if(IsPlayerConnected(id)) {
+			if(IsPlayerInVehicle(id, vehicleid)) {
+				if(GetPlayerVehicleSeat(id) == seatid) return id;
+			}
+		}
+		id++;
+	}
+	return -1;
 }
