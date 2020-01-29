@@ -25,33 +25,36 @@ new Float:CPAVAUTO[15][3] = {
 	{643.7288,-499.5864,15.9658}
 };
 
-CMD:garagem(playerid) {
-	new vid = GetPlayerVehicleID(playerid);
-	if(!vid) {
-		if(IsPlayerInRangeOfPoint(playerid, 3.0, 336.6123,193.3695,1083.7954)) { // Autoescola Dillimore 
-			Streamer_UpdateEx(playerid, 638.7398,-499.9424,15.9664, -1, -1, -1, 1500);
-			SetPlayerInterior(playerid, 0);
-			SetPlayerVirtualWorld(playerid, 0);
-		} else if(IsPlayerInRangeOfPoint(playerid, 3.0, 638.7398,-499.9424,15.9664)) { // Autoescola Dillimore 
-			Streamer_UpdateEx(playerid, 336.6123,193.3695,1083.7954, -1, -1, -1, 1500);
-			SetPlayerInterior(playerid, 1);
-			SetPlayerVirtualWorld(playerid, BUSID_AUTO);
-		}
-	} else if(IsVehicleInRangeOfPoint(vid, 3.0, 336.6123,193.3695,1083.7954)) { // Autoescola Dillimore
-		SetVehiclePos(vid, 638.7398,-499.9424,15.9664);
-		SetVehicleInterior(vid, 0);
-		SetVehicleVirtualWorld(vid, 0);
-	} else if(IsVehicleInRangeOfPoint(vid, 3.0, 638.7398,-499.9424,15.9664)) { // Autoescola Dillimore
-		SetVehiclePos(vid, 336.6123,193.3695,1083.7954);
-		SetVehicleInterior(vid, 1);
-		SetVehicleVirtualWorld(vid, BUSID_AUTO);
+CMD:chaveauto(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
+	new vid;
+	if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/ChaveAuto [IDV]");
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+	new i = 0;
+	for(; i < MAX_BUSINESS_VEHICLES; i++) {
+		if(bInfo[BUSID_AUTO][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+	}
+	if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence à autoescola.");
+	new str[144];
+	if(vInfo[vid][vChave] == pInfo[playerid][pSQL]) {
+		format(str, 144, "A chave do veículo de IDV %03i foi entregue de volta à autoescola.", vid);
+		Info(playerid, str);
+		vInfo[vid][vChave] = CLOC_AUTO;
+	} else if(vInfo[vid][vChave] != CLOC_AUTO) {
+		format(str, 144, "A chave do veículo de IDV %03i está nas mãos de alguém no momento, portanto indisponível.", vid);
+		Info(playerid, str);
+	} else {
+		format(str, 144, "Você pegou a chave de IDV %03i. Faça a avaliação e não se esqueça de usar /ChaveAuto novamente.", vid);
+		Info(playerid, str);
+		vInfo[vid][vChave] = pInfo[playerid][pSQL];
 	}
 	return 1;
 }
 
 CMD:avaliar(playerid, params[]) {
-	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_AUTO) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
+	if(pInfo[playerid][pBus] == -1 && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_AUTO && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
 	new id;
 	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Avaliar [ID]");
 	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
@@ -63,8 +66,8 @@ CMD:avaliar(playerid, params[]) {
 	if(!vInfo[vid][vSQL]) return Advert(playerid, "Você só pode fazer o teste de autoescola nos veículos da autoescola.");
 	new i = 0;
 	for(; i < MAX_BUSINESS_VEHICLES; i++) {
-		if(!bInfo[pInfo[playerid][pBus]][bVehicles][i]) continue;
-		if(vInfo[vid][vSQL] == bInfo[pInfo[playerid][pBus]][bVehicles][i]) break;
+		if(!bInfo[BUSID_AUTO][bVehicles][i]) continue;
+		if(vInfo[vid][vSQL] == bInfo[BUSID_AUTO][bVehicles][i]) break;
 	}
 	if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Você só pode fazer o teste de autoescola nos veículos da autoescola.");
 	for(new j = 0; j < MAX_BUSINESS_VEHICLES; j++) {
@@ -86,8 +89,8 @@ CMD:avaliar(playerid, params[]) {
 }
 
 CMD:cancelaravaliacao(playerid) {
-	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_AUTO) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
+	if(pInfo[playerid][pBus] == -1 && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[BUSID_AUTO][bType] != BUSINESS_AUTO && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
 	for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
 		if(!AvAuto[i][aaCP]) continue;
 		else if(AvAuto[i][aaAR] == playerid) {
@@ -107,8 +110,8 @@ CMD:cancelaravaliacao(playerid) {
 }
 
 CMD:finalizaravaliacao(playerid) {
-	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_AUTO) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
+	if(pInfo[playerid][pBus] == -1 && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_AUTO && pInfo[playerid][pAdmin] < Ajudante) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
 	for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
 		if(!AvAuto[i][aaCP]) continue;
 		else if(AvAuto[i][aaAR] == playerid) {

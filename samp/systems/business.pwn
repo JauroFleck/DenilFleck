@@ -5,6 +5,7 @@
 #define BUSINESS_BANK		4
 #define BUSINESS_AUTO		5
 #define BUSINESS_CONC		6
+#define BUSINESS_TRANSP		7
 
 #define BUSID_BUSBB			0
 #define BUSID_PGMG			1
@@ -13,27 +14,7 @@
 #define BUSID_BANKPC		4
 #define BUSID_AUTO			5
 #define BUSID_CONC			6
-
-#define MAX_BUSINESS			15
-#define MAX_CARGOS				10 		// Lembre-se de mudar no banco de dados.
-#define MAX_PRODUTOS			10		// 					"
-#define MAX_BUSINESS_VEHICLES	10		// 					"
-#define MAX_ENTRADAS			3		//					"
-
-enum BUSINESS_INFO {
-	bSQL,
-	bOwner[24],
-	bName[40],
-	bValue,
-	bReceita,
-	bVehicles[MAX_BUSINESS_VEHICLES],
-	bCargos[MAX_CARGOS],
-	bProdutos[MAX_PRODUTOS],
-	bEntradas[MAX_ENTRADAS],
-	bType,
-	bCaixa,
-	Float:bcP[3]
-};
+#define BUSID_TRANSP		7
 
 enum CARGOS_INFO {
 	cSQL,
@@ -67,7 +48,6 @@ enum GE_INFO {
 
 enum TDMP_INFO { tdmpValue[24] };
 
-new bInfo[MAX_BUSINESS][BUSINESS_INFO];
 new cInfo[MAX_BUSINESS][MAX_CARGOS][CARGOS_INFO];
 new prInfo[MAX_BUSINESS][MAX_PRODUTOS][PRODUTOS_INFO];
 new eInfo[MAX_BUSINESS][MAX_ENTRADAS][ENTRADAS_INFO];
@@ -126,7 +106,7 @@ CMD:gerenciarempresa(playerid, params[]) {
 
 CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]									DIALOG DE CONFIRMAÇÃO
 	new busid = -1;
-	if(IsPlayerInRangeOfPoint(playerid, 5.0, 1501.5955,1306.9298,1093.2891)) { busid = BUSID_BUSBB; }
+	if(IsPlayerInRangeOfPoint(playerid, 5.0, 310.0332,-60.3852,1.6241)) { busid = BUSID_BUSBB; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, -35.9441,-57.4258,1023.5469)) { busid = BUSID_PGMG; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 527.0273,197.9422,1049.9844)) { busid = BUSID_REF; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, 2306.9746,-7.8869,26.7422)) { busid = BUSID_BANKPC; }
@@ -418,6 +398,56 @@ CMD:empresas(playerid) {
 	return 1;
 }
 
+CMD:setprof(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new id, bid;
+	if(sscanf(params, "ii", id, bid)) return AdvertCMD(playerid, "/SetProf [ID do player] [ID da empresa]");
+	if(bid < 0 || bid >= MAX_BUSINESS) return Advert(playerid, "Empresa inválida.");
+	if(!bInfo[bid][bSQL]) return Advert(playerid, "Empresa inexistente.");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144];
+	format(str, 144, "Você colocou %s como funcionário da empresa ID %02i.", pName(id), bid);
+	Info(playerid, str);
+	format(str, 144, "O %s colocou você como funcionário da empresa ID %02i.", Staff(playerid), bid);
+	Info(id, str);
+	pInfo[id][pBus] = bid;
+	return 1;
+}
+
+CMD:setdono(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new bid, id;
+	if(sscanf(params, "ii", bid, id)) return AdvertCMD(playerid, "/SetDono [ID da empresa] [ID do player]");
+	if(bid < 0 || bid >= MAX_BUSINESS) return Advert(playerid, "Empresa inválida.");
+	if(!bInfo[bid][bSQL]) return Advert(playerid, "Empresa inexistente.");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144];
+	format(str, 144, "Você colocou %s como dono da empresa ID %02i.", pName(id), bid);
+	Info(playerid, str);
+	format(str, 144, "O %s colocou você como dono da empresa ID %02i.", Staff(playerid), bid);
+	Info(id, str);
+	format(bInfo[bid][bOwner], 24, "%s", pNick(id));
+	mysql_format(conn, str, 144, "UPDATE businessinfo SET owner = '%s' WHERE sqlid = %i", pNick(id), bInfo[bid][bSQL]);
+	mysql_query(conn, str, false);
+	return 1;
+}
+
+CMD:setreceita(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new bid, mon;
+	if(sscanf(params, "ii", bid, mon)) return AdvertCMD(playerid, "/SetReceita [ID da empresa] [Receita]");
+	if(bid < 0 || bid >= MAX_BUSINESS) return Advert(playerid, "Empresa inválida.");
+	if(!bInfo[bid][bSQL]) return Advert(playerid, "Empresa inexistente.");
+	if(mon < 0) return Advert(playerid, "Valor inválido.");
+	new str[144];
+	format(str, 144, "Você setou a receita da empresa ID %02i para $%i.", bid, mon);
+	Info(playerid, str);
+	bInfo[bid][bReceita] = mon;
+	mysql_format(conn, str, 144, "UPDATE businessinfo SET receita = %i WHERE sqlid = %i", mon, bInfo[bid][bSQL]);
+	mysql_query(conn, str, false);
+	return 1;
+}
+
 forward OnGameModeInit@business();
 public OnGameModeInit@business() {
 	mysql_tquery(conn, "SELECT * FROM `businessinfo`", "LoadBusinessData");
@@ -563,6 +593,7 @@ public LoadEntradaData() {
 					cache_get_value_name_float(i, "sZ", eInfo[j][k][sP][2]);
 					cache_get_value_name_float(i, "sA", eInfo[j][k][sP][3]);
 					cache_get_value_name_int(i, "sInt", eInfo[j][k][sInt]);
+					CreateDynamicPickup(1318, 1, eInfo[j][k][eP][0], eInfo[j][k][eP][1], eInfo[j][k][eP][2]);
 					y = 1;
 					break;
 				}

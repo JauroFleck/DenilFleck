@@ -7,6 +7,8 @@ enum TELEPORTES_INFO {
 	tpName[30]
 };
 
+new AvailablevStaff[] = { 475,474,479,480,489,507,527,529,534,554,579 };
+
 new BlockSV;
 new Teleporte[MAX_TELEPORTES][TELEPORTES_INFO];
 
@@ -29,7 +31,7 @@ CMD:finalizaratendimento(playerid) {
 				Info(i, str);
 				Info(playerid, "Você finalizou o atendimento.");
 				pInfo[i][pAtd] = 0;
-				return 0;
+				break;
 			}
 		}
 	}
@@ -71,6 +73,19 @@ CMD:ajudar(playerid, params[]) {
 	Info(id, "Quando satisfeito, use "AMARELO"/FinalizarAtendimento"BRANCO".");
 	format(str, 144, "Você atendeu a solicitação de ajuda do player %s [%i].", pNick(id), id);
 	Info(playerid, str);
+	return 1;
+}
+
+CMD:mp(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
+	new id, msg[125], str[144];
+	if(sscanf(params, "is[124]", id, msg)) return AdvertCMD(playerid, "/MP [ID] [Mensagem]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(playerid == id) return Advert(playerid, "Não seja tão solitário a ponto de enviar mensagem privada para si próprio :(");
+	format(str, 144, "[MP de %03i]"BRANCO" %s", playerid, msg);
+	SendClientMessage(id, RoxoClaro, str);
+	format(str, 144, "[ENVIADA]"BRANCO" %s", msg);
+	SendClientMessage(playerid, RoxoClaro, str);
 	return 1;
 }
 
@@ -163,6 +178,34 @@ CMD:r(playerid) {
 }
 
 // Fiscalizador +
+
+CMD:congelar(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new id;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Congelar [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144];
+	format(str, 144, "Você congelou o player %s.", pName(id));
+	Info(playerid, str);
+	format(str, 144, "Você foi congelado pelo %s.", Staff(playerid));
+	Advert(id, str);
+	TogglePlayerControllable(id, false);
+	return 1;
+}
+
+CMD:descongelar(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new id;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Descongelar [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144];
+	format(str, 144, "Você descongelou o player %s.", pName(id));
+	Info(playerid, str);
+	format(str, 144, "Você foi descongelado pelo %s.", Staff(playerid));
+	Advert(id, str);
+	TogglePlayerControllable(id, true);
+	return 1;
+}
 
 CMD:specoff(playerid) {
 	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
@@ -300,18 +343,34 @@ CMD:puxar(playerid, params[]) {
 	if(!IsPlayerConnected(id)) return Advert(playerid, "Usuário offline.");
 	if(pInfo[id][pLogged] != 1) return Advert(playerid, "Usuário na tela de login/registro.");
 	if(pInfo[id][pAdmin] >= Senior && pInfo[playerid][pAdmin] < Senior) return Advert(playerid, "Não se pode puxar Sênior nem Fundador.");
-	new Float:P[4], str[144];
-	GetPlayerPos(playerid, P[0], P[1], P[2]);
-	GetPlayerFacingAngle(playerid, P[3]);
-	GetXYInFrontOfPlayer(playerid, Front, P[0], P[1]);
-	P[2] += Upper;
-	GetXYInFrontOfXY(P[0], P[1], Side, (P[3]-90), P[0], P[1]);
-	SetPlayerInterior(id, GetPlayerInterior(playerid));
-	SetPlayerVirtualWorld(id, GetPlayerVirtualWorld(playerid));
-	new vw = GetPlayerVirtualWorld(playerid), interiorid = GetPlayerInterior(playerid);
-	SetPlayerInterior(id, interiorid);
-	SetPlayerVirtualWorld(id, vw);
-	Streamer_UpdateEx(id, P[0], P[1], P[2], vw, interiorid, -1, 1500);
+	new vid = GetPlayerVehicleID(playerid), str[144];
+	if(IsValidVehicle(vid)) {
+		new model = GetVehicleModel(vid), i;
+		for(; i < vSeats[model-400]; i++) {
+			if(GetPlayerIDVehicleSeat(vid, i) == -1) break;
+		}
+		SetPlayerInterior(id, GetVehicleInterior(vid));
+		SetPlayerVirtualWorld(id, GetVehicleVirtualWorld(vid));
+		if(i == vSeats[model-400]) {
+			new Float:P[3];
+			GetVehiclePos(vid, P[0], P[1], P[2]);
+			Streamer_UpdateEx(id, P[0], P[1], P[2], -1, -1, -1, 1500);
+			Advert(id, "O veículo estava cheio e você foi teleportado para cima do veículo.");
+		} else { PutPlayerInVehicle(id, vid, i); }
+	} else {
+		new Float:P[4];
+		GetPlayerPos(playerid, P[0], P[1], P[2]);
+		GetPlayerFacingAngle(playerid, P[3]);
+		GetXYInFrontOfPlayer(playerid, Front, P[0], P[1]);
+		P[2] += Upper;
+		GetXYInFrontOfXY(P[0], P[1], Side, (P[3]-90), P[0], P[1]);
+		SetPlayerInterior(id, GetPlayerInterior(playerid));
+		SetPlayerVirtualWorld(id, GetPlayerVirtualWorld(playerid));
+		new vw = GetPlayerVirtualWorld(playerid), interiorid = GetPlayerInterior(playerid);
+		SetPlayerInterior(id, interiorid);
+		SetPlayerVirtualWorld(id, vw);
+		Streamer_UpdateEx(id, P[0], P[1], P[2], vw, interiorid, -1, 1500);
+	}
 	format(str, 144, "O %s puxou você.", Staff(playerid));
 	Info(id, str);
 	format(str, 144, "Você puxou o player %s (%i).", pName(id), id);
@@ -322,19 +381,22 @@ CMD:puxar(playerid, params[]) {
 // Administrador +
 
 CMD:irv(playerid, params[]) {
-	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
 	new vid;
 	if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/IrV [IDV]");
 	if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
 	new model = GetVehicleModel(vid), i;
 	for(; i < vSeats[model-400]; i++) {
-		if(GetPlayerIDVehicleSeat(vid, i) != -1) continue;
-		else break;
+		if(GetPlayerIDVehicleSeat(vid, i) == -1) break;
 	}
 	SetPlayerInterior(playerid, GetVehicleInterior(vid));
 	SetPlayerVirtualWorld(playerid, GetVehicleVirtualWorld(vid));
-	PutPlayerInVehicle(playerid, vid, i);
-	if(i == vSeats[model-400]) Advert(playerid, "O veículo estava cheio e você foi teleportado para cima do veículo.");
+	if(i == vSeats[model-400]) {
+		new Float:P[3];
+		GetVehiclePos(vid, P[0], P[1], P[2]);
+		Streamer_UpdateEx(playerid, P[0], P[1], P[2], -1, -1, -1, 1500);
+		Advert(playerid, "O veículo estava cheio e você foi teleportado para cima do veículo.");
+	} else { PutPlayerInVehicle(playerid, vid, i); }
 	return 1;
 }
 
@@ -372,6 +434,29 @@ CMD:ginterior(playerid, params[]) {
 	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
 	new str[144];
 	format(str, 144, "O player %s está no interior %i.", pName(id), GetPlayerInterior(id));
+	Info(playerid, str);
+	return 1;
+}
+
+CMD:gmoney(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	new id;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/gMoney [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144];
+	format(str, 144, "O player %s está com "VERDEMONEY"$%i"BRANCO" na carteira.", pName(id), GetPlayerMoney(id));
+	Info(playerid, str);
+	return 1;
+}
+
+CMD:gvida(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	new id;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/gVida [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	new str[144], Float:health;
+	GetPlayerHealth(id, health);
+	format(str, 144, "O player %s está com %.0f de vida.", pName(id), health);
 	Info(playerid, str);
 	return 1;
 }
@@ -420,8 +505,23 @@ CMD:sskin(playerid, params[]) {
 	return 1;
 }
 
-CMD:smoney(playerid, params[]) {
+CMD:svida(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	new id, Float:health;
+	if(sscanf(params, "if", id, health)) return AdvertCMD(playerid, "/sVida [ID] [Vida]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(health < 0.0 || health > 100.0) return Advert(playerid, "Vida inválida. [0-100]");
+	new str[144];
+	format(str, 144, "O %s setou a sua vida para %.0f.", Staff(playerid), health);
+	Info(id, str);
+	format(str, 144, "Você setou a vida do player %s para %.0f.", pName(id), health);
+	Info(playerid, str);
+	SetPlayerHealth(id, health);
+	return 1;
+}
+
+CMD:smoney(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	new id, mon;
 	if(sscanf(params, "ii", id, mon)) return AdvertCMD(playerid, "/sMoney [ID] [Dinheiro]");
 	ResetPlayerMoney(id);
@@ -494,6 +594,18 @@ CMD:irpos(playerid, params[]) {
 
 // Sênior +
 
+CMD:clima(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new id;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Clima [ID do clima]");
+	if(id < 0 || id > 45) return AdvertCMD(playerid, "/Clima [0-45]");
+	SetWeather(id);
+	new str[144];
+	format(str, 144, "Você setou o tempo para "AMARELO"%02i"BRANCO".", id);
+	Info(playerid, str);
+	return 1;
+}
+
 CMD:blocksv(playerid) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	if(BlockSV) {
@@ -513,7 +625,7 @@ CMD:closeserver(playerid) {
 		if(!IsPlayerConnected(i)) continue;
 		KickPlayer(i);
 	}
-	SendRconCommand("exit");
+	SetTimer("CloseServer", 1000, false);
 	return 1;
 }
 
@@ -598,6 +710,19 @@ CMD:unsetstaff(playerid, params[]) {
 	format(str, 144, "Você removeu o cargo de %s.", pNick(id));
 	Info(playerid, str);
 	Success(id, "Seu cargo da staff foi removido.");
+	return 1;
+}
+
+CMD:desempregar(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new str[144], i;
+	if(sscanf(params, "i", i)) return AdvertCMD(playerid, "/Desempregar [ID]");
+	if(!IsPlayerConnected(i)) return Advert(playerid, "ID inválido.");
+	pInfo[i][pBus] = -1;
+	format(str, 144, "Você desempregou %s.", pName(i));
+	Info(playerid, str);
+	format(str, 144, "Você foi desempregado pelo %s.", Staff(playerid));
+	Info(i, str);
 	return 1;
 }
 
@@ -867,6 +992,13 @@ Dialog:vStaffModel(playerid, response, listitem, inputtext[]) {
 			vmodel = strval(inputtext);
 			if(vmodel < 400 || vmodel > 611) return Advert(playerid, "O modelo do veículo deve ser entre 400 e 611.");
 		}
+		if(pInfo[playerid][pAdmin] < Senior) {
+			new i = 0;
+			for(; i < sizeof(AvailablevStaff); i++) {
+				if(vmodel == AvailablevStaff[i]) break;
+			}
+			if(i == sizeof(AvailablevStaff)) return Advert(playerid, "Esse modelo de veículo não é permitido para uso no vStaff.");
+		}
 		new Float:P[4], vw, intid;
 		GetVehiclePos(vStaff[playerid][vsID], P[0], P[1], P[2]);
 		GetVehicleZAngle(vStaff[playerid][vsID], P[3]);
@@ -942,8 +1074,23 @@ public OnPlayerText@admin(playerid, text[]) {
 				Advert(playerid, "Use "AMARELO"#Mensagem"BRANCO".");
 				return 0;
 			}
-			format(str, 144, "[%s] %s", Staff(playerid), text[1]);
+			format(str, 144, "%s: %s", Staff(playerid), text[1]);
 			SendClientMessageToAll(Azul, str);
+			return 0;
+		}
+	} else if(text[0] == '@') {
+		if(pInfo[playerid][pAdmin] >= Ajudante) {
+			if(strlen(text) == 1) {
+				Advert(playerid, "Use "AMARELO"@Mensagem"BRANCO".");
+				return 0;
+			}
+			format(str, 144, "%s:"BRANCO" %s", pName(playerid), text[1]);
+			new color = GetStaffColor(playerid);
+			for(new i = 0; i < MAX_PLAYERS; i++) {
+				if(pInfo[i][pAdmin] >= Ajudante) {
+					SendClientMessage(i, color, str);
+				}
+			}
 			return 0;
 		}
 	}
@@ -1038,6 +1185,12 @@ public OnPlayerVirtualWorldChange@adm(playerid, newworldid, oldworldid) {
 //////////////////////////////////////////////////////////// FORWARDS ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+forward CloseServer();
+public CloseServer() {
+	SendRconCommand("exit");
+	return 1;
+}
+
 forward UnfreezePlayer(playerid);
 public UnfreezePlayer(playerid) {
 	TogglePlayerControllable(playerid, 1);
@@ -1086,4 +1239,15 @@ stock Staff(playerid) {
 	else if(pInfo[playerid][pAdmin] == Senior) { format(s, 40, "Senior %s", pNick(playerid)); }
 	else if(pInfo[playerid][pAdmin] == Fundador) { format(s, 40, "Fundador %s", pNick(playerid)); }
 	return s;
+}
+
+stock GetStaffColor(playerid) {
+	if(pInfo[playerid][pAdmin] == Player) return CPlayer;
+	else if(pInfo[playerid][pAdmin] == Plantonista) return CPlantonista;
+	else if(pInfo[playerid][pAdmin] == Ajudante) return CAjudante;
+	else if(pInfo[playerid][pAdmin] == Fiscalizador) return CFiscalizador;
+	else if(pInfo[playerid][pAdmin] == Administrador) return CAdministrador;
+	else if(pInfo[playerid][pAdmin] == Senior) return CSenior;
+	else if(pInfo[playerid][pAdmin] == Fundador) return CFundador;
+	else return 0;
 }

@@ -2,6 +2,15 @@
 
 #define CLOC_EDOBB			-1
 #define CLOC_AUTO			-2
+#define CLOC_CONC			-3
+#define CLOC_RCSD			-4
+#define CLOC_REF			-5
+#define CLOC_TRANSP			-6
+
+#define MAX_BOOT_SLOTS		10
+
+#define GPSTYPE_NONE		0
+#define GPSTYPE_TRANSP		1
 
 enum VEHICLE_INFO {
 	vSQL,
@@ -11,8 +20,12 @@ enum VEHICLE_INFO {
 	Float:vSpawn[4],
 	vChave,
 	vLock,
+	vBoot,
+	vLights,
 	vGas,
-	vCargaGas
+	vCargaGas,
+	vBootSlot[MAX_BOOT_SLOTS],
+	vGPS
 };
 
 new vInfo[MAX_VEHICLES][VEHICLE_INFO];		// Lida apenas com veículos dentro do banco de dados.
@@ -48,14 +61,38 @@ new vSeats[212] =
 	4, 0, 0};
 new vGasCap[212];
 new vGasGas[212];
+new Float:vBootDist[212];
 new vMotor[MAX_VEHICLES];
 new PlayerText3D:IDV[MAX_PLAYERS][MAX_VEHICLES];
 new bIDV[MAX_PLAYERS];
 new TVelocimetro[MAX_PLAYERS];
 new TGasolimetro[MAX_VEHICLES];
 
+CMD:gps(playerid) {
+	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "Você precisa estar conduzindo um veículo.");
+	new vid = GetPlayerVehicleID(playerid);
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado na base de dados.");
+	if(vInfo[vid][vGPS] == GPSTYPE_NONE) return Advert(playerid, "Esse veículo não possui GPS.");
+	if(vInfo[vid][vGPS] == GPSTYPE_TRANSP) {
+		new str[] = "Transportadora de Blueberry\n\
+					 Well Stacked Pizza de Blueberry\n\
+					 Well Stacked Pizza de Palomino Creek\n\
+					 Padaria de Montgomery\n\
+					 King Ring de Fort Carson\n\
+					 Café de Fort Carson\n\
+					 Sprunk de Blueberry\n\
+					 Sprunk de Montgomery\n\
+					 Bar de Dillimore\n\
+					 Bar de Fort Carson\n\
+					 Loja de roupas de Dillimore\n\
+					 Desligar GPS";
+		Dialog_Show(playerid, "GPSTransp", DIALOG_STYLE_LIST, "GPS", str, "Ir", "Cancelar");
+	}
+	return 1;
+}
+
 CMD:criarveiculo(playerid, params[]) {
-	if(strcmp(pNick(playerid), "John_Black", false)) return SendClientMessage(playerid, -1, "Nananinanão (:");
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	new vid;
 	if(sscanf(params, "i", vid)) return SendClientMessage(playerid, -1, "/criarveiculo [vid]");
 	else {
@@ -65,7 +102,7 @@ CMD:criarveiculo(playerid, params[]) {
 		GetPlayerFacingAngle(playerid, P[3]);
 		new v = CreateVehicle(vid, P[0], P[1], P[2], P[3], 1, 1, 0);
 		PutPlayerInVehicle(playerid, v, 0);
-		format(vInfo[v][vOwner], 24, "John_Black");
+		format(vInfo[v][vOwner], 24, pNick(playerid));
 		vInfo[v][vModel] = vid;
 		vInfo[v][vColors][0] = 1;
 		vInfo[v][vColors][1] = 1;
@@ -76,7 +113,7 @@ CMD:criarveiculo(playerid, params[]) {
 		vInfo[v][vChave] = pInfo[playerid][pSQL];
 
 		new query[300];
-		mysql_format(conn, query, 300, "INSERT INTO `vehicleinfo` (`owner`, `model`, `color1`, `color2`, `sX`, `sY`, `sZ`, `sA`, `chave`) VALUES ('%s', %i, 1, 1, %f, %f, %f, %f, %i)", "John_Black", vid, P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
+		mysql_format(conn, query, 300, "INSERT INTO `vehicleinfo` (`owner`, `model`, `color1`, `color2`, `sX`, `sY`, `sZ`, `sA`, `chave`) VALUES ('%s', %i, 1, 1, %f, %f, %f, %f, %i)", pNick(playerid), vid, P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
 		new Cache:result = mysql_query(conn, query);
 		vInfo[v][vSQL] = cache_insert_id();
 		cache_delete(result);
@@ -93,8 +130,106 @@ CMD:criarveiculo(playerid, params[]) {
 	return 1;
 }
 
+CMD:setveh(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new vid, id;
+	if(sscanf(params, "ii", vid, id)) return AdvertCMD(playerid, "/SetVeh [IDV] [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+	for(new i = 0; i < MAX_BUSINESS; i++) {
+		if(!bInfo[i][bSQL]) continue;
+		for(new j = 0; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(bInfo[i][bVehicles][j] == vInfo[vid][vSQL]) {
+				Advert(playerid, "Esse veículo pertence a uma empresa.");
+				Advert(playerid, "Para remover da empresa use /RemoverVeiculo.");
+				return 1;
+			}
+		}
+	}
+	new str[150];
+	format(vInfo[vid][vOwner], 24, "%s", pNick(id));
+	mysql_format(conn, str, 150, "UPDATE vehicleinfo SET owner = '%s' WHERE sqlid = %i", pNick(id), vInfo[vid][vSQL]);
+	mysql_query(conn, str, false);
+	format(str, 144, "O %s setou o veículo de IDV %03i para você.", Staff(playerid), vid);
+	Info(id, str);
+	format(str, 144, "Você setou o veículo de IDV %03i para o player %s.", vid, pName(id));
+	Info(playerid, str);
+	format(str, 144, "Para setar a chave, use "AMARELO"/SetKey %i %i"BRANCO".", vid, id);
+	Info(playerid, str);
+	return 1;
+}
+
+CMD:setkey(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new vid, id;
+	if(sscanf(params, "ii", vid, id)) return AdvertCMD(playerid, "/SetKey [IDV] [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+	new pid = -1;
+	if(vInfo[vid][vChave] > 0) {
+		for(new i = 0; i < MAX_PLAYERS; i++) {
+			if(pInfo[i][pSQL] == vInfo[vid][vChave]) {
+				pid = i;
+				break;
+			}
+		}
+	}
+	new str[144];
+	if(pid != -1) {
+		format(str, 144, "Sua chave %03i foi retirada pelo %s.", vid, Staff(playerid));
+		Info(pid, str);
+		format(str, 144, "Você retirou a chave %03i do player %s para entregar ao player %s.", vid, pName(pid), pName(id));
+		Info(playerid, str);
+	} else {
+		format(str, 144, "Você entregou a chave %03i para o player %s.", vid, pName(id));
+		Info(playerid, str);
+	}
+	format(str, 144, "O %s entregou a chave %03i para você.", Staff(playerid), vid);
+	Info(id, str);
+	vInfo[vid][vChave] = pInfo[id][pSQL];
+	return 1;
+}
+
+CMD:setvcolors(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new c1, c2;
+	if(sscanf(params, "ii", c1, c2)) return AdvertCMD(playerid, "/SetvColors [Cor 1] [Cor 2]");
+	new vid = GetPlayerVehicleID(playerid);
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Você precisa estar dentro de um veículo.");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado na base de dados.");
+	vInfo[vid][vColors][0] = c1;
+	vInfo[vid][vColors][1] = c2;
+	ChangeVehicleColor(vid, c1, c2);
+	new str[144];
+	format(str, 144, "Você mudou a cor 1 desse veículo para %i e a cor 2 para %i.", c1, c2);
+	Info(playerid, str);
+	new query[150];
+	mysql_format(conn, query, 150, "UPDATE vehicleinfo SET color1 = %i, color2 = %i WHERE sqlid = %i", c1, c2, vInfo[vid][vSQL]);
+	mysql_query(conn, query, false);
+	return 1;
+}
+
+CMD:setgps(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new gps;
+	if(sscanf(params, "i", gps)) return AdvertCMD(playerid, "/SetGPS [GPS]");
+	new vid = GetPlayerVehicleID(playerid);
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Você precisa estar dentro de um veículo.");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado na base de dados.");
+	vInfo[vid][vGPS] = gps;
+	new str[144];
+	format(str, 144, "Você setou o GPS do veículo %03i para %i.", vid, gps);
+	Info(playerid, str);
+	new query[150];
+	mysql_format(conn, query, 150, "UPDATE vehicleinfo SET gps = %i WHERE sqlid = %i", gps, vInfo[vid][vSQL]);
+	mysql_query(conn, query, false);
+	return 1;
+}
+
 CMD:deletarveiculo(playerid) {
-	if(strcmp(pNick(playerid), "John_Black", false)) return SendClientMessage(playerid, -1, "Nananinanão (:");
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Você deve estar dentro de um veículo para fazer isso.");
 	new v = GetPlayerVehicleID(playerid);
 	if(!vInfo[v][vSQL]) return SendClientMessage(playerid, -1, "Veículo ordinário. Use /DV.");
@@ -199,10 +334,16 @@ CMD:destrancar(playerid, params[]) {
 CMD:luzes(playerid) {
 	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return 1;
 	new vid = GetPlayerVehicleID(playerid);
+	if(!IsValidVehicle(vid)) return 1;
 	new a, b, c, d, e, f, g;
-	GetVehicleParamsEx(vid, a, b, c, d, e, f, g);
-	b = (!b) ? (1) : (0);
-	SetVehicleParamsEx(vid, a, b, c, d, e, f, g);
+	GetVehicleParamsEx(vid, a, g, b, c, d, e, f);
+	if(!vInfo[vid][vSQL]) {
+		if(!vInfo[vid][vLights]) { vInfo[vid][vLights] = 1; } else { vInfo[vid][vLights] = 0; }
+		SetVehicleParamsEx(vid, a, vInfo[vid][vLights], b, c, d, e, f);
+	} else {
+		if(g == 1) { g = 0; } else { g = 1; }
+		SetVehicleParamsEx(vid, a, g, b, c, d, e, f);
+	}
 	return 1;
 }
 
@@ -225,15 +366,15 @@ CMD:idv(playerid) {
 }
 
 CMD:chaves(playerid) {
-	new str[300] = "";
+	new str[400] = "";
 	for(new i = 0; i < MAX_VEHICLES; i++) {
 		if(!vInfo[i][vSQL]) continue;
 		if(vInfo[i][vChave] == pInfo[playerid][pSQL]) {
-			format(str, 300, "%s\n\t• IDV %i", str, i);
+			format(str, 400, "%s\n• IDV %i - %s", str, i, vModels[GetVehicleModel(i)-400]);
 		}
 	}
 	if(isnull(str)) return Advert(playerid, "Você não carrega nenhuma chave consigo.");
-	format(str, 300, BRANCO"Chaves:\n%s", str);
+	format(str, 400, BRANCO"\tChaves:\n%s", str);
 	Dialog_Show(playerid, "DialogNone", DIALOG_STYLE_MSGBOX, BRANCO"CHAVES", str, "Fechar", "");
 	return 1;
 }
@@ -288,6 +429,29 @@ CMD:gasgas(playerid, params[]) {
 	return 1;
 }
 
+CMD:bootd(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new Float:D, model;
+	if(sscanf(params, "if", model, D)) return AdvertCMD(playerid, "/BootD [modelo] [Distância do portamalas]");
+	new str[144];
+	format(str, 144, "Distância do portamalas do modelo '%s' definido para "AMARELO"%.2f"BRANCO".", vModels[model-400], D);
+	Info(playerid, str);
+	new query[150], Cache:result, rows;
+	mysql_format(conn, query, 150, "SELECT `model` FROM `vehicledata` WHERE `model` = %i", model);
+	result = mysql_query(conn, query, true);
+	cache_get_row_count(rows);
+	cache_delete(result);
+	if(!rows) {
+		mysql_format(conn, query, 150, "INSERT INTO `vehicledata` (`bootd`, `model`) VALUES (%.2f, %i)", D, model);
+		mysql_query(conn, query, false);
+	} else {
+		mysql_format(conn, query, 150, "UPDATE `vehicledata` SET `bootd` = %.2f WHERE `model` = %i", D, model);
+		mysql_query(conn, query, false);
+	}
+	vBootDist[model-400] = D;
+	return 1;
+}
+
 CMD:setgas(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Administrador) return 1;
 	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "Você precisa conduzir o veículo que deseja setar a gasolina.");
@@ -316,31 +480,77 @@ CMD:estacionar(playerid) {
 	return 1;
 }
 
-stock GetVehicleIDBySQL(sqlid) {
-	new i;
-	for(; i < MAX_VEHICLES; i++) {
-		if(!GetVehicleModel(i)) continue;
-		if(vInfo[i][vSQL] == sqlid) return i;
+CMD:portamalas(playerid, params[]) {
+	new vid;
+	if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/Portamalas [IDV]");
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "ID de veículo inválido.");
+	if(vInfo[vid][vChave] != pInfo[playerid][pSQL]) return Advert(playerid, "Você não tem chave desse veículo. Use "AMARELO"/Chaves"BRANCO".");
+	new Float:P[6], Float:D, modelid = GetVehicleModel(vid), str[144];
+	GetVehicleBootDistance(modelid, D);
+	if(!D) return Advert(playerid, "Veículo sem portamalas. :P");
+	GetVehiclePos(vid, P[0], P[1], P[2]);
+	GetVehicleZAngle(vid, P[3]);
+	GetXYInFrontOfXY(P[0], P[1], D, (P[3]+180.0), P[4], P[5]);
+	if(!IsPlayerInRangeOfPoint(playerid, 1.5, P[4], P[5], P[2])) return Advert(playerid, "Você deve estar próximo ao portamalas do veículo.");
+	if(vInfo[vid][vBoot]) { vInfo[vid][vBoot] = 0; } else { vInfo[vid][vBoot] = 1; }
+	new a, b, c, d, e, f;
+	GetVehicleParamsEx(vid, a, b, c, d, e, f, f);
+	SetVehicleParamsEx(vid, a, b, c, d, e, vInfo[vid][vBoot], f);
+	if(modelid == 609 || modelid == 482) {
+		SetVehicleDoorState(vid, BR_DOOR, vInfo[vid][vBoot]);
+		SetVehicleDoorState(vid, BL_DOOR, vInfo[vid][vBoot]);
 	}
-	if(i == MAX_VEHICLES) return 0;
-	return 0;
+	format(str, 144, "%s o portamalas do seu veículo.", (vInfo[vid][vBoot] ? ("abriu") : ("fechou")));
+	Act(playerid, str);
+	return 1;
 }
 
-stock SetVehicleInterior(vehicleid, interiorid) {
-	if(!GetVehicleModel(vehicleid)) return 0;
-	vinteriorid[vehicleid] = interiorid;
-	return LinkVehicleToInterior(vehicleid, interiorid);
+Dialog:GPSTransp(playerid, response, listitem, inputtext[]) {
+	if(!response) return 1;
+	new Float:GPSCoord[11][3] = {
+		{237.7735,30.8647,2.1306},
+		{204.3268,-207.1580,1.4392},
+		{2339.0771,74.2452,26.3365},
+		{1305.9254,368.0321,19.4163},
+		{-146.1384,1202.9658,19.5319},
+		{-187.4217,1203.2543,19.5396},
+		{176.0676,-148.6380,1.4299},
+		{1313.6764,321.9250,19.4061},
+		{681.5193,-480.1891,16.1845},
+		{-185.4162,1035.2633,19.5986},
+		{677.0688,-635.1308,16.1905}
+	};
+	if(listitem == 11) { // Desligar GPS
+		if(pInfo[playerid][pCP] == CP_GPS) {
+			pInfo[playerid][pCP] = CP_NONE;
+			DisablePlayerCheckpoint(playerid);
+			Info(playerid, "GPS desligado.");
+		} else {
+			Advert(playerid, "Seu GPS não está ligado.");
+		}
+	} else {
+		pInfo[playerid][pCP] = CP_GPS;
+		SetPlayerCheckpoint(playerid, GPSCoord[listitem][0], GPSCoord[listitem][1], GPSCoord[listitem][2], 2.5);
+		Info(playerid, "GPS habilitado.");
+	}
+	return 1;
 }
 
-stock GetVehicleInterior(vehicleid) {
-	if(!GetVehicleModel(vehicleid)) return 0;
-	return vinteriorid[vehicleid];
-}
-
-public OnVehicleSpawn(vehicleid) {
+forward OnVehicleSpawn@veh(vehicleid);
+public OnVehicleSpawn@veh(vehicleid) {
 	if(vInfo[vehicleid][vSQL]) {
 		SetVehiclePos(vehicleid, vInfo[vehicleid][vSpawn][0], vInfo[vehicleid][vSpawn][1], vInfo[vehicleid][vSpawn][2]);
 		SetVehicleZAngle(vehicleid, vInfo[vehicleid][vSpawn][3]);
+	}
+	return 1;
+}
+
+forward OnPlayerEnterCheckpoint@veh(playerid);
+public OnPlayerEnterCheckpoint@veh(playerid) {
+	if(pInfo[playerid][pCP] == CP_GPS) {
+		DisablePlayerCheckpoint(playerid);
+		pInfo[playerid][pCP] = CP_NONE;
+		return 1;
 	}
 	return 1;
 }
@@ -369,7 +579,7 @@ public LoadVehicleData() {
 	new row, v, owner[24];
 	cache_get_row_count(row);
 	for(new i = 0; i < row; i++) {
-		new m, Float:P[4], c1, c2, k; // Necessário devido à variável v.
+		new m, Float:P[4], c1, c2, k, gps; // Necessário devido à variável v.
 		cache_get_value_name_int(i, "model", m);
 		cache_get_value_name_float(i, "sX", P[0]);
 		cache_get_value_name_float(i, "sY", P[1]);
@@ -378,6 +588,7 @@ public LoadVehicleData() {
 		cache_get_value_name_int(i, "color1", c1);
 		cache_get_value_name_int(i, "color2", c2);
 		cache_get_value_name_int(i, "chave", k);
+		cache_get_value_name_int(i, "gps", gps);
 		cache_get_value_name(i, "owner", owner);
 		v = CreateVehicle(m, P[0], P[1], P[2], P[3], c1, c2, 0);
 		vInfo[v][vModel] = m;
@@ -388,11 +599,14 @@ public LoadVehicleData() {
 		vInfo[v][vColors][0] = c1;
 		vInfo[v][vColors][1] = c2;
 		vInfo[v][vChave] = k;
+		vInfo[v][vGPS] = gps;
 		format(vInfo[v][vOwner], 24, "%s", owner);
 		cache_get_value_index_int(i, 0, vInfo[v][vSQL]);
 		cache_get_value_name_int(i, "gas", vInfo[v][vGas]);
 		SetVehicleParamsEx(v, 0, 0, 0, 1, 0, 0, 0);
 		vInfo[v][vLock] = 1;
+		vInfo[v][vBoot] = 0;
+		vInfo[v][vLights] = 0;
 	}
 	return 1;
 }
@@ -406,18 +620,15 @@ public LoadVehicleParams() {
 		m -= 400;
 		cache_get_value_name_int(i, "gascap", vGasCap[m]);
 		cache_get_value_name_int(i, "gasgas", vGasGas[m]);
+		cache_get_value_name_float(i, "bootd", vBootDist[m]);
 	}
 	return 1;
 }
 
 forward OnGameModeInit@vehicle();
 public OnGameModeInit@vehicle() {
-	print("LOADING DATA FROM... vehicleinfo");
 	mysql_tquery(conn, "SELECT * FROM `vehicleinfo`", "LoadVehicleData");
-	print("CONCLUDED!");
-	print("LOADING DATA FROM... vehicledata");
 	mysql_tquery(conn, "SELECT * FROM `vehicledata`", "LoadVehicleParams");
-	print("CONCLUDED!");
 	return 1;
 }
 
@@ -425,7 +636,7 @@ forward OnGameModeExit@vehicle();
 public OnGameModeExit@vehicle() {
 	new query[120];
 	for(new i = 0; i < MAX_VEHICLES; i++) {
-		if(!vInfo[i][vSQL]) continue;
+		if(vInfo[i][vSQL] <= 0) continue;
 		mysql_format(conn, query, 120, "UPDATE vehicleinfo SET `gas` = %i, `chave` = %i WHERE sqlid = %i", vInfo[i][vGas], vInfo[i][vChave], vInfo[i][vSQL]);
 		mysql_query(conn, query, false);
 	}
@@ -454,13 +665,13 @@ public OnPlayerStateChange@vehicle(playerid, newstate, oldstate) {
 			TextDrawShowForPlayer(playerid, TDGas[i]);
 		}
 		new str[30], vid = GetPlayerVehicleID(playerid), Float:V[4];
-		format(str, 30, "%iL/%iL", vInfo[vid][vGas], vGasCap[GetVehicleModel(vid)-400]);
+		format(str, 30, "~w~%i~b~/~w~%i~y~L", vInfo[vid][vGas], vGasCap[GetVehicleModel(vid)-400]);
 		PlayerTextDrawSetString(playerid, TDGasolina[playerid], str);
 		PlayerTextDrawShow(playerid, TDGasolina[playerid]);
 		GetVehicleVelocity(vid, V[0], V[1], V[2]);
 		V[3] = floatsqroot(floatpower(V[0], 2) + floatpower(V[1], 2) + floatpower(V[2], 2));
 		V[3] *= 162.7;
-		format(str, 30, "%fKm/h", V[3]);
+		format(str, 30, "~w~%.0f~y~Km/h", V[3]);
 		PlayerTextDrawSetString(playerid, TDVelocidade[playerid], str);
 		PlayerTextDrawShow(playerid, TDVelocidade[playerid]);
 		TVelocimetro[playerid] = SetTimerEx("Velocimetro", 250, true, "i", playerid);
@@ -470,6 +681,10 @@ public OnPlayerStateChange@vehicle(playerid, newstate, oldstate) {
 		}
 		PlayerTextDrawHide(playerid, TDGasolina[playerid]);
 		PlayerTextDrawHide(playerid, TDVelocidade[playerid]);
+		if(pInfo[playerid][pCP] == CP_GPS) {
+			DisablePlayerCheckpoint(playerid);
+			pInfo[playerid][pCP] = CP_NONE;
+		}
 	}
 	return 1;
 }
@@ -482,7 +697,7 @@ public Velocimetro(playerid) {
 	GetVehicleVelocity(vid, V[0], V[1], V[2]);
 	V[3] = floatsqroot(floatpower(V[0], 2) + floatpower(V[1], 2) + floatpower(V[2], 2));
 	V[3] *= 162.7;
-	format(str, 30, "%.0fKm/h", V[3]);
+	format(str, 30, "~w~%.0f~y~Km/h", V[3]);
 	PlayerTextDrawSetString(playerid, TDVelocidade[playerid], str);
 	return 1;
 }
@@ -497,7 +712,7 @@ public Gasolimetro(vehicleid) {
 		vid = GetPlayerVehicleID(i);
 		if(vid == vehicleid) {
 			new str[30];
-			format(str, 30, "%iL/%iL", vInfo[vehicleid][vGas], vGasCap[GetVehicleModel(vid)-400]);
+			format(str, 30, "~w~%i~b~/~w~%i~y~L", vInfo[vehicleid][vGas], vGasCap[GetVehicleModel(vid)-400]);
 			PlayerTextDrawSetString(i, TDGasolina[i], str);
 			break;
 		}
@@ -508,6 +723,27 @@ public Gasolimetro(vehicleid) {
 		Motor(vid, 0);
 	}
 	return 1;
+}
+
+stock GetVehicleIDBySQL(sqlid) {
+	new i;
+	for(; i < MAX_VEHICLES; i++) {
+		if(!GetVehicleModel(i)) continue;
+		if(vInfo[i][vSQL] == sqlid) return i;
+	}
+	if(i == MAX_VEHICLES) return 0;
+	return 0;
+}
+
+stock SetVehicleInterior(vehicleid, interiorid) {
+	if(!GetVehicleModel(vehicleid)) return 0;
+	vinteriorid[vehicleid] = interiorid;
+	return LinkVehicleToInterior(vehicleid, interiorid);
+}
+
+stock GetVehicleInterior(vehicleid) {
+	if(!GetVehicleModel(vehicleid)) return 0;
+	return vinteriorid[vehicleid];
 }
 
 stock GetModelIDFromModelName(const name[]) {
@@ -530,4 +766,17 @@ stock GetPlayerIDVehicleSeat(vehicleid, seatid) {
 		id++;
 	}
 	return -1;
+}
+
+stock GetVehicleBootDistance(modelid, &Float:D) {
+	if(modelid < 400 || modelid > 611) return 0;
+	D = vBootDist[modelid-400];
+	if(!D) return 0;
+	else return 1;
+}
+
+stock GetVehicleBootSlots(modelid) {
+	if(modelid == 609) return 6;
+	if(modelid == 482) return 4;
+	return 0;
 }

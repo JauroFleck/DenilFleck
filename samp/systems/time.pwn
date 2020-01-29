@@ -71,6 +71,18 @@ public ServerTime() {
 	SetWorldTime(sTime[sHora]);
 	for(new i = 0; i < MAX_PLAYERS; i++) {
 		if(!IsPlayerConnected(i)) continue;
+		SetPlayerTime(i, sTime[sHora], sTime[sMin]);
+		if(pInfo[i][pLogged] != 1) continue;
+		if(pInfo[i][ptPrisao] > 0) {
+			pInfo[i][ptPrisao]--;
+			if(!pInfo[i][ptPrisao]) {
+				SetPlayerInterior(i, 0);
+				SetPlayerVirtualWorld(i, 0);
+				Streamer_UpdateEx(i, 627.0251,-571.7915,17.9145, -1, -1, -1, 1500);
+				SetPlayerFacingAngle(i, 270.0);
+				Info(i, "Você cumpriu seu tempo de prisão.");
+			}
+		}
 		static quarterxp[MAX_PLAYERS];
 		quarterxp[i]++;
 		if(quarterxp[i] == 3) {
@@ -82,10 +94,8 @@ public ServerTime() {
 			pInfo[i][pXP] -= GetXPNextLevel(pInfo[i][pLevel]);
 			pInfo[i][pLevel]++;
 			SetPlayerScore(i, pInfo[i][pLevel]);
-			if(pInfo[i][pLevel] > 1) { GameTextForPlayer(i, "~b~Level UP", 1000, 1); }
-			
+			GameTextForPlayer(i, "~b~Level UP", 1000, 1);
 		}
-		SetPlayerTime(i, sTime[sHora], sTime[sMin]);
 	}
 	return 1;
 }

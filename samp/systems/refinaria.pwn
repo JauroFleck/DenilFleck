@@ -31,22 +31,6 @@ new fInfo[MAX_FICHAS][FICHAS_INFO];
 new ParametrosCFR[MAX_PLAYERS][FICHA_PARAMS];
 new CanoEngate[2];
 
-CMD:portao(playerid) {
-	if(!IsPlayerInRangeOfPoint(playerid, 1.0, -1045.7885,-585.5132,32.0078)) return Advert(playerid, "Apenas é possível abrir o portão de dentro da cabine.");
-	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "É necessário o cartão de identificação da refinaria para ativar o comando.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_REF) return Advert(playerid, "É necessário o cartão de identificação da refinaria para ativar o comando.");
-	static usecmd;
-	if(gettime() < usecmd) return 1;
-	if(PortaoRefinaria > 0) {
-		usecmd = gettime() + (MoveDynamicObject(PortaoRefinaria, -1022.0464, -589.1002, 33.7811, 2.0, 0.0000, 0.0000, -1.6200)/1000) + 1;
-		PortaoRefinaria *= -1;
-	} else {
-		PortaoRefinaria *= -1;
-		usecmd = gettime() + (MoveDynamicObject(PortaoRefinaria, -1033.3864, -588.7602, 33.7811, 2.0, 0.0000, 0.0000, -3.0400)/1000) + 1;
-	}
-	return 1;
-}
-
 CMD:engatar(playerid, params[]) {
 	new pPanel = 0;
 	if(IsPlayerInRangeOfPoint(playerid, 2.5, -986.0909,-639.9603,35.4306)) { pPanel = 1; }

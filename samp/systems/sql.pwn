@@ -1,7 +1,7 @@
-#define HOST 		"198.50.187.244"
-#define USER 		"denilfleckr_2567"
-#define DATABASE 	"denilfleckr_2567"
-#define PASS 		"4jdQ847DQT"
+#define HOST 		"localhost"
+#define USER 		"denilfleck"
+#define DATABASE 	"zdenilfleck0"
+#define PASS 		"CPjCX5q1Hcyo"
 
 new MySQL:conn;
 

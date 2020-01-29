@@ -1,4 +1,34 @@
-	CreateDynamicObject(11317, -1940.66272, 280.43896, 1200.66736,   0.00000, 0.00000, 0.00000);
+	// INTERIOR
+
+	tmpobj = CreateDynamicObject(19377, -1948.31055, 291.70859, 1195.07996,   0.00000, 0.00000, 90.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1954.69580, 291.70071, 1195.09998,   0.00000, 0.00000, 90.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1934.68689, 275.84830, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1958.97412, 266.20181, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1958.97412, 275.83640, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1958.95496, 285.48526, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1939.03284, 252.36465, 1195.09998,   0.00000, 0.00000, 90.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1941.47302, 252.36452, 1195.09998,   0.00000, 0.00000, 90.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1958.97412, 256.53711, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1934.70691, 257.52551, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	tmpobj = CreateDynamicObject(19377, -1934.68689, 267.18509, 1195.07996,   0.00000, 0.00000, 0.00000);
+	SetDynamicObjectMaterial(tmpobj, 0, 10101, "2notherbuildsfe", "ferry_build14");
+	CreateDynamicObject(3851, -1958.87012, 284.67450, 1197.42004,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1934.79932, 271.53409, 1197.42004,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1940.62671, 252.46539, 1197.42004,   0.00000, 0.00000, 90.00000);
+	CreateDynamicObject(3851, -1958.83020, 284.66925, 1191.84705,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1958.86865, 271.54709, 1191.84705,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1958.84106, 258.39935, 1191.84705,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(11317, -1940.68250, 280.43570, 1200.66736,   0.00000, 0.00000, 0.00000);
 	CreateDynamicObject(2008, -1939.64502, 261.99579, 1189.94495,   0.00000, 0.00000, 90.00000);
 	CreateDynamicObject(1715, -1938.14734, 262.43915, 1189.85901,   0.00000, 0.00000, -90.00000);
 	CreateDynamicObject(2308, -1936.73950, 264.74704, 1189.85779,   0.00000, 0.00000, -90.00000);
@@ -54,3 +84,31 @@
 	CreateDynamicObject(1723, -1942.07690, 276.42572, 1195.43469,   0.00000, 0.00000, 0.00000);
 	CreateDynamicObject(1723, -1939.03076, 276.40094, 1195.43469,   0.00000, 0.00000, 0.00000);
 	CreateDynamicObject(2174, -1944.20154, 254.69261, 1195.43738,   0.00000, 0.00000, 90.00000);
+	CreateDynamicObject(3850, -1945.36523, 287.19580, 1195.97595,   0.00000, 0.00000, -89.68000);
+	CreateDynamicObject(3850, -1952.87097, 292.88892, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.85522, 278.93790, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.85718, 282.42465, 1195.97595,   0.00000, 0.00000, -0.06000);
+	CreateDynamicObject(3850, -1947.03918, 278.45328, 1195.97595,   0.00000, 0.00000, 0.68000);
+	CreateDynamicObject(3850, -1947.09399, 281.94437, 1195.97595,   0.00000, 0.00000, 0.74000);
+	CreateDynamicObject(3850, -1947.13770, 285.42490, 1195.97595,   0.00000, 0.00000, 0.68000);
+	CreateDynamicObject(3850, -1952.85535, 275.45511, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.84607, 258.01044, 1195.97595,   0.00000, 0.00000, -0.06000);
+	CreateDynamicObject(3850, -1952.85095, 254.51550, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.84253, 271.96014, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.85315, 268.47525, 1195.97595,   0.00000, 0.00000, -0.06000);
+	CreateDynamicObject(3850, -1952.85535, 264.98242, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.84888, 261.48291, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1958.87073, 271.53198, 1197.42004,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1958.84558, 258.39261, 1197.42004,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3851, -1934.80750, 258.42368, 1197.42004,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.86243, 285.91391, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3850, -1952.87012, 289.40472, 1195.97595,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(19176, -1951.30042, 291.50235, 1191.33997,   0.00000, 0.00000, 0.00000);
+
+	// EXTERIOR
+
+	//RemoveBuildingForPlayer(playerid, 1438, 808.5625, -612.9531, 15.3203, 0.25);
+	//RemoveBuildingForPlayer(playerid, 1438, 806.7500, -612.6016, 15.3047, 0.25);
+	//RemoveBuildingForPlayer(playerid, 1440, 780.0859, -594.4219, 15.8281, 0.25);
+	//RemoveBuildingForPlayer(playerid, 1438, 835.8672, -601.0313, 15.3203, 0.25);
+	//RemoveBuildingForPlayer(playerid, 1438, 867.9453, -589.0547, 16.9219, 0.25);
