@@ -7,10 +7,17 @@ enum TELEPORTES_INFO {
 	tpName[30]
 };
 
-new AvailablevStaff[] = { 475,474,479,480,489,507,527,529,534,554,579 };
+new AvailablevStaff[] = { 461,463,475,474,479,480,489,507,527,529,534,554,579 };
 
 new BlockSV;
 new Teleporte[MAX_TELEPORTES][TELEPORTES_INFO];
+new HUDMsg[5][41] = {
+	{"Visite-nos em: www.denilfleck.com.br"},
+	{"Precisa de assistência? Use /Ajuda."},
+	{"Atualmente estamos na versao Beta."},
+	{"O roleplay sempre é soberano."},
+	{"Convide seus amigos para nos conhecerem."}
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////// COMANDOS ////////////////////////////////////////////////////////////////
@@ -73,19 +80,6 @@ CMD:ajudar(playerid, params[]) {
 	Info(id, "Quando satisfeito, use "AMARELO"/FinalizarAtendimento"BRANCO".");
 	format(str, 144, "Você atendeu a solicitação de ajuda do player %s [%i].", pNick(id), id);
 	Info(playerid, str);
-	return 1;
-}
-
-CMD:mp(playerid, params[]) {
-	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
-	new id, msg[125], str[144];
-	if(sscanf(params, "is[124]", id, msg)) return AdvertCMD(playerid, "/MP [ID] [Mensagem]");
-	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
-	if(playerid == id) return Advert(playerid, "Não seja tão solitário a ponto de enviar mensagem privada para si próprio :(");
-	format(str, 144, "[MP de %03i]"BRANCO" %s", playerid, msg);
-	SendClientMessage(id, RoxoClaro, str);
-	format(str, 144, "[ENVIADA]"BRANCO" %s", msg);
-	SendClientMessage(playerid, RoxoClaro, str);
 	return 1;
 }
 
@@ -178,6 +172,59 @@ CMD:r(playerid) {
 }
 
 // Fiscalizador +
+
+CMD:respawn(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	new vid;
+	if(sscanf(params, "i", vid)) {
+		vid = GetPlayerVehicleID(playerid);
+		if(!IsValidVehicle(vid)) {
+			AdvertCMD(playerid, "/Respawn [IDV]");
+		} else {
+			SetVehicleToRespawn(vid);
+			new str[144];
+			format(str, 144, "Veículo %03i enviado para o respawn. Registrado na base de dados: %s.", vid, (vInfo[vid][vSQL] ? ("Sim") : ("Não")));
+			Success(playerid, str);
+		}
+	} else {
+		if(!IsValidVehicle(vid)) {
+			Advert(playerid, "Veículo inexistente.");
+		} else {
+			SetVehicleToRespawn(vid);
+			new str[144];
+			format(str, 144, "Veículo %03i enviado para o respawn. Registrado na base de dados: %s.", vid, (vInfo[vid][vSQL] ? ("Sim") : ("Não")));
+			Success(playerid, str);
+		}
+	}
+	return 1;
+}
+
+CMD:vdata(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new vid;
+	if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/vData [IDV]");
+	if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+	if(vInfo[vid][vSQL]) {
+		new str[300], Float:H;
+		GetVehicleHealth(vid, H);
+		format(str, 300, "IDV: %03i | Modelo: %03i\nCor 1: %03i | Cor 2: %03i\nGasolina: %03i/%03iL | Vida: %.1f\nDono: %s\nChave: %s",
+			vid, vInfo[vid][vModel], vInfo[vid][vColors][0], vInfo[vid][vColors][1], vInfo[vid][vGas], vGasCap[vInfo[vid][vModel]-400], H, vInfo[vid][vOwner], GetKeyName(vInfo[vid][vChave]));
+		Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "Vehicle Data", str, "Fechar", "");
+		format(str, 144, "Mostrando informações do veículo de IDV "AMARELO"%03i"BRANCO".", vid);
+		Info(playerid, str);
+	} else {
+		new str[144], i = 0;
+		for(; i < MAX_PLAYERS; i++) {
+			if(pInfo[i][pAdmin] >= Ajudante) {
+				if(vStaff[i][vsID] == vid) break;
+			}
+		}
+		if(i == MAX_PLAYERS) return Alert(playerid, "Esse veículo não está registrado na base de dados e NÃO é vStaff.");
+		format(str, 144, "vStaff do %s.", Staff(i));
+		Info(playerid, str);
+	}
+	return 1;
+}
 
 CMD:congelar(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
@@ -279,7 +326,7 @@ CMD:ban(playerid, params[]) {
 		Alert(id, str);
 	} else {
 		format(str, 144, "Insira abaixo o motivo para banir o player %s.", pNick(id));
-		Dialog_Show(playerid, "Banir", DIALOG_STYLE_INPUT, "Motivo", str, "Banir", "Cancelar");
+		Dialog_Show(playerid, "Expulsar", DIALOG_STYLE_INPUT, "Motivo", str, "Banir", "Cancelar");
 		pInfo[playerid][pDialogParam][0] = funcidx("dialog_Expulsar");
 		pInfo[playerid][pDialogParam][1] = id;
 		pInfo[playerid][pDialogParam][2] = -1;
@@ -411,7 +458,7 @@ CMD:tele(playerid) {
 		if(isnull(str)) Advert(playerid, "Não há teleportes disponíveis para uso.");
 		else Dialog_Show(playerid, "TeleporteIR", DIALOG_STYLE_LIST, "TELEPORTES", str, "Ir", "Cancelar");
 	} else if(pInfo[playerid][pAdmin] > Administrador) {
-		Dialog_Show(playerid, "TeleporteME", DIALOG_STYLE_LIST, "MENU TELEPORTES", "Usar teleporte\nCriar teleporte\nExcluir teleporte", "Seleiconar", "Cancelar");
+		Dialog_Show(playerid, "TeleporteME", DIALOG_STYLE_LIST, "MENU TELEPORTES", "Usar teleporte\nCriar teleporte\nExcluir teleporte", "Selecionar", "Cancelar");
 	}
 	return 1;
 }
@@ -594,6 +641,16 @@ CMD:irpos(playerid, params[]) {
 
 // Sênior +
 
+CMD:msghud(playerid) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new str[300];
+	for(new i = 0; i < 5; i++) {
+		format(str, 300, "%s%s\n", str, HUDMsg[i]);
+	}
+	Dialog_Show(playerid, "DialogHUDMsg", DIALOG_STYLE_LIST, "HUD Message", str, "Editar", "Fechar");
+	return 1;
+}
+
 CMD:clima(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	new id;
@@ -729,6 +786,30 @@ CMD:desempregar(playerid, params[]) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////// DIALOGS ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Dialog:DialogHUDMsg(playerid, response, listitem, inputtext[]) {
+	if(!response) return 1;
+	Dialog_Show(playerid, "EditHUDMSG", DIALOG_STYLE_INPUT, "HUD Message", "Insira abaixo a mensagem que deseja substituir", "Editar", "Voltar");
+	pInfo[playerid][pDialogParam][0] = funcidx("dialog_EditHUDMSG");
+	pInfo[playerid][pDialogParam][1] = listitem;
+	return 1;
+}
+
+Dialog:EditHUDMSG(playerid, response, listitem, inputtext[]) {
+	if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_EditHUDMSG")) return ResetDialogParams(playerid);
+	if(!response) {
+		cmd_msghud(playerid);
+	} else {
+		if(strlen(inputtext) > 40) {
+			Advert(playerid, "A mensagem não pode ultrapassar o limite de 40 caracteres.");
+		} else {
+			format(HUDMsg[pInfo[playerid][pDialogParam][1]], 41, "%s", inputtext);
+			Info(playerid, "Mensagem HUD modificada:");
+			Info(playerid, inputtext);
+		}
+	}
+	return ResetDialogParams(playerid);
+}
 
 Dialog:Expulsar(playerid, response, listitem, inputtext[]) {
 	if(!response) return ResetDialogParams(playerid);
@@ -1250,4 +1331,30 @@ stock GetStaffColor(playerid) {
 	else if(pInfo[playerid][pAdmin] == Senior) return CSenior;
 	else if(pInfo[playerid][pAdmin] == Fundador) return CFundador;
 	else return 0;
+}
+
+stock GetKeyName(keyid) {
+	new str[40];
+	if(!keyid) { format(str, 20, "CHAVE INVÁLIDA");
+	} else if(keyid < 0) {
+		if(keyid == CLOC_EDOBB) { format(str, 40, "Estação de ônibus de Blueberry");
+		} else if(keyid == CLOC_AUTO) { format(str, 40, "Autoescola de Dillimore");
+		} else if(keyid == CLOC_CONC) { format(str, 40, "Concessionária de Dillimore");
+		} else if(keyid == CLOC_RCSD) { format(str, 40, "Red County Sheriff Department");
+		} else if(keyid == CLOC_REF) { format(str, 40, "Refinaria de Flint County");
+		} else if(keyid == CLOC_TRANSP) { format(str, 40, "Transportadora de Blueberry");
+		} else if(keyid == CLOC_GARBAGE) { format(str, 40, "Coletora de lixo de Red County"); }
+	} else {
+		new query[60], Cache:result, r = 0;
+		mysql_format(conn, query, 60, "SELECT * FROM playerinfo WHERE sqlid = %i", keyid);
+		result = mysql_query(conn, query, true);
+		cache_get_row_count(r);
+		if(!r) {
+			format(str, 20, "CONTA EXCLUÍDA");
+		} else {
+			cache_get_value_name(0, "nickname", str);
+		}
+		cache_delete(result);
+	}
+	return str;
 }

@@ -6,6 +6,8 @@
 #define BUSINESS_AUTO		5
 #define BUSINESS_CONC		6
 #define BUSINESS_TRANSP		7
+#define BUSINESS_IMOB		8
+#define BUSINESS_GARBAGE	9
 
 #define BUSID_BUSBB			0
 #define BUSID_PGMG			1
@@ -15,6 +17,9 @@
 #define BUSID_AUTO			5
 #define BUSID_CONC			6
 #define BUSID_TRANSP		7
+#define BUSID_IMOB			8
+#define BUSID_PGFC			9
+#define BUSID_GARBAGE		10
 
 enum CARGOS_INFO {
 	cSQL,
@@ -62,7 +67,7 @@ CMD:servico(playerid) {
 			pInfo[playerid][pUSECMD_anim] = 0;
 		} else {
 			if(!IsPlayerInRangeOfPoint(playerid, 3.0, 2305.9309,-2.4660,26.7422)) return Advert(playerid, "Você deve estar na mesa de gerenciamento de contas bancárias.");
-			if(pInfo[playerid][pAnim] != ANIM_SIT4) return Advert(playerid, "Use "AMARELO"/Sentar 4"BRANCO" para entrar em serviço.");
+			if(pInfo[playerid][pAnim] != ANIM_SIT3) return Advert(playerid, "Use "AMARELO"/Sentar 4"BRANCO" para entrar em serviço.");
 			Info(playerid, "Você entrou em serviço. Para se levantar use "AMARELO"/Servico"BRANCO" e "AMARELO"/Clear"BRANCO".");
 			pInfo[playerid][pDuty] = 1;
 			pInfo[playerid][pUSECMD_anim] = 1;
@@ -104,7 +109,7 @@ CMD:gerenciarempresa(playerid, params[]) {
 	return 1;
 }
 
-CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]									DIALOG DE CONFIRMAÇÃO
+CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]
 	new busid = -1;
 	if(IsPlayerInRangeOfPoint(playerid, 5.0, 310.0332,-60.3852,1.6241)) { busid = BUSID_BUSBB; }
 	else if(IsPlayerInRangeOfPoint(playerid, 5.0, -35.9441,-57.4258,1023.5469)) { busid = BUSID_PGMG; }
@@ -388,12 +393,11 @@ CMD:pagarsalario(playerid, params[]) { // /PagarSalario [Nome_do_Cargo]
 }
 
 CMD:empresas(playerid) {
-	new str[500];
+	new str[600];
 	for(new i = 0; i < MAX_BUSINESS; i++) {
-		if(bInfo[i][bSQL]) { format(str, 500, "%s\n[%02i] %s - Dono: %s", str, i, bInfo[i][bName], bInfo[i][bOwner]); }
+		if(bInfo[i][bSQL]) { format(str, 600, "%s\n[%02i] %s - Dono: %s", str, i, bInfo[i][bName], bInfo[i][bOwner]); }
 	}
 	if(isnull(str)) return Info(playerid, "Não existem empresas criadas.");
-	format(str, 500, "\t{FFFF00}Empresas:{FFFFFF}\n%s", str);
 	Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "{FFFFFF}Empresas", str, "Fechar", "");
 	return 1;
 }

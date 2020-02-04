@@ -68,6 +68,10 @@ public ServerTime() {
 		}
 	}
 
+	new randomhud = random(5);
+	SpaceToUnderline(HUDMsg[randomhud]);
+	TextEncoding(HUDMsg[randomhud]);
+	TextDrawSetString(TDBarra[3], HUDMsg[randomhud]);
 	SetWorldTime(sTime[sHora]);
 	for(new i = 0; i < MAX_PLAYERS; i++) {
 		if(!IsPlayerConnected(i)) continue;
@@ -87,14 +91,29 @@ public ServerTime() {
 		quarterxp[i]++;
 		if(quarterxp[i] == 3) {
 			pInfo[i][pXP]++;
+
+			if(pInfo[i][pHUD]) {
+				new str[20], Float:prop = floatdiv(pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
+				PlayerTextDrawTextSize(i, TDXPBox[i], 550.5+prop*49.5, 0.0);
+				PlayerTextDrawHide(i, TDXPBox[i]);
+				PlayerTextDrawShow(i, TDXPBox[i]);
+				format(str, 20, "%i_/_%i", pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
+				PlayerTextDrawSetString(i, TDXPNumber[i], str);
+				format(str, 5, "%i%%", floatround(prop*100));
+				PlayerTextDrawSetString(i, TDXPPercent[i], str);
+			}
+
 			quarterxp[i] = 0;
 		}
-		pInfo[i][pLevel] = GetPlayerScore(i);
 		if(pInfo[i][pXP] >= GetXPNextLevel(pInfo[i][pLevel])) {
 			pInfo[i][pXP] -= GetXPNextLevel(pInfo[i][pLevel]);
 			pInfo[i][pLevel]++;
 			SetPlayerScore(i, pInfo[i][pLevel]);
 			GameTextForPlayer(i, "~b~Level UP", 1000, 1);
+
+			new str[5];
+			format(str, 5, "%i", pInfo[i][pLevel]);
+			PlayerTextDrawSetString(i, TDScore[i], str);
 		}
 	}
 	return 1;

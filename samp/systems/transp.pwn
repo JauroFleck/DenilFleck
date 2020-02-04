@@ -1,6 +1,6 @@
 new PortaoTranspBB;
 
-#define MAX_BOXES					17
+#define MAX_BOXES					29
 
 #define BOXCONTENT_NONE				0
 #define BOXCONTENT_CLOTHES			1
@@ -52,7 +52,19 @@ new Float:BoxCoord[MAX_BOXES][3] = {
 	{262.459564, 30.627412, 1.927703},
 	{263.444061, 30.804489, 1.927703},
 	{263.444061, 30.804489, 2.997702},
-	{262.518768, 30.638027, 2.997702}
+	{262.518768, 30.638027, 2.997702},
+	{270.485473, 20.691532, 2.091087},
+	{264.212463, 19.194581, 1.921087},
+	{265.353363, 19.403985, 1.921087},
+	{265.353363, 19.403985, 2.971087},
+	{264.182861, 19.189172, 2.971087},
+	{271.596801, 20.895519, 2.091087},
+	{272.727813, 21.103111, 2.091087},
+	{273.937683, 21.325145, 2.091087},
+	{274.286132, 19.426853, 2.091087},
+	{273.095947, 19.208417, 2.091087},
+	{272.004211, 19.008043, 2.091087},
+	{270.794342, 18.786001, 2.091087}
 };
 
 enum BOX_INFO {
@@ -301,9 +313,9 @@ CMD:entregarcaixa(playerid) {
 			} else if(j == 7) { value = 40+random(12);
 			} else if(j == 8) { value = 55+random(15);
 			} else if(j == 9) { value = 40+random(12); }
-			GivePlayerMoney(playerid, value);
-			new str[8];
-			format(str, 8, "~g~+%i", value);
+			pInfo[playerid][pMon] += value;
+			new str[9];
+			format(str, 9, "~g~+$%i", value);
 			GameTextForPlayer(playerid, str, 1000, 1);
 			bInfo[BUSID_TRANSP][bReceita] += (value/5);
 			// Criar caixa compensatória
@@ -330,6 +342,25 @@ CMD:entregarcaixa(playerid) {
 		}
 	}
 	Advert(playerid, "Você não está em um lugar onde se entregam caixas.");
+	return 1;
+}
+
+forward OnPlayerDisconnect@transp(playerid, reason);
+public OnPlayerDisconnect@transp(playerid, reason) {
+	for(new i = 0; i < MAX_BOXES; i++) {
+		if(BoxInfo[i][boxPlayerid] == playerid) {
+			BoxInfo[i][boxPlayerid] = -1;
+			new j = 0;
+			for(; j < MAX_BOXES; j++) {
+				if(BoxSlotID(j) == MAX_BOXES) break;
+			}
+			BoxInfo[i][boxSlotid] = j;
+			BoxInfo[i][boxID] = CreateDynamicObject(1271, BoxCoord[j][0], BoxCoord[j][1], BoxCoord[j][2], 0.000000, 0.000000, 10.200001, -1, -1, -1, 300.00, 300.00);
+			new str[3];
+			format(str, 3, "%02i", i);
+			BoxInfo[i][boxLabel] = CreateDynamic3DTextLabel(str, 0xFFFFFFFF, BoxCoord[j][0], BoxCoord[j][1], BoxCoord[j][2], 3.0);
+		}
+	}
 	return 1;
 }
 
@@ -367,6 +398,58 @@ public OnPlayerConnect@transp(playerid) {
 	RemoveBuildingForPlayer(playerid, 1440, 243.953, 24.617, 2.015, 0.250);
 	RemoveBuildingForPlayer(playerid, 3287, 259.835, -4.031, 6.109, 0.250);
 	RemoveBuildingForPlayer(playerid, 3296, 259.835, -4.031, 6.109, 0.250);
+	return 1;
+}
+
+forward OnVehicleDeath@transp(vehicleid, killerid);
+public OnVehicleDeath@transp(vehicleid, killerid) {
+	if(vInfo[vehicleid][vSQL]) {
+		for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[BUSID_TRANSP][bVehicles][i] == vInfo[vehicleid][vSQL]) {
+				for(new j = 0; j < MAX_BOXES; j++) {
+					if(BoxInfo[j][boxVehicleid] == vehicleid) {
+						for(new p = 0; p < MAX_BOOT_SLOTS; p++) { vInfo[vehicleid][vBootSlot][p] = 0; }
+						BoxInfo[j][boxVehicleid] = -1;
+						new k = 0;
+						for(; k < MAX_BOXES; k++) {
+							if(BoxSlotID(k) == MAX_BOXES) break;
+						}
+						BoxInfo[j][boxSlotid] = k;
+						BoxInfo[j][boxID] = CreateDynamicObject(1271, BoxCoord[k][0], BoxCoord[k][1], BoxCoord[k][2], 0.000000, 0.000000, 10.200001, -1, -1, -1, 300.00, 300.00);
+						new str[3];
+						format(str, 3, "%02i", j);
+						BoxInfo[j][boxLabel] = CreateDynamic3DTextLabel(str, 0xFFFFFFFF, BoxCoord[k][0], BoxCoord[k][1], BoxCoord[k][2], 3.0);
+					}
+				}
+			}
+		}
+	}
+	return 1;
+}
+
+forward OnVehicleSpawn@transp(vehicleid);
+public OnVehicleSpawn@transp(vehicleid) {
+	if(vInfo[vehicleid][vSQL]) {
+		for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[BUSID_TRANSP][bVehicles][i] == vInfo[vehicleid][vSQL]) {
+				for(new j = 0; j < MAX_BOXES; j++) {
+					if(BoxInfo[j][boxVehicleid] == vehicleid) {
+						for(new p = 0; p < MAX_BOOT_SLOTS; p++) { vInfo[vehicleid][vBootSlot][p] = 0; }
+						BoxInfo[j][boxVehicleid] = -1;
+						new k = 0;
+						for(; k < MAX_BOXES; k++) {
+							if(BoxSlotID(k) == MAX_BOXES) break;
+						}
+						BoxInfo[j][boxSlotid] = k;
+						BoxInfo[j][boxID] = CreateDynamicObject(1271, BoxCoord[k][0], BoxCoord[k][1], BoxCoord[k][2], 0.000000, 0.000000, 10.200001, -1, -1, -1, 300.00, 300.00);
+						new str[3];
+						format(str, 3, "%02i", j);
+						BoxInfo[j][boxLabel] = CreateDynamic3DTextLabel(str, 0xFFFFFFFF, BoxCoord[k][0], BoxCoord[k][1], BoxCoord[k][2], 3.0);
+					}
+				}
+			}
+		}
+	}
 	return 1;
 }
 

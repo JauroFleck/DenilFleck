@@ -15,7 +15,7 @@
 
 			LEMBRETES
 	- Setar > Casas, veículos e parâmetros de player (armor, score, BRL)
-	- Sistema veicular (Ao deixar veículo ligado, chave fica na ignição | SetVehicleToRespawn - XYZA + interior + vw | OnVehicleDestroy (ResetVars))
+	- Sistema veicular (Ao deixar veículo ligado, chave fica na ignição | SetVehicleToRespawn - XYZA + interior + vw | OnVehicleDeath (ResetVars))
 	- GPS no celular (Ao invés de Waze, Wize)
 	- Sotaques na fala
 	- /Inventario
@@ -35,9 +35,9 @@
 
 #define GameMode
 
-#undef MAX_PLAYERS
+#undef 	MAX_PLAYERS
 #define MAX_PLAYERS 100
-#undef MAX_VEHICLES
+#undef 	MAX_VEHICLES
 #define MAX_VEHICLES 200
 
 #define MAX_BUSINESS			15
@@ -54,6 +54,7 @@
 #define CP_BUS_ROUTE			1
 #define CP_AVAUTO				2
 #define CP_GPS 					3
+#define CP_REFINARIA			4
 
 #define Player  				0
 #define Plantonista				1
@@ -119,7 +120,9 @@ enum PLAYER_INFO {
 	pVoltarInt,
 	pVoltarVW,
 	pSpec,
-	ptPrisao
+	ptPrisao,
+	pMon,
+	pHUD
 	//pFinishedDownload
 };
 
@@ -165,6 +168,12 @@ static const AnimsEnum[][] = {
 new Text:TDLogin;
 new Text:TDGas[4];
 new Text:TDManager[29];
+new Text:TDBarra[15];
+new PlayerText:TDName[MAX_PLAYERS];
+new PlayerText:TDScore[MAX_PLAYERS];
+new PlayerText:TDXPBox[MAX_PLAYERS];
+new PlayerText:TDXPNumber[MAX_PLAYERS];
+new PlayerText:TDXPPercent[MAX_PLAYERS];
 new PlayerText:TDGasolina[MAX_PLAYERS];
 new PlayerText:TDVelocidade[MAX_PLAYERS];
 new PlayerText:PTDManager[MAX_PLAYERS][70];
@@ -175,9 +184,9 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 
 #include "../systems/als.pwn"
 #include "../systems/sql.pwn"
-#include "../systems/time.pwn"
 #include "../systems/vehicle.pwn"
 #include "../systems/admin.pwn"
+#include "../systems/time.pwn"
 #include "../systems/animations.pwn"
 #include "../systems/business.pwn"
 #include "../systems/bus.pwn"
@@ -189,6 +198,8 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 #include "../systems/concessionaria.pwn"
 #include "../systems/rcsd.pwn"
 #include "../systems/transp.pwn"
+#include "../systems/imobiliaria.pwn"
+#include "../systems/lixeiro.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
@@ -216,6 +227,8 @@ stock ResetVars(playerid) {
 	pInfo[playerid][pSpec] = 0;
 	pInfo[playerid][ptPrisao] = 0;
 	pInfo[playerid][pHab] = 0;
+	pInfo[playerid][pMon] = 0;
+	pInfo[playerid][pHUD] = 1;
 	bIDV[playerid] = 0;
 	sbBomba[playerid] = 0;
 	ResetSheriffVar(playerid);
@@ -427,6 +440,23 @@ CMD:g(playerid, params[]) {
 	return 1;
 }
 
+CMD:baixo(playerid, params[]) {
+	if(isnull(params)) return AdvertCMD(playerid, "/Baixo [Fala]");
+	new Float:P[6], str[144];
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	for(new i = 0; i < MAX_PLAYERS; i++) {
+		if(!IsPlayerConnected(i)) continue;
+		GetPlayerPos(i, P[3], P[4], P[5]);
+		new Float:D = VectorSize(P[0]-P[3], P[1]-P[4], P[2]-P[5]);
+		if(D > (ACTION_RANGE*0.25)) continue;
+		new color = floatround(255.0 - 153.0*D/(ACTION_RANGE*0.25));
+		color = (color*0x1000000 + color*0x10000 + color*0x100 + 0xAA);
+		format(str, 144, "[Baixo] %s: "BRANCO"%s", pName(playerid), params);
+		SendClientMessage(i, color, str);
+	}
+	return 1;
+}
+
 CMD:ajuda(playerid) {
 	new i = 0;
 	for(; i < MAX_ATENDIMENTOS; i++) { if(SolAtd[i] == playerid+1) { break; } }
@@ -464,13 +494,44 @@ CMD:pegarchave(playerid, params[]) {
 			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
 		}
 		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		for(new j = 0, idv = 0; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[BUSID_REF][bVehicles][j]) continue;
+			idv = GetVehicleIDBySQL(bInfo[BUSID_REF][bVehicles][j]);
+			if(!idv) continue;
+			if(vInfo[idv][vChave] == pInfo[playerid][pSQL]) {
+				if(GetVehicleModel(idv) == GetVehicleModel(vid)) return Advert(playerid, "Você só pode pegar uma chave de caminhão de uma de carga.");
+			}
+		}
 		if(vInfo[vid][vChave] != CLOC_REF) {
 			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
 		} else {
 			Act(playerid, "retira de dentro da gaveta uma chave.");
 			vInfo[vid][vChave] = pInfo[playerid][pSQL];
 		}
-	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587)) {
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 28.5668,-1165.8140,8.4483)) {
+		if(pInfo[playerid][pBus] != BUSID_GARBAGE) return Advert(playerid, "Você não tem a chave dessa gaveta.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/PegarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Veículo inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		for(new j = 0, idv = 0; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[BUSID_GARBAGE][bVehicles][j]) continue;
+			idv = GetVehicleIDBySQL(bInfo[BUSID_GARBAGE][bVehicles][j]);
+			if(!idv) continue;
+			if(vInfo[idv][vChave] == pInfo[playerid][pSQL]) return Advert(playerid, "Você só pode pegar uma chave da empresa por vez.");
+		}
+		if(vInfo[vid][vChave] != CLOC_GARBAGE) {
+			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
+		} else {
+			Act(playerid, "retira de dentro da gaveta uma chave.");
+			vInfo[vid][vChave] = pInfo[playerid][pSQL];
+		}
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587) || IsPlayerInRangeOfPoint(playerid, 2.0, 267.7446,18.9372,2.4412)) {
 		if(pInfo[playerid][pBus] != BUSID_TRANSP) return Advert(playerid, "Você não tem a chave dessa gaveta.");
 		new vid;
 		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/PegarChave [IDV]");
@@ -481,6 +542,12 @@ CMD:pegarchave(playerid, params[]) {
 			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
 		}
 		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		for(new j = 0, idv = 0; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[BUSID_TRANSP][bVehicles][j]) continue;
+			idv = GetVehicleIDBySQL(bInfo[BUSID_TRANSP][bVehicles][j]);
+			if(!idv) continue;
+			if(vInfo[idv][vChave] == pInfo[playerid][pSQL]) return Advert(playerid, "Você só pode pegar uma chave da empresa por vez.");
+		}
 		if(vInfo[vid][vChave] != CLOC_TRANSP) {
 			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
 		} else {
@@ -515,6 +582,12 @@ CMD:pegarchave(playerid, params[]) {
 			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
 		}
 		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Esse veículo não pertence a sua empresa.");
+		for(new j = 0, idv = 0; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[BUSID_BUSBB][bVehicles][j]) continue;
+			idv = GetVehicleIDBySQL(bInfo[BUSID_TRANSP][bVehicles][j]);
+			if(!idv) continue;
+			if(vInfo[idv][vChave] == pInfo[playerid][pSQL]) return Advert(playerid, "Você só pode pegar uma chave da empresa por vez.");
+		}
 		if(vInfo[vid][vChave] != CLOC_EDOBB) {
 			Act(playerid, "procura por uma chave dentro da gaveta mas não a encontra.");
 		} else {
@@ -559,6 +632,23 @@ CMD:guardarchave(playerid, params[]) {
 			Act(playerid, "guarda uma chave dentro da gaveta.");
 			vInfo[vid][vChave] = CLOC_RCSD;
 		}
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 28.5668,-1165.8140,8.4483)) {
+		if(pInfo[playerid][pBus] != BUSID_GARBAGE) return Advert(playerid, "Você não tem a chave dessa gaveta.");
+		new vid;
+		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/GuardarChave [IDV]");
+		if(!IsValidVehicle(vid)) return Advert(playerid, "Chave inexistente.");
+		if(!vInfo[vid][vSQL]) return Advert(playerid, "Chave não registrada no banco de dados.");
+		new i = 0;
+		for(; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(bInfo[pInfo[playerid][pBus]][bVehicles][i] == vInfo[vid][vSQL]) { break; }
+		}
+		if(i == MAX_BUSINESS_VEHICLES) return Advert(playerid, "Essa chave não pertence a sua empresa.");
+		if(vInfo[vid][vChave] != pInfo[playerid][pSQL]) {
+			Advert(playerid, "Você não possui essa chave. Use "AMARELO"/Chaves"BRANCO" para checar quais você tem.");
+		} else {
+			Act(playerid, "guarda uma chave dentro da gaveta.");
+			vInfo[vid][vChave] = CLOC_GARBAGE;
+		}
 	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 529.8980,210.2571,1049.9844)) {
 		if(pInfo[playerid][pBus] != BUSID_REF) return Advert(playerid, "Você não tem a chave dessa gaveta.");
 		new vid;
@@ -575,8 +665,9 @@ CMD:guardarchave(playerid, params[]) {
 		} else {
 			Act(playerid, "guarda uma chave dentro da gaveta.");
 			vInfo[vid][vChave] = CLOC_REF;
+
 		}
-	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587)) {
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587) || IsPlayerInRangeOfPoint(playerid, 2.0, 267.7446,18.9372,2.4412)) {
 		if(pInfo[playerid][pBus] != BUSID_TRANSP) return Advert(playerid, "Você não tem a chave dessa gaveta.");
 		new vid;
 		if(sscanf(params, "i", vid)) return AdvertCMD(playerid, "/GuardarChave [IDV]");
@@ -592,6 +683,15 @@ CMD:guardarchave(playerid, params[]) {
 		} else {
 			Act(playerid, "guarda uma chave dentro da gaveta.");
 			vInfo[vid][vChave] = CLOC_TRANSP;
+			if(pInfo[playerid][pMon]) {
+				new str[144];
+				format(str, 15, "~g~+$%i", pInfo[playerid][pMon]);
+				GameTextForPlayer(playerid, str, 1000, 1);
+				format(str, 144, "Você recebeu "VERDEMONEY"$%i"BRANCO" pelo serviço prestado.", pInfo[playerid][pMon]);
+				Success(playerid, str);
+				GivePlayerMoney(playerid, pInfo[playerid][pMon]);
+				pInfo[playerid][pMon] = 0;
+			}
 		}
 	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, -1936.6091,263.9367,1190.8627)) {
 		if(pInfo[playerid][pBus] != BUSID_CONC) return Advert(playerid, "Você não tem a chave dessa gaveta.");
@@ -626,6 +726,15 @@ CMD:guardarchave(playerid, params[]) {
 		} else {
 			Act(playerid, "guarda uma chave dentro da gaveta.");
 			vInfo[vid][vChave] = CLOC_EDOBB;
+			if(pInfo[playerid][pMon]) {
+				new str[144];
+				format(str, 15, "~g~+$%i", pInfo[playerid][pMon]);
+				GameTextForPlayer(playerid, str, 1000, 1);
+				format(str, 144, "Você recebeu "VERDEMONEY"$%i"BRANCO" pelo serviço prestado.", pInfo[playerid][pMon]);
+				Success(playerid, str);
+				GivePlayerMoney(playerid, pInfo[playerid][pMon]);
+				pInfo[playerid][pMon] = 0;
+			}
 		}
 	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 361.4470,198.5358,1084.1685)) {
 		if(pInfo[playerid][pBus] != BUSID_AUTO) return Advert(playerid, "Você não tem a chave dessa gaveta.");
@@ -673,21 +782,45 @@ CMD:info(playerid) {
 			format(str, 150, "Gostaria de trabalhar aqui.\nComo falo com o gerente daqui?");
 		}
 		Dialog_Show(playerid, "MenuBusBB", DIALOG_STYLE_LIST, "Selecione sua fala", str, "Selecionar", "Cancelar");
-	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587)) {
-		new str[150];
-		if(pInfo[playerid][pBus] == BUSID_TRANSP) {
-			format(str, 150, "Desejo falar com o gerente.\nQuero pedir minhas contas.");
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 534.1007,208.7319,1049.9844)) {
+		new str[100];
+		if(pInfo[playerid][pBus] == BUSID_REF) {
+			format(str, 100, "Desejo falar com o gerente.\nQuero pedir minhas contas.");
 		} else {
-			format(str, 150, "Gostaria de trabalhar aqui.\nComo falo com o gerente daqui?");
+			format(str, 100, "Gostaria de trabalhar aqui.\nComo falo com o gerente daqui?");
+		}
+		Dialog_Show(playerid, "MenuRef", DIALOG_STYLE_LIST, "Selecione sua fala", str, "Selecionar", "Cancelar");
+		return 1;
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 260.3185,34.9675,2.4587) || IsPlayerInRangeOfPoint(playerid, 2.0, 267.7446,18.9372,2.4412)) {
+		new str[100];
+		if(pInfo[playerid][pBus] == BUSID_TRANSP) {
+			format(str, 100, "Desejo falar com o gerente.\nQuero pedir minhas contas.");
+		} else {
+			format(str, 100, "Gostaria de trabalhar aqui.\nComo falo com o gerente daqui?");
 		}
 		Dialog_Show(playerid, "MenuTransp", DIALOG_STYLE_LIST, "Selecione sua fala", str, "Selecionar", "Cancelar");
+		return 1;
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 577.6893,-337.5042,1484.8677)) {
+		new str[] = "Gostaria de comprar uma propriedade\n\
+					 Quem é o gerente daqui?\n\
+					 Como faço para trabalhar aqui?";
+		Dialog_Show(playerid, "MenuImob", DIALOG_STYLE_LIST, "Selecione sua fala", str, "Selecionar", "Cancelar");
+		return 1;
+	} else if(IsPlayerInRangeOfPoint(playerid, 2.0, 26.6980,-1162.7847,8.4483)) {
+		new str[100];
+		if(pInfo[playerid][pBus] == BUSID_GARBAGE) {
+			format(str, 100, "Desejo falar com o gerente.\nQuero pedir minhas contas.");
+		} else {
+			format(str, 100, "Gostaria de trabalhar aqui.\nComo falo com o gerente daqui?");
+		}
+		Dialog_Show(playerid, "MenuLixeiro", DIALOG_STYLE_LIST, "Selecione sua fala", str, "Selecionar", "Cancelar");
 		return 1;
 	}
 	return 1;
 }
 
 CMD:portao(playerid) {
-	if(IsPlayerInRangeOfPoint(playerid, 1.0, -1045.7885,-585.5132,32.0078)) {
+	if(IsPlayerInRangeOfPoint(playerid, 8.0, -1039.6951,-588.2967,32.0126)) {
 		if(pInfo[playerid][pBus] != BUSID_REF) return Advert(playerid, "É necessário o cartão de identificação da refinaria para ativar o comando.");
 		static usecmd;
 		if(gettime() < usecmd) return 1;
@@ -709,6 +842,159 @@ CMD:portao(playerid) {
 			PortaoBusBB *= -1;
 			usecmd = gettime() + (MoveDynamicObject(PortaoBusBB, 328.48309, -59.97890, 1.94570, 0.001, -1.32000, 2.88000, 4.00000)/1000) + 1;
 		}
+	} else if(IsPlayerInRangeOfPoint(playerid, 5.0, 16.5960,-1183.0790,7.2392)) {
+		if(pInfo[playerid][pBus] != BUSID_GARBAGE) return Advert(playerid, "É necessário o cartão de identificação da coletora de lixo para usar o portão.");
+		static usecmd;
+		if(gettime() < usecmd) return 1;
+		if(PortaoLixeiro > 0) {
+			usecmd = gettime() + (MoveDynamicObject(PortaoLixeiro, 16.183443, -1174.960327, 7.910368, 1.0, 0.000000, 0.000000, 90.000000)/1000) + 1;
+			PortaoLixeiro *= -1;
+		} else {
+			PortaoLixeiro *= -1;
+			usecmd = gettime() + (MoveDynamicObject(PortaoLixeiro, 16.183443, -1182.962158, 7.910369, 1.0, 0.000000, 0.000000, 90.000000)/1000) + 1;
+		}
+	}
+	return 1;
+}
+
+CMD:iniciarrota(playerid, params[]) {
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
+	if(pInfo[playerid][pBus] == BUSID_BUSBB) {
+		if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "Você deve estar conduzindo um dos ônibus da empresa.");
+		for(new i = 0; i < MAX_ROUTES; i++) {
+			if(pRoute[playerid][i][proutePoint]) return Advert(playerid, "Você já iniciou a rota. Cancele ou finalize ela. /CancelarRota | /FinalizarRota.");
+		}
+		new r;
+		if(sscanf(params, "i", r)) return AdvertCMD(playerid, "/IniciarRota [1-3]");
+		if(r < 1 || r > 3) return AdvertCMD(playerid, "/IniciarRota [1-3]");
+		if(!BusRoute[pInfo[playerid][pBus]][r-1][brNum]) return Advert(playerid, "Essa rota não foi definida ainda.");
+		for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
+			if(!bInfo[pInfo[playerid][pBus]][bVehicles][i]) continue;
+			new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][i]);
+			if(IsPlayerInVehicle(playerid, vid)) {
+				if(!IsVehicleInRangeOfPoint(vid, 15.0, 321.1762,-24.1846,1.5781)) return SendClientMessage(playerid, -1, "Você deve estar na Estação de Ônibus de Blueberry.");
+				Success(playerid, "Rota iniciada. Siga os checkpoints marcados no mapa e pare nos pontos de ônibus para os passageiros subirem e descerem.");
+				pRoute[playerid][r-1][proutePoint] = 1;
+				//pRoute[playerid][r-1][proutePartner] = id;
+				pRoute[playerid][r-1][prouteVehicle] = vid;
+				pInfo[playerid][pCP] = CP_BUS_ROUTE;
+				SetPlayerCheckpoint(playerid, BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][0], BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][1], BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][2], 3.0);
+				return 1;
+			}
+		}
+		Advert(playerid, "Você deve estar conduzindo um dos ônibus da empresa.");
+	}
+	return 1;
+}
+
+CMD:finalizarrota(playerid) {
+	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
+	if(pInfo[playerid][pBus] == BUSID_BUSBB) {
+		new r;
+		for(; r < MAX_ROUTES; r++) {
+			if(pRoute[playerid][r][proutePoint]) break;
+		}
+		if(r == MAX_ROUTES) return Advert(playerid, "Você não iniciou a rota. Para isso, use "AMARELO"/IniciarRota"BRANCO".");
+		if(pRoute[playerid][r][proutePoint] < BusRoute[pInfo[playerid][pBus]][r][brNum]+2) return Advert(playerid, "Você ainda não passou por todos os pontos obrigatórios da rota.");
+		new j = 0;
+		for(; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[pInfo[playerid][pBus]][bVehicles][j]) continue;
+			if(IsPlayerInVehicle(playerid, GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]))) break;
+		}
+		if(j == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Você deve estar conduzindo um ônibus da empresa.");
+		new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]);
+		if(!IsVehicleInRangeOfPoint(vid, 3.0, vInfo[vid][vSpawn][0], vInfo[vid][vSpawn][1], vInfo[vid][vSpawn][2])) return SendClientMessage(playerid, -1, "Você deve estar no estacionamento deste ônibus.");
+
+		pInfo[playerid][pMon] += BusRoute[pInfo[playerid][pBus]][r][brVal];
+		//GivePlayerMoney(pRoute[playerid][r][proutePartner]-1, floatround(0.8*BusRoute[pInfo[playerid][pBus]][r][brVal]));
+
+		new str[144];
+		Success(playerid, "Rota finalizada com sucesso.");
+		//Success(pRoute[playerid][r][proutePartner]-1, "Rota finalizada com sucesso.");
+		format(str, 144, "Foram adicionados $%i pela rota.", BusRoute[pInfo[playerid][pBus]][r][brVal]);
+		Success(playerid, str);
+		Success(playerid, "Você pode continuar fazendo outras rotas ou receber seu dinheiro agora guardando a chave do ônibus na secretaria.");
+		//format(str, 144, "Você foi pago em $%i pela rota.", floatround(0.8*BusRoute[pInfo[playerid][pBus]][r][brVal]));
+		//Success(pRoute[playerid][r][proutePartner]-1, str);
+		pRoute[playerid][r][proutePoint] = 0;
+		//pRoute[playerid][r][proutePartner] = 0;
+		pRoute[playerid][r][prouteVehicle] = 0;
+		bInfo[BUSID_BUSBB][bReceita] += floatround(floatdiv(BusRoute[pInfo[playerid][pBus]][r][brVal], 5));
+	}
+	return 1;
+}
+
+CMD:cancelarrota(playerid) {
+	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
+	if(pInfo[playerid][pBus] == BUSID_BUSBB) {
+		new r;
+		for(; r < MAX_ROUTES; r++) {
+			if(pRoute[playerid][r][proutePoint]) break;
+		}
+		if(r == MAX_ROUTES) return Advert(playerid, "Você não iniciou a rota. Para isso, use "AMARELO"/IniciarRota"BRANCO".");
+		if(pRoute[playerid][r][proutePoint] == BusRoute[pInfo[playerid][pBus]][r][brNum]+2) return Advert(playerid, "Você já passou por todos os pontos obrigatórios da rota. Use "AMARELO"/FinalizarRota"BRANCO".");
+		new j = 0;
+		for(; j < MAX_BUSINESS_VEHICLES; j++) {
+			if(!bInfo[pInfo[playerid][pBus]][bVehicles][j]) continue;
+			if(IsPlayerInVehicle(playerid, GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]))) break;
+		}
+		if(j == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Você deve estar conduzindo um ônibus da empresa.");
+		new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]);
+		if(!IsVehicleInRangeOfPoint(vid, 3.0, vInfo[vid][vSpawn][0], vInfo[vid][vSpawn][1], vInfo[vid][vSpawn][2])) return SendClientMessage(playerid, -1, "Você deve estar no estacionamento deste ônibus.");
+		Info(playerid, "Rota cancelada.");
+		pInfo[playerid][pCP] = 0;
+		DisablePlayerCheckpoint(playerid);
+		pRoute[playerid][r][proutePoint] = 0;
+	}
+	return 1;
+}
+
+CMD:mp(playerid, params[]) {
+	new id, msg[125], str[144];
+	if(sscanf(params, "is[124]", id, msg)) return AdvertCMD(playerid, "/MP [ID] [Mensagem]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(playerid == id) return Advert(playerid, "Não seja tão solitário a ponto de enviar mensagem privada para si próprio :(");
+	format(str, 144, "[MP de %03i]"BRANCO" %s", playerid, msg);
+	SendClientMessage(id, RoxoClaro, str);
+	format(str, 144, "[ENVIADA]"BRANCO" %s", msg);
+	SendClientMessage(playerid, RoxoClaro, str);
+	return 1;
+}
+
+CMD:hud(playerid) {
+	if(!pInfo[playerid][pHUD]) {
+		for(new i = 0; i < sizeof(TDBarra); i++) {
+			TextDrawShowForPlayer(playerid, TDBarra[i]);
+		}
+		new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		format(str, 24, "%s", pName(playerid));
+		SpaceToUnderline(str);
+		PlayerTextDrawSetString(playerid, TDName[playerid], str);
+		PlayerTextDrawShow(playerid, TDName[playerid]);
+		format(str, 5, "%i", pInfo[playerid][pLevel]);
+		PlayerTextDrawSetString(playerid, TDScore[playerid], str);
+		PlayerTextDrawShow(playerid, TDScore[playerid]);
+		PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
+		PlayerTextDrawShow(playerid, TDXPBox[playerid]);
+		format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
+		PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
+		format(str, 5, "%i%%", floatround(prop*100));
+		PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
+		PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
+		Info(playerid, "HUD habilitada.");
+		pInfo[playerid][pHUD] = 1;
+	} else {
+		for(new i = 0; i < sizeof(TDBarra); i++) {
+			TextDrawHideForPlayer(playerid, TDBarra[i]);
+		}
+		PlayerTextDrawHide(playerid, TDName[playerid]);
+		PlayerTextDrawHide(playerid, TDScore[playerid]);
+		PlayerTextDrawHide(playerid, TDXPBox[playerid]);
+		PlayerTextDrawHide(playerid, TDXPNumber[playerid]);
+		PlayerTextDrawHide(playerid, TDXPPercent[playerid]);
+		Info(playerid, "HUD desabilitada.");
+		pInfo[playerid][pHUD] = 0;
 	}
 	return 1;
 }
@@ -759,6 +1045,34 @@ Dialog:MenuBusBB(playerid, response, listitem, inputtext[]) {
 	return 1;
 }
 
+Dialog:MenuRef(playerid, response, listitem, inputtext[]) {
+	if(pInfo[playerid][pBus] == BUSID_REF) {
+		if(listitem == 0) {		// Desejo falar com o gerente.
+			new str[144];
+			format(str, 144, "O atual proprietário dessa empresa se chama %s.", bInfo[BUSID_REF][bOwner]);
+			Info(playerid, str);
+		} else if(listitem == 1) {		// Quero pedir minhas contas.
+			for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
+				if(!bInfo[BUSID_REF][bVehicles][i]) continue;
+				if(vInfo[GetVehicleIDBySQL(bInfo[BUSID_REF][bVehicles][i])][vChave] == pInfo[playerid][pSQL]) return Advert(playerid, "Você não pode ficar com as chaves da empresa.");
+			}
+			pInfo[playerid][pBus] = -1;
+			Info(playerid, "Você se demitiu e não faz mais parte dessa empresa.");
+		}
+	} else {
+		if(listitem == 0) {				// Gostaria de trabalhar aqui.
+			if(pInfo[playerid][pBus] != -1) return Advert(playerid, "Você não pode trabalhar aqui enquanto for funcionário de outra empresa.");
+			pInfo[playerid][pBus] = BUSID_REF;
+			Info(playerid, "Agora você está contratado e pode trabalhar aqui como transportador da refinaria.");
+		} else if(listitem == 1) {		// Como falo com o gerente daqui?
+			new str[144];
+			format(str, 144, "O atual proprietário dessa empresa se chama %s.", bInfo[BUSID_REF][bOwner]);
+			Info(playerid, str);
+		}
+	}
+	return 1;
+}
+
 Dialog:MenuTransp(playerid, response, listitem, inputtext[]) {
 	if(pInfo[playerid][pBus] == BUSID_TRANSP) {
 		if(listitem == 0) {		// Desejo falar com o gerente.
@@ -787,23 +1101,62 @@ Dialog:MenuTransp(playerid, response, listitem, inputtext[]) {
 	return 1;
 }
 
+Dialog:MenuLixeiro(playerid, response, listitem, inputtext[]) {
+	if(pInfo[playerid][pBus] == BUSID_GARBAGE) {
+		if(listitem == 0) {		// Desejo falar com o gerente.
+			new str[144];
+			format(str, 144, "O atual proprietário dessa empresa se chama %s.", bInfo[BUSID_GARBAGE][bOwner]);
+			Info(playerid, str);
+		} else if(listitem == 1) {		// Quero pedir minhas contas.
+			for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
+				if(!bInfo[BUSID_GARBAGE][bVehicles][i]) continue;
+				if(vInfo[GetVehicleIDBySQL(bInfo[BUSID_GARBAGE][bVehicles][i])][vChave] == pInfo[playerid][pSQL]) return Advert(playerid, "Você não pode ficar com as chaves da empresa.");
+			}
+			pInfo[playerid][pBus] = -1;
+			Info(playerid, "Você se demitiu e não faz mais parte dessa empresa.");
+		}
+	} else {
+		if(listitem == 0) {				// Gostaria de trabalhar aqui.
+			if(pInfo[playerid][pBus] != -1) return Advert(playerid, "Você não pode trabalhar aqui enquanto for funcionário de outra empresa.");
+			pInfo[playerid][pBus] = BUSID_GARBAGE;
+			Info(playerid, "Agora você está contratado e pode trabalhar aqui como coletor de lixo.");
+		} else if(listitem == 1) {		// Como falo com o gerente daqui?
+			new str[144];
+			format(str, 144, "O atual proprietário dessa empresa se chama %s.", bInfo[BUSID_GARBAGE][bOwner]);
+			Info(playerid, str);
+		}
+	}
+	return 1;
+}
+
 Dialog:DialogAjuda(playerid, response, listitem, inputtext[]) {
 	if(!response) return 1;
 	if(listitem == 0) { //				Nível
 		new str[250];
-		format(str, 250, "A cada 10 minutos você ganha 10 XP, ações no servidor contabilizam XP extra para você.\n100 XP = Nível 1; 200 XP = Nível 2; assim subsequentemente.\n- Experiência: %i/%iXP\n- Nível: %i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]), pInfo[playerid][pLevel]);
+		format(str, 250, "Você recebe 1 XP por minuto jogado OOC.\nCada nível tem seu total de experiência único, sempre crescente.\n- Experiência: %i/%iXP\n- Nível: %i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]), pInfo[playerid][pLevel]);
 		Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "Nível", str, "Fechar", "");
 	} else if(listitem == 1) { //		Profissão
 		if(pInfo[playerid][pBus] == -1) return Info(playerid, "Você é desempregado.");
-		new str[150], i = 0;
+		new str[300], i = 0;
 		for(; i < MAX_CARGOS; i++) {
 			if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) continue;
 			else if(strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], pName(playerid), true)) continue;
 			else break;
 		}
-		if(i == MAX_CARGOS) return Advert(playerid, "Informe da administração sobre essa mensagem de erro. [COD 011]");
-		format(str, 150, "Você trabalha para a empresa %s no cargo de %s.", bInfo[pInfo[playerid][pBus]][bName], cInfo[pInfo[playerid][pBus]][i][cName]);
-		Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "PROFISSÃO", str, "Fechar", "");
+		if(i == MAX_CARGOS) {
+			format(str, 200, BRANCO"Você atualmente trabalha na empresa %s.\nComandos:\n"AMARELO, bInfo[pInfo[playerid][pBus]][bName]);
+			if(pInfo[playerid][pBus] == BUSID_BUSBB) {
+				format(str, 300, "%s/IniciarRota [1-3] | /CancelarRota | /FinalizarRota", str);
+			} else if(pInfo[playerid][pBus] == BUSID_TRANSP) {
+				format(str, 300, "%s(/Et)iqueta [Caixa] | /PegarCaixa [Caixa] | /SoltarCaixa [Caixa]\n/Carregar [IDV] | /Cargas [IDV] | /EntregarCaixa", str);
+			} else if(pInfo[playerid][pBus] == BUSID_REF) {
+				format(str, 300, "%s/PegarFicha [1-5] | /GuardarFicha | /VerFicha\n/Engatar [IDV] | /Desengatar | /Painel\n/FichasRefinaria", str);
+			}
+			Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "Ajuda > Profissão", str, "Fechar", "");
+		} else {
+			format(str, 150, "Você trabalha para a empresa %s no cargo de %s.", bInfo[pInfo[playerid][pBus]][bName], cInfo[pInfo[playerid][pBus]][i][cName]);
+			Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "PROFISSÃO", str, "Fechar", "");
+		}
 	} else if(listitem == 2) { //		Solicitar atendimento / Cancelar solicitação
 		new i = 0;
 		for(; i < MAX_ATENDIMENTOS; i++) { if(SolAtd[i] == playerid+1) { break; } }
@@ -839,7 +1192,8 @@ Dialog:DialogRegister(playerid, response, listitem, inputtext[]) {
 	mysql_format(conn, query, 150, "INSERT INTO `playerinfo` (`nickname`, `senha`) VALUES ('%s', '%s')", pNick(playerid), inputtext);
 	mysql_tquery(conn, query, "PlayerRegister", "i", playerid);
 	pInfo[playerid][pLogged] = 2;
-	GivePlayerMoney(playerid, 150);
+	GivePlayerMoney(playerid, 1000);
+	SetPlayerVirtualWorld(playerid, 0);
 	return 1;
 }
 
@@ -884,7 +1238,7 @@ Dialog:DialogLogin(playerid, response, listitem, inputtext[]) {
 
 Dialog:AmICalled(playerid, response, listitem, inputtext[]) {
 	if(!response) return 1;
-	Dialog_Show(playerid, "SelectCaller", DIALOG_STYLE_LIST, "Quem te convidou?", "Mateus Marinheiro\nJohn Philip\nEmily Parker\nUlisses Pedroso\nTonny Riviera", "Confirmar", "Cancelar");
+	Dialog_Show(playerid, "SelectCaller", DIALOG_STYLE_LIST, "Quem te convidou?", "Eduardo Nunes\nWictor Lima\nRian Lourete", "Confirmar", "Cancelar");
 	return 1;
 }
 
@@ -899,12 +1253,6 @@ Dialog:SelectCaller(playerid, response, listitem, inputtext[]) {
 		mysql_query(conn, query, false);
 	} else if(listitem == 2) {
 		mysql_format(conn, query, 150, "UPDATE playerinfo SET convidado = 3 WHERE sqlid = %i", pInfo[playerid][pSQL]);
-		mysql_query(conn, query, false);
-	} else if(listitem == 3) {
-		mysql_format(conn, query, 150, "UPDATE playerinfo SET convidado = 4 WHERE sqlid = %i", pInfo[playerid][pSQL]);
-		mysql_query(conn, query, false);
-	} else if(listitem == 4) {
-		mysql_format(conn, query, 150, "UPDATE playerinfo SET convidado = 5 WHERE sqlid = %i", pInfo[playerid][pSQL]);
 		mysql_query(conn, query, false);
 	}
 	Success(playerid, "Obrigado por contribuir conosco. Você recebeu "VERDEMONEY"$1.500"BRANCO" a mais para começar sua vida.");
@@ -939,6 +1287,7 @@ public OnGameModeInit() {
 	#include "../maps/newbiespawn.pwn"
 	#include "../maps/postomg.pwn"
 	#include "../maps/postodm.pwn"
+	#include "../maps/postofc.pwn"
 	#include "../maps/refinaria.pwn"
 	#include "../maps/bancopalomino.pwn"
 	#include "../maps/palomino.pwn"
@@ -947,6 +1296,9 @@ public OnGameModeInit() {
 	#include "../maps/concessionaria.pwn"
 	#include "../maps/rcsd.pwn"
 	#include "../maps/transp.pwn"
+	#include "../maps/imobiliaria.pwn"
+	#include "../maps/lixeiro.pwn"
+	#include "../maps/casas.pwn"
 	print("Mapas carregados com sucesso.");
 
 	// TEXTDRAWS
@@ -954,6 +1306,7 @@ public OnGameModeInit() {
 	#include "../textdraws/login.pwn"
 	#include "../textdraws/gas.pwn"
 	#include "../textdraws/manager.pwn"
+	#include "../textdraws/barra.pwn"
 
 	//
 
@@ -966,9 +1319,18 @@ public OnGameModeInit() {
 	ShowPlayerMarkers(PLAYER_MARKERS_MODE_OFF);
 
 	CreateDynamicPickup(1239, 1, 311.8055,-58.4579,1.6171);							// Estação de ônibus Blueberry
-	CreateDynamic3DTextLabel("/Info", 0xFFFF00FF, 311.8055,-58.4579,1.6171, 3.0);
+	CreateDynamic3DTextLabel("/Info", Amarelo, 311.8055,-58.4579,1.6171, 3.0);
 	CreateDynamicPickup(1239, 1, 260.3185,34.9675,2.4587);							// Transportadora de Blueberry
-	CreateDynamic3DTextLabel("/Info", 0xFFFF00FF, 260.3185,34.9675,2.4587, 3.0);
+	CreateDynamic3DTextLabel("/Info", Amarelo, 260.3185,34.9675,2.4587, 3.0);
+	CreateDynamicPickup(1239, 1, 267.7446,18.9372,2.4412);							// Transportadora de Blueberry (APK)
+	CreateDynamic3DTextLabel("/Info", Amarelo, 267.7446,18.9372,2.4412, 3.0);
+	CreateDynamicPickup(1239, 1, 577.6893,-337.5042,1484.8677);							// Imobiliária de Palomino Creek
+	CreateDynamic3DTextLabel("/Info", Amarelo, 577.6893,-337.5042,1484.8677, 3.0);
+	CreateDynamicPickup(1239, 1, 26.6980,-1162.7847,8.4483);							// Coletora de Lixo Red County
+	CreateDynamic3DTextLabel("/Info", Amarelo, 26.6980,-1162.7847,8.4483, 3.0);
+	CreateDynamicPickup(1239, 1, 534.1007,208.7319,1049.9844);							// Refinaria de Flint County
+	CreateDynamic3DTextLabel("/Info", Amarelo, 534.1007,208.7319,1049.9844, 3.0);
+
 
 	return 1;
 }
@@ -989,8 +1351,26 @@ public OnPlayerSpawn(playerid) {
 	if(pInfo[playerid][pLogged] == 2) { // Logou-se com sucesso
 		TextDrawHideForPlayer(playerid, TDLogin);
 		StopAudioStreamForPlayer(playerid);
-		SetPlayerVirtualWorld(playerid, 0);
 		pInfo[playerid][pLogged] = 1;
+		for(new i = 0; i < sizeof(TDBarra); i++) {
+			TextDrawShowForPlayer(playerid, TDBarra[i]);
+		}
+		new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		format(str, 24, "%s", pName(playerid));
+		SpaceToUnderline(str);
+		PlayerTextDrawSetString(playerid, TDName[playerid], str);
+		PlayerTextDrawShow(playerid, TDName[playerid]);
+		format(str, 5, "%i", pInfo[playerid][pLevel]);
+		PlayerTextDrawSetString(playerid, TDScore[playerid], str);
+		PlayerTextDrawShow(playerid, TDScore[playerid]);
+		PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
+		PlayerTextDrawShow(playerid, TDXPBox[playerid]);
+		format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
+		PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
+		format(str, 5, "%i%%", floatround(prop*100));
+		PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
+		PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
 		return 1;
 	} else if(!pInfo[playerid][pLogged]) { // Conectou-se ao servidor
 		//if(!pInfo[playerid][pFinishedDownload]) return 1;
@@ -1047,6 +1427,13 @@ public OnPlayerSpawn(playerid) {
 
 public OnVehicleSpawn(vehicleid) {
 	CallLocalFunction("OnVehicleSpawn@veh", "i", vehicleid);
+	CallLocalFunction("OnVehicleSpawn@transp", "i", vehicleid);
+	return 1;
+}
+
+public OnVehicleDeath(vehicleid, killerid) {
+	CallLocalFunction("OnVehicleDeath@veh", "i", vehicleid);
+	CallLocalFunction("OnVehicleDeath@transp", "i", vehicleid);
 	return 1;
 }
 
@@ -1086,6 +1473,7 @@ public OnPlayerConnect(playerid) {
 	CallLocalFunction("OnPlayerConnect@transp", "i", playerid);
 	#include "../textdraws/pgas.pwn"
 	#include "../textdraws/pmanager.pwn"
+	#include "../textdraws/pbarra.pwn"
 	SetTimerEx("SpawnarPlayer", 200, false, "i", playerid);
 
 	// Casa 1
@@ -1146,14 +1534,17 @@ public OnPlayerDisconnect(playerid, reason) {
 			for(new j = 0; j < MAX_BUSINESS_VEHICLES; j++) {
 				if(bInfo[BUSID_BUSBB][bVehicles][j] == vInfo[i][vSQL]) {
 					vInfo[i][vChave] = CLOC_EDOBB;
+					SetVehicleToRespawn(i);
 				} else if(bInfo[BUSID_AUTO][bVehicles][j] == vInfo[i][vSQL]) {
 					vInfo[i][vChave] = CLOC_AUTO;
 				} else if(bInfo[BUSID_CONC][bVehicles][j] == vInfo[i][vSQL]) {
 					vInfo[i][vChave] = CLOC_CONC;
 				} else if(bInfo[BUSID_REF][bVehicles][j] == vInfo[i][vSQL]) {
 					vInfo[i][vChave] = CLOC_REF;
+					SetVehicleToRespawn(i);
 				} else if(bInfo[BUSID_TRANSP][bVehicles][j] == vInfo[i][vSQL]) {
 					vInfo[i][vChave] = CLOC_TRANSP;
+					SetVehicleToRespawn(i);
 				}
 			}
 		}
@@ -1161,11 +1552,13 @@ public OnPlayerDisconnect(playerid, reason) {
 	for(new i = 0; i < MAX_VIATURAS; i++) {
 		if(vInfo[Viatura[i]][vChave] == pInfo[playerid][pSQL]) {
 			vInfo[Viatura[i]][vChave] = CLOC_RCSD;
+			SetVehicleToRespawn(Viatura[i]);
 		}
 	}
 	CallLocalFunction("OnPlayerDisconnect@bus", "i", playerid);
 	CallLocalFunction("OnPlayerDisconnect@autoescola", "i", playerid);
 	CallLocalFunction("OnPlayerDisconnect@admin", "i", playerid);
+	CallLocalFunction("OnPlayerDisconnect@transp", "i", playerid);
 	SavePlayerData(playerid);
 	ResetVars(playerid);
 	return 1;
@@ -1186,6 +1579,7 @@ public OnPlayerEnterCheckpoint(playerid) {
 	CallLocalFunction("OnPlayerEnterCheckpoint@bus", "i", playerid);
 	CallLocalFunction("OnPlayerEnterCheckpoint@auto", "i", playerid);
 	CallLocalFunction("OnPlayerEnterCheckpoint@veh", "i", playerid);
+	CallLocalFunction("OnPlayerEnterCheckpoint@ref", "i", playerid);
 	return 1;
 }
 
@@ -1315,7 +1709,7 @@ public LoadPlayerData(playerid) {
 	SetPlayerFacingAngle(playerid, P[3]);
 	SetPlayerInterior(playerid, interiorid);
 	SetPlayerVirtualWorld(playerid, vw);
-	Streamer_UpdateEx(playerid, P[0], P[1], P[2], vw, interiorid, -1, 1500);
+	Streamer_UpdateEx(playerid, P[0], P[1], P[2], -1, -1, -1, 1500);
 	if(pInfo[playerid][pAdmin] >= Fiscalizador) {
 		new query[150];
 		mysql_format(conn, query, 150, "SELECT * FROM vstaffinfo WHERE psqlid = %i", pInfo[playerid][pSQL]);
@@ -1341,7 +1735,7 @@ stock SavePlayerData(playerid) {
 	GetPlayerFacingAngle(playerid, P[3]);
 	new query[300];
 	mysql_format(conn, query, 300, "UPDATE `playerinfo` SET `tprisao` = %i, `hab` = %i,`comp` = %i, `xp` = %i, `interior` = %i, `vw` = %i, `idv` = %i, `admin` = %i, `score` = %i, `skinid` = %i, `money` = %i, `pbus` = %i, `sX` = %f, `sY` = %f, `sZ` = %f, `sA` = %f WHERE `sqlid` = %i",
-		pInfo[playerid][ptPrisao], pInfo[playerid][pHab], pInfo[playerid][pComprovante], pInfo[playerid][pXP], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid), bIDV[playerid], pInfo[playerid][pAdmin], pInfo[playerid][pLevel], pInfo[playerid][pSkin], GetPlayerMoney(playerid), pInfo[playerid][pBus], P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
+		pInfo[playerid][ptPrisao], pInfo[playerid][pHab], pInfo[playerid][pComprovante], pInfo[playerid][pXP], GetPlayerInterior(playerid), GetPlayerVirtualWorld(playerid), bIDV[playerid], pInfo[playerid][pAdmin], pInfo[playerid][pLevel], pInfo[playerid][pSkin], (GetPlayerMoney(playerid)+pInfo[playerid][pMon]), pInfo[playerid][pBus], P[0], P[1], P[2], P[3], pInfo[playerid][pSQL]);
 	mysql_query(conn, query, false);
 	if(pInfo[playerid][pAdmin] >= Fiscalizador) {
 		if(vStaff[playerid][vsID]) {

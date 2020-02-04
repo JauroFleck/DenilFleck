@@ -6,11 +6,23 @@
 #define CLOC_RCSD			-4
 #define CLOC_REF			-5
 #define CLOC_TRANSP			-6
+#define CLOC_GARBAGE		-7
 
 #define MAX_BOOT_SLOTS		10
 
 #define GPSTYPE_NONE		0
 #define GPSTYPE_TRANSP		1
+#define GPSTYPE_PERSONAL	2
+
+#define MAX_VATTACHMENTS	30
+
+enum VATTACH_INFO {
+	vaSQL,
+	vaID,
+	vaModel,
+	Float:vaP[3],
+	Float:vaR[3]
+};
 
 enum VEHICLE_INFO {
 	vSQL,
@@ -25,9 +37,11 @@ enum VEHICLE_INFO {
 	vGas,
 	vCargaGas,
 	vBootSlot[MAX_BOOT_SLOTS],
-	vGPS
+	vGPS,
+	vAttObj[3]
 };
 
+new vAttachments[MAX_VATTACHMENTS][VATTACH_INFO];
 new vInfo[MAX_VEHICLES][VEHICLE_INFO];		// Lida apenas com veículos dentro do banco de dados.
 new vinteriorid[MAX_VEHICLES];				// Importante pois lida com veículos fora do banco de dados.
 new vModels[212][] =
@@ -87,6 +101,17 @@ CMD:gps(playerid) {
 					 Loja de roupas de Dillimore\n\
 					 Desligar GPS";
 		Dialog_Show(playerid, "GPSTransp", DIALOG_STYLE_LIST, "GPS", str, "Ir", "Cancelar");
+	}
+	if(vInfo[vid][vGPS] == GPSTYPE_PERSONAL) {
+		new str[] = "Imobiliária de Palomino Creek\n\
+					 Banco de Palomino Creek\n\
+					 Transportadora de Blueberry\n\
+					 Estação de ônibus de Blueberry\n\
+					 Concessionária de Dillimore\n\
+					 Autoescola de Dillimore\n\
+					 Refinaria de Flint County\n\
+					 Desligar GPS";
+		Dialog_Show(playerid, "GPSPersonal", DIALOG_STYLE_LIST, "GPS", str, "Ir", "Cancelar");
 	}
 	return 1;
 }
@@ -379,6 +404,25 @@ CMD:chaves(playerid) {
 	return 1;
 }
 
+CMD:repor(playerid) {
+	new vid = GetPlayerVehicleID(playerid);
+	if(!IsValidVehicle(vid)) return 1;
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado na base de dados.");
+	new i = 0;
+	for(; i < 3; i++) {
+		if(!vInfo[vid][vAttObj][i]) continue;
+		for(new j = 0; j < MAX_VATTACHMENTS; j++) {
+			if(vAttachments[j][vaSQL] == vInfo[vid][vAttObj][i]) {
+				DestroyDynamicObject(vAttachments[j][vaID]);
+				vAttachments[j][vaID] = CreateDynamicObject(vAttachments[j][vaModel], 0.0, 0.0, -1000.0, 0.0, 0.0, 0.0);
+				AttachDynamicObjectToVehicle(vAttachments[j][vaID], vid, vAttachments[j][vaP][0], vAttachments[j][vaP][1], vAttachments[j][vaP][2], vAttachments[j][vaR][0], vAttachments[j][vaR][1], vAttachments[j][vaR][2]);
+				break;
+			}
+		}
+	}
+	return 1;
+}
+
 CMD:gascap(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	if(!IsPlayerInAnyVehicle(playerid)) return Advert(playerid, "Você deve estar dentro do veículo que deseja definir a capacidade de gasolina.");
@@ -536,11 +580,52 @@ Dialog:GPSTransp(playerid, response, listitem, inputtext[]) {
 	return 1;
 }
 
+Dialog:GPSPersonal(playerid, response, listitem, inputtext[]) {
+	if(!response) return 1;
+	new Float:GPSCoord[7][3] = {
+		{2298.7888,-41.5417,26.3386},
+		{2298.8108,-14.8488,26.3359},
+		{237.5936,32.6788,2.4342},
+		{316.4675,-67.1039,1.4305},
+		{843.8165,-571.4354,16.3908},
+		{612.1050,-490.4809,16.1889},
+		{-1038.8312,-582.3068,31.9389}
+	};
+	if(listitem == 7) { // Desligar GPS
+		if(pInfo[playerid][pCP] == CP_GPS) {
+			pInfo[playerid][pCP] = CP_NONE;
+			DisablePlayerCheckpoint(playerid);
+			Info(playerid, "GPS desligado.");
+		} else {
+			Advert(playerid, "Seu GPS não está ligado.");
+		}
+	} else {
+		pInfo[playerid][pCP] = CP_GPS;
+		SetPlayerCheckpoint(playerid, GPSCoord[listitem][0], GPSCoord[listitem][1], GPSCoord[listitem][2], 2.5);
+		Info(playerid, "GPS habilitado.");
+	}
+	return 1;
+}
+
 forward OnVehicleSpawn@veh(vehicleid);
 public OnVehicleSpawn@veh(vehicleid) {
+	SetVehicleParamsEx(vehicleid, 0, 0, 0, 1, 0, 0, 0);
 	if(vInfo[vehicleid][vSQL]) {
 		SetVehiclePos(vehicleid, vInfo[vehicleid][vSpawn][0], vInfo[vehicleid][vSpawn][1], vInfo[vehicleid][vSpawn][2]);
 		SetVehicleZAngle(vehicleid, vInfo[vehicleid][vSpawn][3]);
+		vInfo[vehicleid][vLock] = 1;
+		vInfo[vehicleid][vBoot] = 0;
+		vInfo[vehicleid][vLights] = 0;
+	}
+	return 1;
+}
+
+forward OnVehicleDeath@veh(vehicleid, killerid);
+public OnVehicleDeath@veh(vehicleid, killerid) {
+	if(vInfo[vehicleid][vSQL]) {
+		vInfo[vehicleid][vLock] = 1;
+		vInfo[vehicleid][vBoot] = 0;
+		vInfo[vehicleid][vLights] = 0;
 	}
 	return 1;
 }
@@ -607,6 +692,35 @@ public LoadVehicleData() {
 		vInfo[v][vLock] = 1;
 		vInfo[v][vBoot] = 0;
 		vInfo[v][vLights] = 0;
+		if(m == 408) { // Trashmaster
+			new j = 0;
+			for(; j < MAX_VATTACHMENTS; j++) {
+				if(!vAttachments[j][vaSQL]) break;
+			}
+			if(j == MAX_VATTACHMENTS) continue;
+			vAttachments[j][vaSQL] = j+1;
+			vAttachments[j][vaModel] = 3280;
+			vAttachments[j][vaID] = CreateDynamicObject(3280, 0.0, 0.0, -1000.0, 0.0, 0.0, 0.0);
+			vAttachments[j][vaP][0] = -0.54;
+			vAttachments[j][vaP][1] = -4.1;
+			vAttachments[j][vaP][2] = -1.06;
+			vAttachments[j][vaR][0] = 0.0;
+			vAttachments[j][vaR][1] = 0.0;
+			vAttachments[j][vaR][2] = 0.0;
+			vAttachments[j+1][vaSQL] = j+2;
+			vAttachments[j+1][vaModel] = 3280;
+			vAttachments[j+1][vaID] = CreateDynamicObject(3280, 0.0, 0.0, -1000.0, 0.0, 0.0, 0.0);
+			vAttachments[j+1][vaP][0] = 0.51;
+			vAttachments[j+1][vaP][1] = -4.1;
+			vAttachments[j+1][vaP][2] = -1.06;
+			vAttachments[j+1][vaR][0] = 0.0;
+			vAttachments[j+1][vaR][1] = 0.0;
+			vAttachments[j+1][vaR][2] = 0.0;
+			AttachDynamicObjectToVehicle(vAttachments[j][vaID], v, vAttachments[j][vaP][0], vAttachments[j][vaP][1], vAttachments[j][vaP][2], vAttachments[j][vaR][0], vAttachments[j][vaR][1], vAttachments[j][vaR][2]);
+			AttachDynamicObjectToVehicle(vAttachments[j+1][vaID], v, vAttachments[j+1][vaP][0], vAttachments[j+1][vaP][1], vAttachments[j+1][vaP][2], vAttachments[j+1][vaR][0], vAttachments[j+1][vaR][1], vAttachments[j+1][vaR][2]);
+			vInfo[v][vAttObj][0] = j+1;
+			vInfo[v][vAttObj][1] = j+2;
+		}
 	}
 	return 1;
 }
@@ -717,10 +831,10 @@ public Gasolimetro(vehicleid) {
 			break;
 		}
 	}
-	if(!vInfo[vehicleid][vGas]) {
+	if(vInfo[vehicleid][vGas] <= 0) {
 		KillTimer(TGasolimetro[vehicleid]);
 		TGasolimetro[vehicleid] = 0;
-		Motor(vid, 0);
+		Motor(vehicleid, 0);
 	}
 	return 1;
 }
@@ -728,7 +842,7 @@ public Gasolimetro(vehicleid) {
 stock GetVehicleIDBySQL(sqlid) {
 	new i;
 	for(; i < MAX_VEHICLES; i++) {
-		if(!GetVehicleModel(i)) continue;
+		if(!IsValidVehicle(i)) continue;
 		if(vInfo[i][vSQL] == sqlid) return i;
 	}
 	if(i == MAX_VEHICLES) return 0;
@@ -736,13 +850,13 @@ stock GetVehicleIDBySQL(sqlid) {
 }
 
 stock SetVehicleInterior(vehicleid, interiorid) {
-	if(!GetVehicleModel(vehicleid)) return 0;
+	if(!IsValidVehicle(vehicleid)) return 0;
 	vinteriorid[vehicleid] = interiorid;
 	return LinkVehicleToInterior(vehicleid, interiorid);
 }
 
 stock GetVehicleInterior(vehicleid) {
-	if(!GetVehicleModel(vehicleid)) return 0;
+	if(!IsValidVehicle(vehicleid)) return 0;
 	return vinteriorid[vehicleid];
 }
 
@@ -755,7 +869,7 @@ stock GetModelIDFromModelName(const name[]) {
 }
 
 stock GetPlayerIDVehicleSeat(vehicleid, seatid) {
-	if(!GetVehicleModel(vehicleid)) return -1;
+	if(!IsValidVehicle(vehicleid)) return -1;
 	new id;
 	while(id < MAX_PLAYERS) {
 		if(IsPlayerConnected(id)) {

@@ -40,94 +40,6 @@ new curPoint[MAX_BUSINESS];
 new pRoute[MAX_PLAYERS][MAX_ROUTES][PROUTE_INFO];
 new CriandoRota[MAX_PLAYERS];
 
-CMD:iniciarrota(playerid, params[]) { // Definir quais cargos são permitidos a utilizar este comando.
-	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_BUS) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
-	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "Você deve estar conduzindo um dos ônibus da empresa.");
-	for(new i = 0; i < MAX_ROUTES; i++) {
-		if(pRoute[playerid][i][proutePoint]) return Advert(playerid, "Você já iniciou a rota. Cancele ou finalize ela. /CancelarRota | /FinalizarRota.");
-	}
-	new r;
-	if(sscanf(params, "i", r)) return AdvertCMD(playerid, "/IniciarRota [1-3]");
-	if(r < 1 || r > 3) return AdvertCMD(playerid, "/IniciarRota [1-3]");
-	if(!BusRoute[pInfo[playerid][pBus]][r-1][brNum]) return Advert(playerid, "Essa rota não foi definida ainda.");
-	for(new i = 0; i < MAX_BUSINESS_VEHICLES; i++) {
-		if(!bInfo[pInfo[playerid][pBus]][bVehicles][i]) continue;
-		new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][i]);
-		if(IsPlayerInVehicle(playerid, vid)) {
-			if(!IsVehicleInRangeOfPoint(vid, 15.0, 321.1762,-24.1846,1.5781)) return SendClientMessage(playerid, -1, "Você deve estar na Estação de Ônibus de Blueberry.");
-			Success(playerid, "Rota iniciada. Siga os checkpoints marcados no mapa e pare nos pontos de ônibus para os passageiros subirem e descerem.");
-			pRoute[playerid][r-1][proutePoint] = 1;
-			//pRoute[playerid][r-1][proutePartner] = id;
-			pRoute[playerid][r-1][prouteVehicle] = vid;
-			pInfo[playerid][pCP] = CP_BUS_ROUTE;
-			SetPlayerCheckpoint(playerid, BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][0], BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][1], BusStops[brCP[pInfo[playerid][pBus]][r-1][pRoute[playerid][r-1][proutePoint]-1]][2], 3.0);
-			return 1;
-		}
-	}
-	Advert(playerid, "Você deve estar conduzindo um dos ônibus da empresa.");
-	return 1;
-}
-
-CMD:finalizarrota(playerid) {
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_BUS) return SendClientMessage(playerid, -1, "Sua empresa não tem permissão para uso desse comando.");
-	new r;
-	for(; r < MAX_ROUTES; r++) {
-		if(pRoute[playerid][r][proutePoint]) break;
-	}
-	if(r == MAX_ROUTES) return Advert(playerid, "Você não iniciou a rota. Para isso, use "AMARELO"/IniciarRota"BRANCO".");
-	if(pRoute[playerid][r][proutePoint] < BusRoute[pInfo[playerid][pBus]][r][brNum]+2) return Advert(playerid, "Você ainda não passou por todos os pontos obrigatórios da rota.");
-	new j = 0;
-	for(; j < MAX_BUSINESS_VEHICLES; j++) {
-		if(!bInfo[pInfo[playerid][pBus]][bVehicles][j]) continue;
-		if(IsPlayerInVehicle(playerid, GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]))) break;
-	}
-	if(j == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Você deve estar conduzindo um ônibus da empresa.");
-	new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]);
-	if(!IsVehicleInRangeOfPoint(vid, 3.0, vInfo[vid][vSpawn][0], vInfo[vid][vSpawn][1], vInfo[vid][vSpawn][2])) return SendClientMessage(playerid, -1, "Você deve estar no estacionamento deste ônibus.");
-
-	GivePlayerMoney(playerid, BusRoute[pInfo[playerid][pBus]][r][brVal]*BusRoute[pInfo[playerid][pBus]][r][brNum]);
-	//GivePlayerMoney(pRoute[playerid][r][proutePartner]-1, floatround(0.8*BusRoute[pInfo[playerid][pBus]][r][brVal]));
-
-	new str[144];
-	Success(playerid, "Rota finalizada com sucesso.");
-	//Success(pRoute[playerid][r][proutePartner]-1, "Rota finalizada com sucesso.");
-	format(str, 144, "Você foi pago em $%i pela rota.", BusRoute[pInfo[playerid][pBus]][r][brVal]*BusRoute[pInfo[playerid][pBus]][r][brNum]);
-	Success(playerid, str);
-	//format(str, 144, "Você foi pago em $%i pela rota.", floatround(0.8*BusRoute[pInfo[playerid][pBus]][r][brVal]));
-	//Success(pRoute[playerid][r][proutePartner]-1, str);
-	pRoute[playerid][r][proutePoint] = 0;
-	//pRoute[playerid][r][proutePartner] = 0;
-	pRoute[playerid][r][prouteVehicle] = 0;
-	bInfo[BUSID_BUSBB][bReceita] += ((16-BusRoute[pInfo[playerid][pBus]][r][brVal])*BusRoute[pInfo[playerid][pBus]][r][brNum]);
-	return 1;
-}
-
-CMD:cancelarrota(playerid) {
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
-	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_BUS) return SendClientMessage(playerid, -1, "Sua empresa não tem permissão para uso desse comando.");
-	new r;
-	for(; r < MAX_ROUTES; r++) {
-		if(pRoute[playerid][r][proutePoint]) break;
-	}
-	if(r == MAX_ROUTES) return Advert(playerid, "Você não iniciou a rota. Para isso, use "AMARELO"/IniciarRota"BRANCO".");
-	if(pRoute[playerid][r][proutePoint] == BusRoute[pInfo[playerid][pBus]][r][brNum]+2) return Advert(playerid, "Você já passou por todos os pontos obrigatórios da rota. Use "AMARELO"/FinalizarRota"BRANCO".");
-	new j = 0;
-	for(; j < MAX_BUSINESS_VEHICLES; j++) {
-		if(!bInfo[pInfo[playerid][pBus]][bVehicles][j]) continue;
-		if(IsPlayerInVehicle(playerid, GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]))) break;
-	}
-	if(j == MAX_BUSINESS_VEHICLES) return SendClientMessage(playerid, -1, "Você deve estar conduzindo um ônibus da empresa.");
-	new vid = GetVehicleIDBySQL(bInfo[pInfo[playerid][pBus]][bVehicles][j]);
-	if(!IsVehicleInRangeOfPoint(vid, 3.0, vInfo[vid][vSpawn][0], vInfo[vid][vSpawn][1], vInfo[vid][vSpawn][2])) return SendClientMessage(playerid, -1, "Você deve estar no estacionamento deste ônibus.");
-	Info(playerid, "Rota cancelada.");
-	pInfo[playerid][pCP] = 0;
-	DisablePlayerCheckpoint(playerid);
-	pRoute[playerid][r][proutePoint] = 0;
-	return 1;
-}
-
 CMD:criarrota(playerid, params[]) {
 	if(strcmp(bInfo[BUSID_BUSBB][bOwner], pNick(playerid), false)) return SendClientMessage(playerid, -1, "Apenas o dono da empresa pode fazer isso.");
 	new n, r;
@@ -148,14 +60,14 @@ CMD:valorrota(playerid, params[]) {
 	if(sscanf(params, "ii", r, value)) return AdvertCMD(playerid, "/ValorRota [Número da Rota] [Valor por ponto]");
 	if(r < 1 || r > 3) return AdvertCMD(playerid, "/ValorRota [1-3] [Valor por ponto]");
 	if(!BusRoute[pInfo[playerid][pBus]][r-1][brNum]) return SendClientMessage(playerid, -1, "Essa rota não está criada. Para criá-la, use /CriarRota [Número da Rota] [Número de Paradas].");
-	if(value < 1 || value > 16) return SendClientMessage(playerid, -1, "Valor inválido (1-16).");
+	if(value < 1 || value > 300) return SendClientMessage(playerid, -1, "Valor inválido (1-16).");
 	new str[144];
 	format(str, 144, "Valor da rota atribuído para $%i por ponto (total: $%i)", value, value*BusRoute[pInfo[playerid][pBus]][r-1][brNum]);
 	Info(playerid, str);
-	BusRoute[pInfo[playerid][pBus]][r-1][brVal] = BusRoute[pInfo[playerid][pBus]][r-1][brNum]*value;
+	BusRoute[pInfo[playerid][pBus]][r-1][brVal] = value;
 
 	new query[150];
-	mysql_format(conn, query, 150, "UPDATE `busrouteinfo` SET `routevalue` = %i WHERE `sqlbus` = %i AND `numroute` = %i", value*BusRoute[pInfo[playerid][pBus]][r-1][brNum], bInfo[pInfo[playerid][pBus]][bSQL], r-1);
+	mysql_format(conn, query, 150, "UPDATE `busrouteinfo` SET `routevalue` = %i WHERE `sqlbus` = %i AND `numroute` = %i", value, bInfo[pInfo[playerid][pBus]][bSQL], r-1);
 	mysql_query(conn, query, false);
 	return 1;
 }
@@ -358,14 +270,14 @@ public OnPlayerDisconnect@bus(playerid) {
 				if(GetPlayerVehicleID(i) == pRoute[playerid][r][prouteVehicle]) {
 					Info(i, "O motorista da rota foi desconectado. Espero um momento até ele reconectar ou façam um RP alternativo.");
 					//if(i != pRoute[playerid][r][proutePartner]-1) {
-					Info(i, "Foi devolvido também o valor do ticket de passagem para você.");
-					new k = 0, str[20];
-					for(; k < MAX_PRODUTOS; k++) {
-						if(!strcmp(prInfo[pInfo[playerid][pBus]][k][prName], "Ticket", true) && !isnull(prInfo[pInfo[playerid][pBus]][k][prName])) break;
-					}
-					GivePlayerMoney(i, floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
-					format(str, 20, "~g~+$%i", floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
-					GameTextForPlayer(i, str, 1000, 1);
+					//Info(i, "Foi devolvido também o valor do ticket de passagem para você.");
+					//new k = 0, str[20];
+					//for(; k < MAX_PRODUTOS; k++) {
+					//	if(!strcmp(prInfo[pInfo[playerid][pBus]][k][prName], "Ticket", true) && !isnull(prInfo[pInfo[playerid][pBus]][k][prName])) break;
+					//}
+					//GivePlayerMoney(i, floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
+					//format(str, 20, "~g~+$%i", floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
+					//GameTextForPlayer(i, str, 1000, 1);
 					//}
 				}
 			}
