@@ -12,7 +12,7 @@
 #define AzulEscuro   			0x001BFFFF
 #define Lilas 					0x9E67FEFF
 #define LaranjaAvermelhado 		0xFF9900FF
-#define Cinza 					0x525053FF
+#define Cinza 					0x777777FF
 #define CinzaEsverdeado 		0x3C493EFF
 #define CinzaAzulado			0xB6EDEEFF
 #define Vinho 					0x4E1828FF
@@ -46,7 +46,7 @@
 #define AZULESCURO    			"{001BFF}"
 #define LILAS 					"{9E67FE}"
 #define LARANJAAVERMELHADO 		"{FF9900}"
-#define CINZA 					"{525053}"
+#define CINZA 					"{777777}"
 #define CINZAESVERDEADO 		"{3C493E}"
 #define CINZAAZULADO			"{B6EDEE}"
 #define VINHO 					"{4E1828}"

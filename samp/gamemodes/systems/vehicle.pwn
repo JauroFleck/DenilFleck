@@ -378,7 +378,7 @@ CMD:idv(playerid) {
 		for(new i = 0; i < MAX_VEHICLES; i++) {
 			if(!vInfo[i][vSQL]) continue;
 			format(str, 10, "IDV %i", i);
-			IDV[playerid][i] = CreatePlayer3DTextLabel(playerid, str, -1, 0.0, 0.0, 0.25, 20.0, INVALID_PLAYER_ID, i, 1);
+			IDV[playerid][i] = CreatePlayer3DTextLabel(playerid, str, -1, 0.0, 0.0, 0.0, 20.0, INVALID_PLAYER_ID, i, 1);
 		}
 		bIDV[playerid] = 1;
 	} else {
@@ -549,6 +549,40 @@ CMD:portamalas(playerid, params[]) {
 	return 1;
 }
 
+CMD:veridv(playerid) {
+	new Float:D, Float:d = 100.0, Float:P[6], vid;
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	for(new i = 0; i < MAX_VEHICLES; i++) {
+		if(!IsValidVehicle(i)) continue;
+		if(!vInfo[i][vSQL]) continue;
+		GetVehiclePos(i, P[3], P[4], P[5]);
+		D = VectorSize(P[0]-P[3], P[1]-P[4], P[2]-P[5]);
+		if(D > 10.0) continue;
+		if(D < d) {
+			d = D;
+			vid = i;
+		}
+	}
+	if(d == 100.0) {
+		Advert(playerid, "Você deve estar a pelo menos 10 metros do veículo para saber seu IDV.");
+	} else {
+		new str[144];
+		format(str, 144, "O veículo mais próximo de você tem IDV %03i e modelo %s.", vid, vModels[GetVehicleModel(vid)-400]);
+		Info(playerid, str);
+	}
+	return 1;
+}
+
+CMD:gasolina(playerid) {
+	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "É necessário estar conduzindo um veículo para isso.");
+	new vid = GetPlayerVehicleID(playerid);
+	if(!vInfo[vid][vSQL]) return Advert(playerid, "Veículo não registrado na base de dados.");
+	new str[144];
+	format(str, 144, "Status do tanque de gasolina: "AMARELO"%i/%iL", vInfo[vid][vGas], vGasCap[GetVehicleModel(vid)-400]);
+	Info(playerid, str);
+	return 1;
+}
+
 Dialog:GPSTransp(playerid, response, listitem, inputtext[]) {
 	if(!response) return 1;
 	new Float:GPSCoord[11][3] = {
@@ -609,13 +643,13 @@ Dialog:GPSPersonal(playerid, response, listitem, inputtext[]) {
 
 forward OnVehicleSpawn@veh(vehicleid);
 public OnVehicleSpawn@veh(vehicleid) {
-	SetVehicleParamsEx(vehicleid, 0, 0, 0, 1, 0, 0, 0);
 	if(vInfo[vehicleid][vSQL]) {
 		SetVehiclePos(vehicleid, vInfo[vehicleid][vSpawn][0], vInfo[vehicleid][vSpawn][1], vInfo[vehicleid][vSpawn][2]);
 		SetVehicleZAngle(vehicleid, vInfo[vehicleid][vSpawn][3]);
 		vInfo[vehicleid][vLock] = 1;
 		vInfo[vehicleid][vBoot] = 0;
 		vInfo[vehicleid][vLights] = 0;
+		SetVehicleParamsEx(vehicleid, 0, 0, 0, 1, 0, 0, 0);
 	}
 	return 1;
 }
@@ -644,10 +678,11 @@ forward Motor(vid, eng);
 public Motor(vid, eng) {
 	if(eng) {
 		if(vInfo[vid][vSQL]) {
-			if(!vInfo[vid][vGas]) {
+			if(vInfo[vid][vGas] <= 0) {
 				new Float:P[3];
 				GetVehiclePos(vid, P[0], P[1], P[2]);
 				Amb(P[0], P[1], P[2], "Falha do motor ao ser ligado.");
+				vInfo[vid][vGas] = 0;
 				return 1;
 			}
 		}
@@ -775,6 +810,9 @@ public OnPlayerKeyStateChange@vehicle(playerid, newkeys, oldkeys) {
 forward OnPlayerStateChange@vehicle(playerid, newstate, oldstate);
 public OnPlayerStateChange@vehicle(playerid, newstate, oldstate) {
 	if(newstate == PLAYER_STATE_DRIVER) {
+		new a, b, c, d, e, f, g, v = GetPlayerVehicleID(playerid);
+		GetVehicleParamsEx(v, a, b, c, d, e, f, g);
+		SetVehicleParamsEx(v, a, b, c, d, e, f, g);
 		for(new i = 0; i < sizeof(TDGas); i++) {
 			TextDrawShowForPlayer(playerid, TDGas[i]);
 		}

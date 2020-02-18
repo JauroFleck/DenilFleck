@@ -177,3 +177,622 @@ v0.3.DL-R1, (C)2005-2018 SA-MP Team
 [14:41:47] ---------------
 [14:41:47]   Loaded 0 filterscripts.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[22:20:01] filterscripts = ""  (string)
+[22:20:01] 
+[22:20:01] Server Plugins
+[22:20:01] --------------
+[22:20:01]  Loading plugin: sscanf
+[22:20:01] 
+
+[22:20:01]  ===============================
+
+[22:20:01]       sscanf plugin loaded.     
+
+[22:20:01]          Version:  2.8.3        
+
+[22:20:01]   (c) 2018 Alex "Y_Less" Cole  
+
+[22:20:01]  ===============================
+
+[22:20:01]   Loaded.
+[22:20:01]  Loading plugin: mysql
+[22:20:02]  >> plugin.mysql: R41-4 successfully loaded.
+[22:20:02]   Loaded.
+[22:20:02]  Loading plugin: streamer
+[22:20:02] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[22:20:02]   Loaded.
+[22:20:02]  Loaded 3 plugins.
+
+[22:20:02] 
+[22:20:02] Filterscripts
+[22:20:02] ---------------
+[22:20:02]   Loaded 0 filterscripts.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[01:17:18] filterscripts = ""  (string)
+[01:17:18] 
+[01:17:18] Server Plugins
+[01:17:18] --------------
+[01:17:18]  Loading plugin: sscanf
+[01:17:18] 
+
+[01:17:18]  ===============================
+
+[01:17:18]       sscanf plugin loaded.     
+
+[01:17:18]          Version:  2.8.3        
+
+[01:17:18]   (c) 2018 Alex "Y_Less" Cole  
+
+[01:17:18]  ===============================
+
+[01:17:18]   Loaded.
+[01:17:18]  Loading plugin: mysql
+[01:17:18]  >> plugin.mysql: R41-4 successfully loaded.
+[01:17:18]   Loaded.
+[01:17:18]  Loading plugin: streamer
+[01:17:18] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[01:17:18]   Loaded.
+[01:17:18]  Loaded 3 plugins.
+
+[01:17:18] 
+[01:17:18] Filterscripts
+[01:17:18] ---------------
+[01:17:18]   Loaded 0 filterscripts.
+
+[01:17:18] Number of vehicle models: 0
+[01:17:46] [connection] 127.0.0.1:52873 requests connection cookie.
+[01:17:47] [connection] incoming connection: 127.0.0.1:52873 id: 0
+[01:17:47] [join] John_Black has joined the server (0:127.0.0.1)
+[01:19:10] [part] John_Black has left the server (0:1)
+Console input: exit
+[01:38:51] --- Server Shutting Down.
+[01:38:51] 
+
+[01:38:51]  ===============================
+
+[01:38:51]      sscanf plugin unloaded.    
+
+[01:38:51]  ===============================
+
+[01:38:51] plugin.mysql: Unloading plugin...
+[01:38:51] plugin.mysql: Plugin unloaded.
+[01:38:51] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[02:10:01] filterscripts = ""  (string)
+[02:10:01] 
+[02:10:01] Server Plugins
+[02:10:01] --------------
+[02:10:01]  Loading plugin: sscanf
+[02:10:01] 
+
+[02:10:01]  ===============================
+
+[02:10:01]       sscanf plugin loaded.     
+
+[02:10:01]          Version:  2.8.3        
+
+[02:10:01]   (c) 2018 Alex "Y_Less" Cole  
+
+[02:10:01]  ===============================
+
+[02:10:01]   Loaded.
+[02:10:01]  Loading plugin: mysql
+[02:10:01]  >> plugin.mysql: R41-4 successfully loaded.
+[02:10:01]   Loaded.
+[02:10:01]  Loading plugin: streamer
+[02:10:01] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[02:10:01]   Loaded.
+[02:10:01]  Loaded 3 plugins.
+
+[02:10:01] 
+[02:10:01] Filterscripts
+[02:10:01] ---------------
+[02:10:01]   Loaded 0 filterscripts.
+
+[02:10:01] Number of vehicle models: 0
+[02:10:18] [connection] 127.0.0.1:55203 requests connection cookie.
+[02:10:19] [connection] incoming connection: 127.0.0.1:55203 id: 0
+[02:10:20] [join] John_Black has joined the server (0:127.0.0.1)
+[02:16:30] RCON (In-Game): Player #0 (John_Black) has logged in.
+[02:16:32] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:16:44] Number of vehicle models: 0
+[02:22:36] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:22:48] Number of vehicle models: 0
+[02:27:57] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:28:09] Number of vehicle models: 0
+[02:30:25] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:30:37] Number of vehicle models: 0
+[02:44:23] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:44:35] Number of vehicle models: 0
+[02:50:09] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:50:21] Number of vehicle models: 0
+[02:56:31] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:56:43] Number of vehicle models: 0
+[03:05:10] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:05:22] Number of vehicle models: 0
+[03:05:27] [chat] [John_Black]: Teste
+[03:05:36] [chat] [John_Black]: 123456789012345678901234567890123456789012345678901234567890
+[03:05:43] [chat] [John_Black]: 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:48] [chat] [John_Black]: 1234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:50] [chat] [John_Black]: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:55] [chat] [John_Black]: 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:57] [chat] [John_Black]: 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:58] [chat] [John_Black]: 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:05:59] [chat] [John_Black]: 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+[03:06:01] [chat] [John_Black]: 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
+[03:06:03] [chat] [John_Black]: 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
+[03:16:09] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:16:21] Number of vehicle models: 0
+[03:18:40] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:18:52] Number of vehicle models: 0
+[03:19:18] sscanf warning: String buffer overflow.
+[03:22:12] RCON (In-Game): Player [John_Black] sent command: gx
+[03:22:14] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:22:26] Number of vehicle models: 0
+[03:23:24] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:23:36] Number of vehicle models: 0
+[03:25:11] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:25:23] Number of vehicle models: 0
+[03:26:21] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:26:33] Number of vehicle models: 0
+[03:27:27] [part] John_Black has left the server (0:1)
+Console input: exit
+[03:31:59] --- Server Shutting Down.
+[03:31:59] 
+
+[03:31:59]  ===============================
+
+[03:31:59]      sscanf plugin unloaded.    
+
+[03:31:59]  ===============================
+
+[03:31:59] plugin.mysql: Unloading plugin...
+[03:31:59] plugin.mysql: Plugin unloaded.
+[03:31:59] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[03:54:25] filterscripts = ""  (string)
+[03:54:25] 
+[03:54:25] Server Plugins
+[03:54:25] --------------
+[03:54:25]  Loading plugin: sscanf
+[03:54:25] 
+
+[03:54:25]  ===============================
+
+[03:54:25]       sscanf plugin loaded.     
+
+[03:54:25]          Version:  2.8.3        
+
+[03:54:25]   (c) 2018 Alex "Y_Less" Cole  
+
+[03:54:25]  ===============================
+
+[03:54:25]   Loaded.
+[03:54:25]  Loading plugin: mysql
+[03:54:25]  >> plugin.mysql: R41-4 successfully loaded.
+[03:54:25]   Loaded.
+[03:54:25]  Loading plugin: streamer
+[03:54:25] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[03:54:25]   Loaded.
+[03:54:25]  Loaded 3 plugins.
+
+[03:54:25] 
+[03:54:25] Filterscripts
+[03:54:25] ---------------
+[03:54:25]   Loaded 0 filterscripts.
+
+[03:54:25] Number of vehicle models: 0
+[03:54:47] [connection] 127.0.0.1:62498 requests connection cookie.
+[03:54:48] [connection] incoming connection: 127.0.0.1:62498 id: 0
+[03:54:48] [join] John_Black has joined the server (0:127.0.0.1)
+[03:56:38] [chat] [John_Black]:  
+[03:57:21] RCON (In-Game): Player #0 (John_Black) has logged in.
+[03:57:22] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:57:34] Number of vehicle models: 0
+[03:58:57] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:59:09] Number of vehicle models: 0
+[04:02:22] RCON (In-Game): Player [John_Black] sent command: gmx
+[04:02:34] Number of vehicle models: 0
+[04:04:14] RCON (In-Game): Player [John_Black] sent command: gmx
+[04:04:26] Number of vehicle models: 0
+[04:05:36] RCON (In-Game): Player [John_Black] sent command: gmx
+[04:05:48] Number of vehicle models: 0
+[04:08:10] RCON (In-Game): Player [John_Black] sent command: gmx
+[04:08:22] Number of vehicle models: 0
+[04:17:17] RCON (In-Game): Player [John_Black] sent command: gmx
+[04:17:29] Number of vehicle models: 0
+[04:17:32] [part] John_Black has left the server (0:0)
+[04:17:49] [connection] 127.0.0.1:53912 requests connection cookie.
+[04:17:50] [connection] incoming connection: 127.0.0.1:53912 id: 0
+[04:17:50] [join] John_Black has joined the server (0:127.0.0.1)
+[04:17:55] [part] John_Black has left the server (0:1)
+[04:18:16] [connection] 127.0.0.1:50359 requests connection cookie.
+[04:18:17] [connection] incoming connection: 127.0.0.1:50359 id: 0
+[04:18:17] [join] John_McFly has joined the server (0:127.0.0.1)
+[04:18:21] [part] John_McFly has left the server (0:1)
+[04:18:59] [connection] 127.0.0.1:50581 requests connection cookie.
+[04:19:00] [connection] incoming connection: 127.0.0.1:50581 id: 0
+[04:19:01] [join] John_black has joined the server (0:127.0.0.1)
+[04:19:03] [part] John_black has left the server (0:1)
+[04:19:32] [connection] 127.0.0.1:49939 requests connection cookie.
+[04:19:33] [connection] incoming connection: 127.0.0.1:49939 id: 0
+[04:19:33] [join] John_Black_ has joined the server (0:127.0.0.1)
+[04:19:35] [part] John_Black_ has left the server (0:1)
+[04:20:00] [connection] 127.0.0.1:50159 requests connection cookie.
+[04:20:01] [connection] incoming connection: 127.0.0.1:50159 id: 0
+[04:20:01] [join] John__Black has joined the server (0:127.0.0.1)
+[04:20:02] [part] John__Black has left the server (0:1)
+[04:20:23] [connection] 127.0.0.1:56825 requests connection cookie.
+[04:20:24] [connection] incoming connection: 127.0.0.1:56825 id: 0
+[04:20:24] [join] John_Bla[ck has joined the server (0:127.0.0.1)
+[04:20:26] [part] John_Bla[ck has left the server (0:1)
+Console input: exit
+[04:38:01] --- Server Shutting Down.
+[04:38:01] 
+
+[04:38:01]  ===============================
+
+[04:38:01]      sscanf plugin unloaded.    
+
+[04:38:01]  ===============================
+
+[04:38:01] plugin.mysql: Unloading plugin...
+[04:38:01] plugin.mysql: Plugin unloaded.
+[04:38:01] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[20:57:41] 
+[20:57:41] Server Plugins
+[20:57:41] --------------
+[20:57:41]  Loading plugin: sscanf
+[20:57:41] 
+
+[20:57:41]  ===============================
+
+[20:57:41]       sscanf plugin loaded.     
+
+[20:57:41]          Version:  2.8.3        
+
+[20:57:41]   (c) 2018 Alex "Y_Less" Cole  
+
+[20:57:41]  ===============================
+
+[20:57:41]   Loaded.
+[20:57:41]  Loading plugin: mysql
+[20:57:41]  >> plugin.mysql: R41-4 successfully loaded.
+[20:57:41]   Loaded.
+[20:57:41]  Loading plugin: streamer
+[20:57:41] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[20:57:41]   Loaded.
+[20:57:41]  Loaded 3 plugins.
+
+[20:57:41] 
+[20:57:41] Filterscripts
+[20:57:41] ---------------
+[20:57:41]   Loading filterscript 'aview.amx'...
+[20:57:41] 
+         Animation Browser
+[20:57:41]               v1.0
+[20:57:41]              SoNik))
+
+[20:57:41]   Loaded 1 filterscripts.
+
+[20:57:41] Number of vehicle models: 0
+[20:57:59] [connection] 127.0.0.1:64531 requests connection cookie.
+[20:58:00] [connection] incoming connection: 127.0.0.1:64531 id: 0
+[20:58:01] [join] John_Black has joined the server (0:127.0.0.1)
+[21:40:54] [chat] [John_Black]: éisto
+[21:40:54] [part] John_Black has left the server (0:1)
+Console input: exit
+[01:04:37] --- Server Shutting Down.
+[01:04:37] 
+
+[01:04:37]  ===============================
+
+[01:04:37]      sscanf plugin unloaded.    
+
+[01:04:37]  ===============================
+
+[01:04:37] plugin.mysql: Unloading plugin...
+[01:04:37] plugin.mysql: Plugin unloaded.
+[01:04:37] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[04:33:08] 
+[04:33:08] Server Plugins
+[04:33:08] --------------
+[04:33:08]  Loading plugin: sscanf
+[04:33:08] 
+
+[04:33:08]  ===============================
+
+[04:33:08]       sscanf plugin loaded.     
+
+[04:33:08]          Version:  2.8.3        
+
+[04:33:08]   (c) 2018 Alex "Y_Less" Cole  
+
+[04:33:08]  ===============================
+
+[04:33:08]   Loaded.
+[04:33:08]  Loading plugin: mysql
+[04:33:08]  >> plugin.mysql: R41-4 successfully loaded.
+[04:33:08]   Loaded.
+[04:33:08]  Loading plugin: streamer
+[04:33:08] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[04:33:08]   Loaded.
+[04:33:08]  Loaded 3 plugins.
+
+[04:33:08] 
+[04:33:08] Filterscripts
+[04:33:08] ---------------
+[04:33:08]   Loading filterscript 'aview.amx'...
+[04:33:08] 
+         Animation Browser
+[04:33:08]               v1.0
+[04:33:08]              SoNik))
+
+[04:33:08]   Loaded 1 filterscripts.
+
+[04:33:08] Number of vehicle models: 0
+[04:33:26] [connection] 127.0.0.1:55140 requests connection cookie.
+[04:33:27] [connection] incoming connection: 127.0.0.1:55140 id: 0
+[04:33:27] [join] John_Black has joined the server (0:127.0.0.1)
+[04:33:30] [chat] [John_Black]: a
+[05:06:26] [part] John_Black has left the server (0:1)
+Console input: exit
+[06:25:03] --- Server Shutting Down.
+[06:25:03] 
+
+[06:25:03]  ===============================
+
+[06:25:03]      sscanf plugin unloaded.    
+
+[06:25:03]  ===============================
+
+[06:25:03] plugin.mysql: Unloading plugin...
+[06:25:03] plugin.mysql: Plugin unloaded.
+[06:25:03] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[02:13:50] filterscripts = ""  (string)
+[02:13:50] 
+[02:13:50] Server Plugins
+[02:13:50] --------------
+[02:13:50]  Loading plugin: sscanf
+[02:13:50] 
+
+[02:13:50]  ===============================
+
+[02:13:50]       sscanf plugin loaded.     
+
+[02:13:50]          Version:  2.8.3        
+
+[02:13:50]   (c) 2018 Alex "Y_Less" Cole  
+
+[02:13:50]  ===============================
+
+[02:13:50]   Loaded.
+[02:13:50]  Loading plugin: mysql
+[02:13:50]  >> plugin.mysql: R41-4 successfully loaded.
+[02:13:50]   Loaded.
+[02:13:50]  Loading plugin: streamer
+[02:13:50] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[02:13:50]   Loaded.
+[02:13:50]  Loaded 3 plugins.
+
+[02:13:50] 
+[02:13:50] Filterscripts
+[02:13:50] ---------------
+[02:13:50]   Loaded 0 filterscripts.
+
+[02:13:50] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[02:13:50] Carregando mapas...
+[02:13:50] Mapas carregados com sucesso.
+[02:13:50] Number of vehicle models: 1
+[02:14:29] [connection] 127.0.0.1:51896 requests connection cookie.
+[02:14:30] [connection] incoming connection: 127.0.0.1:51896 id: 0
+[02:14:30] [join] John_Black has joined the server (0:127.0.0.1)
+[02:15:42] RCON (In-Game): Player #0 (John_Black) has logged in.
+[02:15:43] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:15:55] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[02:15:55] Carregando mapas...
+[02:15:55] Mapas carregados com sucesso.
+[02:15:55] Number of vehicle models: 1
+[02:20:40] RCON (In-Game): Player [John_Black] sent command: gmx
+[02:20:52] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[02:20:52] Carregando mapas...
+[02:20:52] Mapas carregados com sucesso.
+[02:20:52] Number of vehicle models: 1
+[02:33:20] [chat] [John_Black]: teste
+[02:33:22] [chat] [John_Black]: aa
+[02:33:29] [chat] [John_Black]: a
+[03:05:50] [chat] [John_Black]: a
+[03:06:01] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:06:13] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[03:06:13] Carregando mapas...
+[03:06:13] Mapas carregados com sucesso.
+[03:06:13] Number of vehicle models: 1
+[03:06:20] [chat] [John_Black]: a
+[03:06:22] [chat] [John_Black]: mwiem
+[03:07:25] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:07:37] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[03:07:37] Carregando mapas...
+[03:07:37] Mapas carregados com sucesso.
+[03:07:37] Number of vehicle models: 1
+[03:07:47] [chat] [John_Black]: a
+[03:13:25] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:13:37] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[03:13:37] Carregando mapas...
+[03:13:37] Mapas carregados com sucesso.
+[03:13:37] Number of vehicle models: 1
+[03:17:16] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:17:28] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[03:17:28] Carregando mapas...
+[03:17:28] Mapas carregados com sucesso.
+[03:17:28] Number of vehicle models: 1
+[03:17:28] ORG SQL 001: San Andreas Sheriff Department - DONO: 097
+[03:20:43] RCON (In-Game): Player [John_Black] sent command: gmx
+[03:20:55] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[03:20:55] Carregando mapas...
+[03:20:55] Mapas carregados com sucesso.
+[03:20:55] Number of vehicle models: 1
+[03:20:55] ORG SQL 001: San Andreas Sheriff Department - DONO: 011
+[05:51:52] RCON (In-Game): Player [John_Black] sent command: gmx
+[05:52:04] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[05:52:04] Carregando mapas...
+[05:52:04] Mapas carregados com sucesso.
+[05:52:04] Number of vehicle models: 1
+[05:52:04] ORG SQL 001: San Andreas Sheriff Department - DONO: 011
+[05:52:17] [part] John_Black has left the server (0:0)
+[05:52:33] [connection] 127.0.0.1:61459 requests connection cookie.
+[05:52:34] [connection] incoming connection: 127.0.0.1:61459 id: 0
+[05:52:34] [join] John_Black has joined the server (0:127.0.0.1)
+[05:58:53] RCON (In-Game): Player #0 (John_Black) has logged in.
+[05:58:54] RCON (In-Game): Player [John_Black] sent command: gmx
+[05:59:06] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[05:59:06] Carregando mapas...
+[05:59:06] Mapas carregados com sucesso.
+[05:59:06] Number of vehicle models: 1
+[05:59:06] ORG SQL 001: San Andreas Sheriff Department - DONO: 011
+[06:01:40] RCON (In-Game): Player [John_Black] sent command: gmx
+[06:01:52] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[06:01:52] Carregando mapas...
+[06:01:52] Mapas carregados com sucesso.
+[06:01:52] Number of vehicle models: 1
+[06:01:52] ORG SQL 001: San Andreas Sheriff Department - DONO: 011
+[06:07:19] RCON (In-Game): Player [John_Black] sent command: gmx
+[06:07:31] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[06:07:31] Carregando mapas...
+[06:07:31] Mapas carregados com sucesso.
+[06:07:31] Number of vehicle models: 1
+[06:07:31] ORG 00 [001] RECONHECIDA
+[06:07:31] ORG 00 [001] RECONHECIDA
+[06:07:31] ORG 00 [001] RECONHECIDA
+[06:07:31] ORG 00 [001] RECONHECIDA
+[06:10:50] RCON (In-Game): Player [John_Black] sent command: gmx
+[06:11:02] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[06:11:02] Carregando mapas...
+[06:11:02] Mapas carregados com sucesso.
+[06:11:02] Number of vehicle models: 1
+[06:12:13] RCON (In-Game): Player [John_Black] sent command: gmx
+[06:12:25] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[06:12:25] Carregando mapas...
+[06:12:25] Mapas carregados com sucesso.
+[06:12:25] Number of vehicle models: 1
+[06:12:25] ORG 00 [001] RECONHECIDA
+[06:12:25] POSTO 00 [007] RECONHECIDO
+[06:12:25] ORG 00 [001] RECONHECIDA
+[06:12:25] POSTO 01 [008] RECONHECIDO
+[06:12:25] ORG 00 [001] RECONHECIDA
+[06:12:25] POSTO 02 [009] RECONHECIDO
+[06:12:25] ORG 00 [001] RECONHECIDA
+[06:12:25] POSTO 03 [010] RECONHECIDO
+[06:13:35] [death] John_Black died 255
+[06:15:55] [part] John_Black has left the server (0:2)
+[06:15:56] --- Server Shutting Down.
+[06:15:56] 
+
+[06:15:56]  ===============================
+
+[06:15:56]      sscanf plugin unloaded.    
+
+[06:15:56]  ===============================
+
+[06:15:56] plugin.mysql: Unloading plugin...
+[06:15:56] plugin.mysql: Plugin unloaded.
+[06:15:56] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+

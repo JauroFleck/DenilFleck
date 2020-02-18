@@ -45,8 +45,26 @@ CMD:venderveiculo(playerid, params[]) {
 	return 1;
 }
 
+CMD:tabelaconc(playerid) {
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_CONC) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
+	if(!IsPlayerInRangeOfPoint(playerid, 2.5, -1938.9280,262.4574,1190.8627)) return Advert(playerid, "Você só pode fazer isso na mesa de negociação.");
+	new str[400];
+	format(str, 400, "Modelo\tQuantia\t"VERDEMONEY"Preço\n");
+	for(new i = 0; i < MAX_CONC_VMODELS; i++) {
+		if(prInfo[BUSID_CONC][i][prModel]) {
+			format(str, 400, "%s%s\t%i\t"VERDEMONEY"$%.0f\n", str, vModels[prInfo[BUSID_CONC][i][prModel]-400], prInfo[BUSID_CONC][i][prQuant], prInfo[BUSID_CONC][i][prPrice]);
+		} else {
+			format(str, 400, "%s-\t-\t-\n", str);
+		}
+	}
+	Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_LIST, "Tabela", str, "Fechar", "");
+	return 1;
+}
+
 CMD:guardarveiculo(playerid) {
-	if(strcmp(bInfo[BUSID_CONC][bOwner], pNick(playerid), false)) return Advert(playerid, "Apenas o dono da concessionária tem permissão para isso.");
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_CONC) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
 	if(!IsPlayerInRangeOfPoint(playerid, 2.5, 797.4374,-617.7095,16.2241)) return Advert(playerid, "Você só pode fazer isso na garagem principal da concessionária.");
 	new v = GetPlayerVehicleID(playerid);
 	if(!v) return Advert(playerid, "Você deve estar dentro de um veículo da sua concessionária.");
@@ -84,10 +102,10 @@ CMD:guardarveiculo(playerid) {
 }
 
 CMD:pegarveiculo(playerid) {
-	if(strcmp(bInfo[BUSID_CONC][bOwner], pNick(playerid), false)) return Advert(playerid, "Apenas o dono da concessionária tem permissão para isso.");
+	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
+	if(bInfo[pInfo[playerid][pBus]][bType] != BUSINESS_CONC) return Advert(playerid, "Sua empresa não tem permissão para uso desse comando.");
 	if(!IsPlayerInRangeOfPoint(playerid, 2.5, 797.4374,-617.7095,16.2241)) return Advert(playerid, "Você só pode fazer isso na garagem principal da concessionária.");
 	new str[400];
-	format(str, 400, "Modelo\t\tQuantia\n");
 	for(new i = 0; i < MAX_CONC_VMODELS; i++) {
 		if(prInfo[BUSID_CONC][i][prModel]) {
 			format(str, 400, "%s%s\t\t%i\n", str, vModels[prInfo[BUSID_CONC][i][prModel]-400], prInfo[BUSID_CONC][i][prQuant]);
@@ -95,7 +113,7 @@ CMD:pegarveiculo(playerid) {
 			format(str, 400, "%s-\t\t-\n", str);
 		}
 	}
-	Dialog_Show(playerid, "CatchVehicle", DIALOG_STYLE_TABLIST_HEADERS, "Receber Veículo", str, "Solicitar", "Cancelar");
+	Dialog_Show(playerid, "CatchVehicle", DIALOG_STYLE_LIST, "Receber Veículo", str, "Solicitar", "Cancelar");
 	return 1;
 }
 

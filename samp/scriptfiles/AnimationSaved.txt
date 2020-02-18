@@ -1,2 +1,40 @@
 
-ApplyAnimation(playerid, "FOOD", "FF_SIT_IN", 4.1, false, false, false, true, 0, false); // sit4
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKA", 4.1, false, false, false, false, 0, false); // papo1
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKB", 4.1, false, false, false, false, 0, false); // papo2
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKC", 4.1, false, false, false, false, 0, false); // papo3
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKD", 4.1, false, false, false, false, 0, false); // papo4
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKE", 4.1, false, false, false, false, 0, false); // papo5
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKF", 4.1, false, false, false, false, 0, false); // papo6
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKG", 4.1, false, false, false, false, 0, false); // papo7
+ApplyAnimation(playerid, "GANGS", "PRTIAL_GNGTLKH", 4.1, false, false, false, false, 0, false); // papo8
+ApplyAnimation(playerid, "GANGS", "SMKCIG_PRTL", 4.1, false, false, false, false, 0, false); // smoke
+ApplyAnimation(playerid, "FIGHT_D", "FIGHTD_G", 4.1, false, true, true, false, 0, false); // chute1
+ApplyAnimation(playerid, "FIGHT_E", "HIT_FIGHTKICK_B", 4.1, false, true, true, true, 0, false); // cair1
+ApplyAnimation(playerid, "FOOD", "FF_SIT_IN_L", 4.1, false, false, false, true, 0, false); // sentar4
+ApplyAnimation(playerid, "FOOD", "FF_SIT_IN_R", 4.1, false, false, false, true, 0, false); // sentar5
+ApplyAnimation(playerid, "FOOD", "FF_SIT_LOOP", 4.1, false, false, false, true, 0, false); // sentar6
+ApplyAnimation(playerid, "FOOD", "FF_SIT_OUT_180", 4.1, false, false, false, false, 0, false); // levantar3
+ApplyAnimation(playerid, "FOOD", "FF_SIT_OUT_L_180", 4.1, false, false, false, false, 0, false); // levantar5
+ApplyAnimation(playerid, "FOOD", "FF_SIT_OUT_R_180", 4.1, false, false, false, false, 0, false); // levantar6
+ApplyAnimation(playerid, "PED", "COWER", 4.1, false, false, false, true, 0, false); // agachar
+ApplyAnimation(playerid, "PED", "ENDCHAT_03", 4.1, false, false, false, false, 0, false); // tchau
+ApplyAnimation(playerid, "PED", "FLOOR_HIT", 4.1, false, false, false, true, 0, false); // cair 1
+ApplyAnimation(playerid, "PED", "FLOOR_HIT_F", 4.1, false, false, false, true, 0, false); // cair 2
+ApplyAnimation(playerid, "PED", "FUCKU", 4.1, false, false, false, false, 0, false); // xingar
+ApplyAnimation(playerid, "PED", "GETUP", 4.1, false, false, false, false, 0, false); // levantar 1
+ApplyAnimation(playerid, "PED", "GETUP_FRONT", 4.1, false, false, false, false, 0, false); // levantar 2
+ApplyAnimation(playerid, "PED", "HANDSUP", 4.1, false, false, false, true, 0, false); // handsup
+ApplyAnimation(playerid, "PED", "IDLE_TAXI", 4.1, false, false, false, false, 0, false); // taxi
+ApplyAnimation(playerid, "PED", "IDLE_TIRED", 4.1, true, false, false, false, 0, false); // cansado
+ApplyAnimation(playerid, "PED", "PHONE_IN", 4.1, false, false, false, true, 0, false); // phonein
+ApplyAnimation(playerid, "PED", "PHONE_OUT", 4.1, false, false, false, false, 0, false); // phoneout
+ApplyAnimation(playerid, "PED", "ROADCROSS", 4.1, false, false, false, false, 0, false); // olhar
+ApplyAnimation(playerid, "KISSING", "GFWAVE2", 4.1, false, false, false, false, 0, false); // acenar
+ApplyAnimation(playerid, "GANGS", "HNDSHKAA", 4.1, false, false, false, false, 0, false); // cumprimento1
+ApplyAnimation(playerid, "GANGS", "HNDSHKBA", 4.1, false, false, false, false, 0, false); // cumprimento2
+ApplyAnimation(playerid, "GANGS", "HNDSHKCA", 4.1, false, false, false, false, 0, false); // cumprimento3
+ApplyAnimation(playerid, "GANGS", "HNDSHKDA", 4.1, false, false, false, false, 0, false); // cumprimento4
+ApplyAnimation(playerid, "GANGS", "HNDSHKEA", 4.1, false, false, false, false, 0, false); // cumprimento5
+ApplyAnimation(playerid, "GANGS", "HNDSHKFA", 4.1, false, false, false, false, 0, false); // cumprimento6
+ApplyAnimation(playerid, "GANGS", "LEANIDLE", 4.1, false, false, false, true, 0, false); // encostar
+ApplyAnimation(playerid, "GANGS", "LEANOUT", 4.1, false, false, false, false, 0, false); // desencostar

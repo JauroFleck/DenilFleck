@@ -247,17 +247,17 @@ public OnPlayerConnect@bus(playerid) {
 	RemoveBuildingForPlayer(playerid, 1721, 1501.0781, 1307.0156, 1092.2813, 0.25);
 	RemoveBuildingForPlayer(playerid, 1721, 1501.0781, 1307.6719, 1092.2813, 0.25);
 
-	RemoveBuildingForPlayer(playerid, 13063, 321.8516, -34.5234, 4.8984, 0.25);
-	RemoveBuildingForPlayer(playerid, 1294, 329.7813, -64.8047, 5.0313, 0.25);
-	RemoveBuildingForPlayer(playerid, 1468, 307.8984, -59.1484, 3.8984, 0.25);
-	RemoveBuildingForPlayer(playerid, 1468, 307.8984, -53.8281, 3.8984, 0.25);
-	RemoveBuildingForPlayer(playerid, 1468, 307.8984, -48.5000, 3.8984, 0.25);
-	RemoveBuildingForPlayer(playerid, 1468, 307.8984, -43.1797, 3.8984, 0.25);
-	RemoveBuildingForPlayer(playerid, 1440, 308.7891, -54.6875, 1.0625, 0.25);
-	RemoveBuildingForPlayer(playerid, 1684, 317.6953, -42.2344, 2.0156, 0.25);
-	RemoveBuildingForPlayer(playerid, 13436, 252.3281, -28.8906, 9.1094, 0.25);
-	RemoveBuildingForPlayer(playerid, 705, 294.4453, -0.8516, 1.3438, 0.25);
-	RemoveBuildingForPlayer(playerid, 13061, 321.8516, -34.5234, 4.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 13063, 321.8516, -34.5234, 4.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1294, 329.7813, -64.8047, 5.0313, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1468, 307.8984, -59.1484, 3.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1468, 307.8984, -53.8281, 3.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1468, 307.8984, -48.5000, 3.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1468, 307.8984, -43.1797, 3.8984, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1440, 308.7891, -54.6875, 1.0625, 0.25);
+	// RemoveBuildingForPlayer(playerid, 1684, 317.6953, -42.2344, 2.0156, 0.25);
+	// RemoveBuildingForPlayer(playerid, 13436, 252.3281, -28.8906, 9.1094, 0.25);
+	// RemoveBuildingForPlayer(playerid, 705, 294.4453, -0.8516, 1.3438, 0.25);
+	// RemoveBuildingForPlayer(playerid, 13061, 321.8516, -34.5234, 4.8984, 0.25);
 	return 1;
 }
 
@@ -269,16 +269,16 @@ public OnPlayerDisconnect@bus(playerid) {
 				if(!IsPlayerConnected(i)) continue;
 				if(GetPlayerVehicleID(i) == pRoute[playerid][r][prouteVehicle]) {
 					Info(i, "O motorista da rota foi desconectado. Espero um momento até ele reconectar ou façam um RP alternativo.");
-					//if(i != pRoute[playerid][r][proutePartner]-1) {
-					//Info(i, "Foi devolvido também o valor do ticket de passagem para você.");
-					//new k = 0, str[20];
-					//for(; k < MAX_PRODUTOS; k++) {
-					//	if(!strcmp(prInfo[pInfo[playerid][pBus]][k][prName], "Ticket", true) && !isnull(prInfo[pInfo[playerid][pBus]][k][prName])) break;
-					//}
-					//GivePlayerMoney(i, floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
-					//format(str, 20, "~g~+$%i", floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
-					//GameTextForPlayer(i, str, 1000, 1);
-					//}
+					/*if(i != pRoute[playerid][r][proutePartner]-1) {
+						Info(i, "Foi devolvido também o valor do ticket de passagem para você.");
+						new k = 0, str[20];
+						for(; k < MAX_PRODUTOS; k++) {
+							if(!strcmp(prInfo[pInfo[playerid][pBus]][k][prName], "Ticket", true) && !isnull(prInfo[pInfo[playerid][pBus]][k][prName])) break;
+						}
+						GivePlayerMoney(i, floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
+						format(str, 20, "~g~+$%i", floatround(prInfo[pInfo[playerid][pBus]][k][prPrice]));
+						GameTextForPlayer(i, str, 1000, 1);
+					}*/
 				}
 			}
 			/*if(IsPlayerConnected(pRoute[playerid][r][proutePartner]-1)) {
@@ -293,7 +293,7 @@ public OnPlayerDisconnect@bus(playerid) {
 				pRoute[playerid][r][proutePoint] = 0;
 				pRoute[playerid][r][proutePartner] = 0;
 				pRoute[playerid][r][prouteVehicle] = 0;
-			} else {*/
+			}*/
 			for(new i = 0; i < MAX_PLAYERS; i++) {
 				if(!IsPlayerConnected(i)) continue;
 				if(GetPlayerVehicleID(i) == pRoute[playerid][r][prouteVehicle]) {
@@ -304,7 +304,6 @@ public OnPlayerDisconnect@bus(playerid) {
 			pRoute[playerid][r][proutePoint] = 0;
 			pRoute[playerid][r][prouteVehicle] = 0;
 			//pRoute[playerid][r][proutePartner] = 0;
-			//}
 			break;
 		}
 		/*for(new i = 0; i < MAX_PLAYERS; i++) {

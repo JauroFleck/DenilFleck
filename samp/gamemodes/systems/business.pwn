@@ -8,6 +8,8 @@
 #define BUSINESS_TRANSP		7
 #define BUSINESS_IMOB		8
 #define BUSINESS_GARBAGE	9
+#define BUSINESS_BAR		10
+#define BUSINESS_LSHOP		11
 
 #define BUSID_BUSBB			0
 #define BUSID_PGMG			1
@@ -20,6 +22,8 @@
 #define BUSID_IMOB			8
 #define BUSID_PGFC			9
 #define BUSID_GARBAGE		10
+#define BUSID_WPUMP			11
+#define BUSID_LSHOP			12
 
 enum CARGOS_INFO {
 	cSQL,
@@ -58,6 +62,36 @@ new prInfo[MAX_BUSINESS][MAX_PRODUTOS][PRODUTOS_INFO];
 new eInfo[MAX_BUSINESS][MAX_ENTRADAS][ENTRADAS_INFO];
 new TDMParams[MAX_PLAYERS][70][TDMP_INFO];
 new GerenciandoEmpresa[MAX_PLAYERS][GE_INFO];
+
+CMD:trancaremp(playerid) {
+	if(IsPlayerInRangeOfPoint(playerid, 1.0, 254.6243,-60.9710,1.5703) || IsPlayerInRangeOfPoint(playerid, 1.0, 254.4281,-62.2512,1.5781)) {
+		if(pInfo[playerid][pBus] != BUSID_LSHOP) return Advert(playerid, "Apenas funcionários dessa empresa tem a chave da porta.");
+		if(bInfo[BUSID_LSHOP][bTrancas][0]) return Advert(playerid, "Essa porta já está trancada.");
+		bInfo[BUSID_LSHOP][bTrancas][0] = 1;
+		Act(playerid, "chaveia a porta, trancando-a.");
+	} else if(IsPlayerInRangeOfPoint(playerid, 1.0, 244.1492,-52.7594,1.5703) || IsPlayerInRangeOfPoint(playerid, 1.0, 244.1996,-51.3659,1.5781)) {
+		if(pInfo[playerid][pBus] != BUSID_LSHOP) return Advert(playerid, "Apenas funcionários dessa empresa tem a chave da porta.");
+		if(bInfo[BUSID_LSHOP][bTrancas][1]) return Advert(playerid, "Essa porta já está trancada.");
+		bInfo[BUSID_LSHOP][bTrancas][1] = 1;
+		Act(playerid, "chaveia a porta, trancando-a.");
+	}
+	return 1;
+}
+
+CMD:destrancaremp(playerid) {
+	if(IsPlayerInRangeOfPoint(playerid, 1.0, 254.6243,-60.9710,1.5703) || IsPlayerInRangeOfPoint(playerid, 1.0, 254.4281,-62.2512,1.5781)) {
+		if(pInfo[playerid][pBus] != BUSID_LSHOP) return Advert(playerid, "Apenas funcionários dessa empresa tem a chave da porta.");
+		if(!bInfo[BUSID_LSHOP][bTrancas][0]) return Advert(playerid, "Essa porta já está destrancada.");
+		bInfo[BUSID_LSHOP][bTrancas][0] = 0;
+		Act(playerid, "chaveia a porta, destrancando-a.");
+	} else if(IsPlayerInRangeOfPoint(playerid, 1.0, 244.1492,-52.7594,1.5703) || IsPlayerInRangeOfPoint(playerid, 1.0, 244.1996,-51.3659,1.5781)) {
+		if(pInfo[playerid][pBus] != BUSID_LSHOP) return Advert(playerid, "Apenas funcionários dessa empresa tem a chave da porta.");
+		if(!bInfo[BUSID_LSHOP][bTrancas][1]) return Advert(playerid, "Essa porta já está destrancada.");
+		bInfo[BUSID_LSHOP][bTrancas][1] = 0;
+		Act(playerid, "chaveia a porta, destrancando-a.");
+	}
+	return 1;
+}
 
 CMD:servico(playerid) {
 	if(pInfo[playerid][pBus] == -1) return Advert(playerid, "Você é desempregado.");
@@ -240,13 +274,13 @@ CMD:precoproduto(playerid, params[]) { // /PrecoProduto [Nome_do_Produto] [Novo 
 	return 1;
 }
 
-CMD:adicionarveiculo(playerid, params[]) { // /AdicionarVeiculo [Empresa ID]
-	if(pInfo[playerid][pAdmin] < Senior) return SendClientMessage(playerid, -1, "Nananinanão (:");
+CMD:setvbusiness(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um veículo para usar este comando corretamente.");
 	new vid = GetPlayerVehicleID(playerid);
 	if(vInfo[vid][vModel] == 0) return SendClientMessage(playerid, -1, "Veículo não atribuído à base de dados.");
 	new eid;
-	if(sscanf(params, "i", eid)) return SendClientMessage(playerid, -1, "Use /AdicionarVeiculo [Empresa ID].");
+	if(sscanf(params, "i", eid)) return SendClientMessage(playerid, -1, "Use /SetvBusiness [Empresa ID].");
 	if(eid < 0 || eid >= MAX_BUSINESS) return SendClientMessage(playerid, -1, "Ta querendo crashar o server?");
 	new i = 0;
 	while(i < MAX_BUSINESS_VEHICLES) {
@@ -269,8 +303,8 @@ CMD:adicionarveiculo(playerid, params[]) { // /AdicionarVeiculo [Empresa ID]
 	return 1;
 }
 
-CMD:removerveiculo(playerid) {
-	if(pInfo[playerid][pAdmin] < Senior) return SendClientMessage(playerid, -1, "Nananinanão (:");
+CMD:remvbusiness(playerid) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "Entre em um veículo para usar este comando corretamente.");
 	new vid = GetPlayerVehicleID(playerid);
 	if(!vInfo[vid][vSQL]) return SendClientMessage(playerid, -1, "Veículo não atribuído à base de dados.");
@@ -393,9 +427,9 @@ CMD:pagarsalario(playerid, params[]) { // /PagarSalario [Nome_do_Cargo]
 }
 
 CMD:empresas(playerid) {
-	new str[600];
+	new str[700];
 	for(new i = 0; i < MAX_BUSINESS; i++) {
-		if(bInfo[i][bSQL]) { format(str, 600, "%s\n[%02i] %s - Dono: %s", str, i, bInfo[i][bName], bInfo[i][bOwner]); }
+		if(bInfo[i][bSQL]) { format(str, 700, "%s\n[%02i] %s - Dono: %s", str, i, bInfo[i][bName], bInfo[i][bOwner]); }
 	}
 	if(isnull(str)) return Info(playerid, "Não existem empresas criadas.");
 	Dialog_Show(playerid, "Dialog_None", DIALOG_STYLE_MSGBOX, "{FFFFFF}Empresas", str, "Fechar", "");
@@ -418,10 +452,10 @@ CMD:setprof(playerid, params[]) {
 	return 1;
 }
 
-CMD:setdono(playerid, params[]) {
+CMD:setbus(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
 	new bid, id;
-	if(sscanf(params, "ii", bid, id)) return AdvertCMD(playerid, "/SetDono [ID da empresa] [ID do player]");
+	if(sscanf(params, "ii", bid, id)) return AdvertCMD(playerid, "/SetBus [ID da empresa] [ID do player]");
 	if(bid < 0 || bid >= MAX_BUSINESS) return Advert(playerid, "Empresa inválida.");
 	if(!bInfo[bid][bSQL]) return Advert(playerid, "Empresa inexistente.");
 	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
@@ -498,6 +532,8 @@ public LoadBusinessData() {
 		for(new j = 0; j < MAX_ENTRADAS; j++) {
 			format(str, 10, "entrada%i", j);
 			cache_get_value_name_int(i, str, bInfo[i][bEntradas][j]);
+			format(str, 10, "tranca%i", j);
+			cache_get_value_name_int(i, str, bInfo[i][bTrancas][j]);
 		}
 
 	}
@@ -544,16 +580,11 @@ public LoadCargoData() {
 		new y = 0, x = 0;
 
 		cache_get_value_index_int(i, 0, x);
-		printf("Cargo SQL %03i detectado. Row: %02i", x, i);
 
 		for(new j = 0; j < MAX_BUSINESS; j++) {
-			if(!bInfo[j][bSQL]) {
-				printf("Pulando empresa %02i", j);
-				continue;
-			}
+			if(!bInfo[j][bSQL]) continue;
 			for(new k = 0; k < MAX_CARGOS; k++) {
 				if(bInfo[j][bCargos][k] == x) {
-					printf("Atribuindo cargo SQL %03i a empresa ID %02i [SLOT %02i]", x, j, k);
 					cInfo[j][k][cSQL] = x;
 					cache_get_value_name(i, "name", str);
 					if(strcmp(str, "NULL", true)) { format(cInfo[j][k][cName], 25, "%s", str); }

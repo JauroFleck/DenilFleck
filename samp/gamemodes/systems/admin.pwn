@@ -85,6 +85,22 @@ CMD:ajudar(playerid, params[]) {
 
 // Ajudante +
 
+CMD:sskin(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
+	new id, skinid;
+	if(sscanf(params, "ii", id, skinid)) return AdvertCMD(playerid, "/sSkin [ID] [Skin]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(skinid < 0 || skinid > 311) return Advert(playerid, "Skin inválida.");
+	new str[144];
+	format(str, 144, "O %s setou a skin %i para você.", Staff(playerid), skinid);
+	Info(id, str);
+	format(str, 144, "Você setou a skin %i para o player %s.", skinid, pName(id));
+	Info(playerid, str);
+	SetPlayerSkin(id, skinid);
+	pInfo[id][pSkin] = skinid;
+	return 1;
+}
+
 CMD:ir(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
 	new id, Float:Front, Float:Upper, Float:Side;
@@ -171,7 +187,85 @@ CMD:r(playerid) {
 	return 1;
 }
 
+CMD:specoff(playerid) {
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
+	if(!pInfo[playerid][pSpec]) return Advert(playerid, "Você não está espiando ninguém.");
+	TogglePlayerSpectating(playerid, false);
+	return 1;
+}
+
+CMD:spec(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
+	if(pInfo[playerid][pSpec]) return Advert(playerid, "Antes você deve usar "AMARELO"/SpecOFF"BRANCO".");
+	new id, vid;
+	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Spec [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(pInfo[id][pLogged] != 1) return Advert(playerid, "Usuário na tela de registro/login.");
+	if(pInfo[id][pAdmin] >= Senior) return Advert(playerid, "Você não pode espiar Sênior nem Fundador.");
+	if(playerid == id) return Advert(playerid, "Para né fofa.");
+	if(pInfo[id][pSpec]) return Advert(playerid, "Você não pode espiar alguém que está espiando outra pessoa.");
+	vid = GetPlayerVehicleID(id);
+	GetPlayerPos(playerid, pInfo[playerid][pVoltar][0], pInfo[playerid][pVoltar][1], pInfo[playerid][pVoltar][2]);
+	pInfo[playerid][pSkin] = GetPlayerSkin(playerid);
+	pInfo[playerid][pVoltarInt] = GetPlayerInterior(playerid);
+	pInfo[playerid][pVoltarVW] = GetPlayerVirtualWorld(playerid);
+	SetPlayerInterior(playerid, GetPlayerInterior(id));
+	SetPlayerVirtualWorld(playerid, GetPlayerVirtualWorld(id));
+	TogglePlayerSpectating(playerid, true);
+	pInfo[playerid][pSpec] = id+1;
+	new str[144];
+	format(str, 144, "Você agora está espiando o player %s.", pName(id));
+	Info(playerid, str);
+	Info(playerid, "Para interromper o spec, use "AMARELO"/SpecOFF"BRANCO".");
+	if(vid) { PlayerSpectateVehicle(playerid, vid); } else { PlayerSpectatePlayer(playerid, id); }
+	return 1;
+}
+
 // Fiscalizador +
+
+CMD:gip(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new id;
+	if(sscanf(params, "u", id)) return AdvertCMD(playerid, "/gIP [ID/Nickname]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "Usuário offline.");
+	if(pInfo[id][pAdmin] >= pInfo[playerid][pAdmin]) return Advert(playerid, "Informação confidencial.");
+	new ip[16], str[144];
+	GetPlayerIp(id, ip, 16);
+	format(str, 144, "O player [%03i] %s possui o seguinte IPv4: "AMARELO"%s", id, pNick(id), ip);
+	Info(playerid, str);
+	return 1;
+}
+
+CMD:banip(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new ip[16];
+	if(sscanf(params, "s[16]", ip)) return AdvertCMD(playerid, "/BanIP [IP]");
+	new query[150];
+	mysql_format(conn, query, 150, "INSERT INTO kickbans (time, IP, staff, exec) VALUES (-1, '%s', '%s', %i)", ip, pNick(playerid), gettime());
+	mysql_query(conn, query, false);
+	format(query, 150, "IP banido: %s", ip);
+	Info(playerid, query);
+	return 1;
+}
+
+CMD:desbanip(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
+	new ip[16], ban = 0;
+	if(sscanf(params, "s[16]", ip)) return AdvertCMD(playerid, "/DesbanIP [IP]");
+	new query[150], Cache:result, r;
+	mysql_format(conn, query, 150, "SELECT IP FROM kickbans WHERE IP = '%s' AND time = -1", ip);
+	result = mysql_query(conn, query, true);
+	cache_get_row_count(r);
+	if(!r) { Advert(playerid, "Esse IP não está banido."); } else { ban = 1; }
+	cache_delete(result);
+	if(ban) {
+		mysql_format(conn, query, 150, "UPDATE kickbans SET time = -2 WHERE IP = '%s'", ip);
+		mysql_query(conn, query, false);
+		format(query, 50, "IP desbanido: %s", ip);
+		Info(playerid, query);
+	}
+	return 1;
+}
 
 CMD:respawn(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Administrador) return 1;
@@ -251,40 +345,6 @@ CMD:descongelar(playerid, params[]) {
 	format(str, 144, "Você foi descongelado pelo %s.", Staff(playerid));
 	Advert(id, str);
 	TogglePlayerControllable(id, true);
-	return 1;
-}
-
-CMD:specoff(playerid) {
-	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
-	if(!pInfo[playerid][pSpec]) return Advert(playerid, "Você não está espiando ninguém.");
-	TogglePlayerSpectating(playerid, false);
-	return 1;
-}
-
-CMD:spec(playerid, params[]) {
-	if(pInfo[playerid][pAdmin] < Fiscalizador) return 1;
-	if(pInfo[playerid][pSpec]) return Advert(playerid, "Antes você deve usar "AMARELO"/SpecOFF"BRANCO".");
-	new id, vid;
-	if(sscanf(params, "i", id)) return AdvertCMD(playerid, "/Spec [ID]");
-	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
-	if(pInfo[id][pLogged] != 1) return Advert(playerid, "Usuário na tela de registro/login.");
-	if(pInfo[id][pAdmin] >= Senior) return Advert(playerid, "Você não pode espiar Sênior nem Fundador.");
-	if(playerid == id) return Advert(playerid, "Para né fofa.");
-	if(pInfo[id][pSpec]) return Advert(playerid, "Você não pode espiar alguém que está espiando outra pessoa.");
-	vid = GetPlayerVehicleID(id);
-	GetPlayerPos(playerid, pInfo[playerid][pVoltar][0], pInfo[playerid][pVoltar][1], pInfo[playerid][pVoltar][2]);
-	pInfo[playerid][pSkin] = GetPlayerSkin(playerid);
-	pInfo[playerid][pVoltarInt] = GetPlayerInterior(playerid);
-	pInfo[playerid][pVoltarVW] = GetPlayerVirtualWorld(playerid);
-	SetPlayerInterior(playerid, GetPlayerInterior(id));
-	SetPlayerVirtualWorld(playerid, GetPlayerVirtualWorld(id));
-	TogglePlayerSpectating(playerid, true);
-	pInfo[playerid][pSpec] = id+1;
-	new str[144];
-	format(str, 144, "Você agora está espiando o player %s.", pName(id));
-	Info(playerid, str);
-	Info(playerid, "Para interromper o spec, use "AMARELO"/SpecOFF"BRANCO".");
-	if(vid) { PlayerSpectateVehicle(playerid, vid); } else { PlayerSpectatePlayer(playerid, id); }
 	return 1;
 }
 
@@ -536,22 +596,6 @@ CMD:sinterior(playerid, params[]) {
 	return 1;
 }
 
-CMD:sskin(playerid, params[]) {
-	if(pInfo[playerid][pAdmin] < Administrador) return 1;
-	new id, skinid;
-	if(sscanf(params, "ii", id, skinid)) return AdvertCMD(playerid, "/sSkin [ID] [Skin]");
-	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
-	if(skinid < 0 || skinid > 311) return Advert(playerid, "Skin inválida.");
-	new str[144];
-	format(str, 144, "O %s setou a skin %i para você.", Staff(playerid), skinid);
-	Info(id, str);
-	format(str, 144, "Você setou a skin %i para o player %s.", skinid, pName(id));
-	Info(playerid, str);
-	SetPlayerSkin(id, skinid);
-	pInfo[id][pSkin] = skinid;
-	return 1;
-}
-
 CMD:svida(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Administrador) return 1;
 	new id, Float:health;
@@ -640,6 +684,14 @@ CMD:irpos(playerid, params[]) {
 }
 
 // Sênior +
+
+CMD:test(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new m, b, Float:P[6];
+	if(sscanf(params, "iiffffff", m, b, P[0], P[1], P[2], P[3], P[4], P[5])) return AdvertCMD(playerid, "/Test [modelid] [bone] [X] [Y] [Z] [rX] [rY] [rZ]");
+	SetPlayerAttachedObject(playerid, 5, m, b, P[0], P[1], P[2], P[3], P[4], P[5]);
+	return 1;
+}
 
 CMD:msghud(playerid) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
@@ -964,7 +1016,7 @@ Dialog:SolicitarAtd(playerid, response, listitem, inputtext[]) {
 		format(str, 144, "[AJUDA] O player %s está solicitando ajuda. Use /Ajudar %i para atendê-lo.", pNick(playerid), playerid); // 
 		for(new j = 0; j < MAX_PLAYERS; j++) {
 			if(!IsPlayerConnected(j)) continue;
-			if(pInfo[j][pAdmin] == Ajudante || pInfo[j][pAdmin] == Fiscalizador) {
+			if(pInfo[j][pAdmin] == Ajudante || pInfo[j][pAdmin] == Plantonista) {
 				if(pInfo[j][pAtd]) continue;
 				else {
 					SendClientMessage(j, Amarelo, str);
@@ -975,7 +1027,7 @@ Dialog:SolicitarAtd(playerid, response, listitem, inputtext[]) {
 		if(!x) {
 			for(new j = 0; j < MAX_PLAYERS; j++) {
 				if(!IsPlayerConnected(j)) continue;
-				if(pInfo[j][pAdmin] > Fiscalizador) {
+				if(pInfo[j][pAdmin] > Ajudante) {
 					if(pInfo[j][pAtd]) continue;
 					SendClientMessage(j, Amarelo, str);
 					x++;
@@ -1230,9 +1282,10 @@ public OnPlayerEnterVehicle@admin(playerid, vehicleid, ispassenger) {
 
 forward OnPlayerDisconnect@admin(playerid);
 public OnPlayerDisconnect@admin(playerid) {
-	if(pInfo[playerid][pAdmin] >= Fiscalizador) {
+	if(pInfo[playerid][pAdmin] >= Ajudante) {
 		if(GetVehicleModel(vStaff[playerid][vsID])) {
 			DestroyVehicle(vStaff[playerid][vsID]);
+			vStaff[playerid][vsID] = 0;
 		}
 	}
 	for(new i = 0; i < MAX_PLAYERS; i++) {

@@ -239,6 +239,24 @@ CMD:destrancarcasa(playerid) {
 	return 1;
 }
 
+CMD:sethouse(playerid, params[]) {
+	if(pInfo[playerid][pAdmin] < Senior) return 1;
+	new idc, id;
+	if(sscanf(params, "ii", idc, id)) return AdvertCMD(playerid, "/SetHouse [IDC] [ID]");
+	if(!IsPlayerConnected(id)) return Advert(playerid, "ID inválido.");
+	if(idc < 0 || idc >= MAX_HOUSES) return Advert(playerid, "Casa inválida.");
+	if(!hInfo[idc][hSQL])  return Advert(playerid, "Casa inexistente.");
+	new str[150];
+	format(hInfo[idc][hOwner], 24, "%s", pNick(id));
+	mysql_format(conn, str, 150, "UPDATE houseinfo SET owner = '%s' WHERE sqlid = %i", pNick(id), hInfo[idc][hSQL]);
+	mysql_query(conn, str, false);
+	format(str, 144, "O %s setou uma casa para você.", Staff(playerid));
+	Info(id, str);
+	format(str, 144, "Você setou a casa de ID %03i para o player %s.", idc, pName(id));
+	Info(playerid, str);
+	return 1;
+}
+
 forward OnGameModeInit@casa();
 public OnGameModeInit@casa() {
 	new Cache:result, rows, str[30], x;
