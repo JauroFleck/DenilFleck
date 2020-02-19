@@ -208,6 +208,7 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 #include "systems/lixeiro.pwn"
 #include "systems/bbliquor.pwn"
 #include "systems/org.pwn"
+#include "systems/taxibb.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
@@ -1495,6 +1496,7 @@ public OnGameModeInit() {
 	#include "maps/wpump.pwn"
 	#include "maps/rcsigns.pwn"
 	#include "maps/bbliquor.pwn"
+	#include "maps/taxibb.pwn"
 	print("Mapas carregados com sucesso.");
 
 	// TEXTDRAWS
@@ -1680,6 +1682,7 @@ public OnPlayerConnect(playerid) {
 	CallLocalFunction("OnPlayerConnect@rcsd", "i", playerid);
 	CallLocalFunction("OnPlayerConnect@transp", "i", playerid);
 	CallLocalFunction("OnPlayerConnect@bbliquor", "i", playerid);
+	CallLocalFunction("OnPlayerConnect@taxibb", "i", playerid);
 	#include "textdraws/pgas.pwn"
 	#include "textdraws/pmanager.pwn"
 	#include "textdraws/pbarra.pwn"
