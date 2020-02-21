@@ -249,8 +249,8 @@ Dialog:CollectorsQuant(playerid, response, listitem, inputtext[]) {
 
 Dialog:Select1Collector(playerid, response, listitem, inputtext[]) {
 	if(!response) return 1;
-	new Nickname[24];
-	format(Nickname, 24, "%s", inputtext);
+	new Nickname[25];
+	format(Nickname, 25, "%s", inputtext);
 	SpaceToUnderline(Nickname);
 	new id = GetPlayerIDByNickname(Nickname);
 	if(id == -1) return Advert(playerid, "Esse player foi desconectado.");
@@ -271,8 +271,8 @@ Dialog:Select2Collectors(playerid, response, listitem, inputtext[]) {
 		gRoute[playerid][grouteInvite][0] = 0;
 		gRoute[playerid][grouteInvite][1] = 0;
 	}
-	new Nickname[24];
-	format(Nickname, 24, "%s", inputtext);
+	new Nickname[25];
+	format(Nickname, 25, "%s", inputtext);
 	SpaceToUnderline(Nickname);
 	new id = GetPlayerIDByNickname(Nickname);
 	if(id == -1) return Advert(playerid, "Esse player foi desconectado.");

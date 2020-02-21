@@ -12,7 +12,7 @@ enum HOUSE_INFO {
 	hSQL,
 	Float:hP[4],
 	hInterior,
-	hOwner[24],
+	hOwner,
 	hLock,
 	hPickup,
 	Text3D:hLabel,
@@ -76,7 +76,7 @@ CMD:excluircasa(playerid, params[]) {
 	hInfo[id][hP][3] = 0.0;
 	hInfo[id][hInterior] = 0;
 	hInfo[id][hLock] = 0;
-	format(hInfo[id][hOwner], 24, "");
+	hInfo[id][hOwner] = 0;
 	DestroyDynamicPickup(hInfo[id][hPickup]);
 	DestroyDynamic3DTextLabel(hInfo[id][hLabel]);
 	hInfo[id][hPickup] = 0;
@@ -203,7 +203,7 @@ CMD:trancarcasa(playerid) {
 	for(new i = 0; i < MAX_HOUSES; i++) {
 		if(!hInfo[i][hSQL]) continue;
 		if(IsPlayerInRangeOfPoint(playerid, 2.0, hInfo[i][hP][0], hInfo[i][hP][1], hInfo[i][hP][2])) {
-			if(!strcmp(pName(playerid), hInfo[i][hOwner], true) && !isnull(hInfo[i][hOwner])) {
+			if(hInfo[i][hOwner] == pInfo[playerid][pSQL]) {
 				if(!hInfo[i][hLock]) {
 					hInfo[i][hLock] = 1;
 					Act(playerid, "tranca a porta da casa.");
@@ -223,7 +223,7 @@ CMD:destrancarcasa(playerid) {
 	for(new i = 0; i < MAX_HOUSES; i++) {
 		if(!hInfo[i][hSQL]) continue;
 		if(IsPlayerInRangeOfPoint(playerid, 2.0, hInfo[i][hP][0], hInfo[i][hP][1], hInfo[i][hP][2])) {
-			if(!strcmp(pName(playerid), hInfo[i][hOwner], true) && !isnull(hInfo[i][hOwner])) {
+			if(hInfo[i][hOwner] == pInfo[playerid][pSQL]) {
 				if(hInfo[i][hLock]) {
 					hInfo[i][hLock] = 0;
 					Act(playerid, "destranca a porta da casa.");
@@ -247,7 +247,7 @@ CMD:sethouse(playerid, params[]) {
 	if(idc < 0 || idc >= MAX_HOUSES) return Advert(playerid, "Casa inválida.");
 	if(!hInfo[idc][hSQL])  return Advert(playerid, "Casa inexistente.");
 	new str[150];
-	format(hInfo[idc][hOwner], 24, "%s", pNick(id));
+	hInfo[idc][hOwner] = pInfo[id][pSQL];
 	mysql_format(conn, str, 150, "UPDATE houseinfo SET owner = '%s' WHERE sqlid = %i", pNick(id), hInfo[idc][hSQL]);
 	mysql_query(conn, str, false);
 	format(str, 144, "O %s setou uma casa para você.", Staff(playerid));
@@ -275,12 +275,8 @@ public OnGameModeInit@casa() {
 	cache_get_row_count(rows);
 	for(new i = 0; i < rows; i++) {
 		cache_get_value_index_int(i, 0, hInfo[i][hSQL]);
-		cache_get_value_name(i, "owner", str);
-		if(!strcmp(str, "NULL", false)) { str[0] = EOS; }
-		format(hInfo[i][hOwner], 24, "%s", str);
-		if(!strcmp(str, "NULL", false)) { str[0] = EOS; }
+		cache_get_value_name_int(i, "owner", hInfo[i][hOwner]);
 		cache_get_value_name(i, "bairro", str);
-		if(!strcmp(str, "NULL", false)) { str[0] = EOS; }
 		format(hInfo[i][hNeighbourhood], 30, "%s", str);
 		cache_get_value_name(i, "number", str);
 		format(hInfo[i][hNumber], 15, "%s", str);

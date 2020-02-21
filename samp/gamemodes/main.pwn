@@ -1333,8 +1333,7 @@ Dialog:DialogAjuda(playerid, response, listitem, inputtext[]) {
 		new str[300], i = 0;
 		for(; i < MAX_CARGOS; i++) {
 			if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) continue;
-			else if(strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], pName(playerid), true)) continue;
-			else break;
+			else if(cInfo[pInfo[playerid][pBus]][i][cEmp] == pInfo[playerid][pSQL]) break;
 		}
 		if(i == MAX_CARGOS) {
 			format(str, 200, BRANCO"Você atualmente trabalha na empresa %s.\nComandos:\n"AMARELO, bInfo[pInfo[playerid][pBus]][bName]);
@@ -1993,7 +1992,7 @@ stock pName(playerid) {
 	return name;
 }
 
-stock GetPlayerIDByNickname(nickname[24]) {
+stock GetPlayerIDByNickname(nickname[25]) {
 	new k = MAX_PLAYERS-1;
 	while(k > -1) {
 		if(IsPlayerConnected(k)) {

@@ -33,7 +33,7 @@ Dialog:BuyHouseNumber(playerid, response, listitem, inputtext[]) {
 			if(!hInfo[i][hSQL]) continue;
 			if(hInfo[i][hCity] != cid) continue;
 			if(!strcmp(hInfo[i][hNumber], inputtext, true)) {
-				if(!isnull(hInfo[i][hOwner])) {
+				if(hInfo[i][hOwner]) {
 					Advert(playerid, "Essa casa não está a venda.");
 				} else {
 					new str[200];
@@ -59,7 +59,7 @@ Dialog:BuyHouseConfirm(playerid, response, listitem, inputtext[]) {
 		} else {
 			Success(playerid, "Casa comprada! Chaves recebidas e dinheiro retirado rsrs ;)");
 			GivePlayerMoney(playerid, -hInfo[cid][hPrice]);
-			format(hInfo[cid][hOwner], 24, "%s", pName(playerid));
+			hInfo[cid][hOwner] = pInfo[playerid][pSQL];
 			new query[150];
 			mysql_format(conn, query, 150, "UPDATE houseinfo SET owner = '%s' WHERE sqlid = %i", pName(playerid), hInfo[cid][hSQL]);
 			mysql_query(conn, query, false);

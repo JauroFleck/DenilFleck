@@ -28,7 +28,7 @@
 enum CARGOS_INFO {
 	cSQL,
 	cName[30],
-	cEmp[24],
+	cEmp,
 	cSal,
 	cHire,
 	cPay,
@@ -156,13 +156,10 @@ CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]
 	if(!strcmp(bInfo[busid][bOwner], pNick(playerid), false)) {
 		perm = 1;
 	} else {
-		new Name[24], p = 0;
-		GetPlayerName(playerid, Name, 24);
-		UnderlineToSpace(Name);
+		new p = 0;
 		for(; p < MAX_CARGOS; p++) {
 			if(!cInfo[busid][p][cSQL]) continue;
-			else if(strcmp(Name, cInfo[busid][p][cEmp], false)) continue;
-			else break;
+			else if(cInfo[busid][p][cEmp] == pInfo[playerid][pSQL]) break;
 		}
 		if(!cInfo[busid][p][cHire]) return Advert(playerid, "Você não tem permissão para contratar.");
 		else { perm = 1; }
@@ -177,15 +174,15 @@ CMD:contratar(playerid, params[]) { // /Contratar [Nome_do_Cargo] [ID]
 			else break;
 		}
 		if(i == MAX_CARGOS) return Advert(playerid, "Não existe um cargo com este nome.");
-		if(!isnull(cInfo[busid][i][cEmp])) return Advert(playerid, "Este cargo já está ocupado por outro funcionário.");
+		if(cInfo[busid][i][cEmp]) return Advert(playerid, "Este cargo já está ocupado por outro funcionário.");
 		if(!IsPlayerConnected(id)) return SendClientMessage(playerid, -1, "ID inválido.");
 		new Float:P[3];
 		GetPlayerPos(playerid, P[0], P[1], P[2]);
 		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return Advert(playerid, "Você deve estar próximo à pessoa que estiver contratando.");
 		if(pInfo[id][pBus] != -1) return Advert(playerid, "Você não pode contratar alguém que não seja desempregado.");
-		format(cInfo[busid][i][cEmp], 24, "%s", pName(id));
+		cInfo[busid][i][cEmp] = pInfo[id][pSQL];
 		new query[120];
-		mysql_format(conn, query, 120, "UPDATE `cargoinfo` SET `emp` = '%s' WHERE `sqlid` = %i", pName(id), cInfo[busid][i][cSQL]);
+		mysql_format(conn, query, 120, "UPDATE `cargoinfo` SET `emp` = %i WHERE `sqlid` = %i", pInfo[id][pSQL], cInfo[busid][i][cSQL]);
 		mysql_query(conn, query, false);
 		pInfo[id][pBus] = busid;
 		new str[200];
@@ -206,35 +203,32 @@ CMD:demitir(playerid, params[]) { // /Demitir [Nome_Sobrenome]
 	if(!strcmp(bInfo[pInfo[playerid][pBus]][bOwner], pNick(playerid), false)) {
 		perm = 1;	
 	} else {
-		new Name[24], p = 0;
-		GetPlayerName(playerid, Name, 24);
-		UnderlineToSpace(Name);
+		new p = 0;
 		for(; p < MAX_CARGOS; p++) {
 			if(!cInfo[pInfo[playerid][pBus]][p][cSQL]) continue;
-			else if(strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false)) continue;
-			else break;
+			else if(cInfo[pInfo[playerid][pBus]][p][cEmp] == pInfo[playerid][pSQL]) break;
 		}
 		if(!cInfo[pInfo[playerid][pBus]][p][cHire]) return Advert(playerid, "Você não tem permissão para demitir.");
 		else { perm = 1; }
 	}
 	if(perm) {
-		new nickname[24];
+		new nickname[25];
 		if(sscanf(params, "s[24]", nickname)) return SendClientMessage(playerid, -1, "Use /Demitir [Nome_Sobrenome].");
-		new name[24];
-		for(new i = 0; i < 24; i++) { if(nickname[i] == '_') { name[i] = ' '; } else { name[i] = nickname[i]; } }
+		new sqlid = GetSQLBypNick(nickname);
+		if(!sqlid) return Advert(playerid, "Nome_Sobrenome inválido.");
 		for(new i = 0; i < MAX_CARGOS; i++) {
 			if(!cInfo[pInfo[playerid][pBus]][i][cSQL]) continue;
-			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cEmp], name, false)) {
+			if(cInfo[pInfo[playerid][pBus]][i][cEmp] == sqlid) {
 				if(cInfo[pInfo[playerid][pBus]][i][cMon]) return SendClientMessage(playerid, -1, "Você não pode demitir alguém com pagamento pendente.");
 				new str[128];
-				format(str, 128, "Você demitiu %s do cargo de %s.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName]);
+				format(str, 128, "Você demitiu %s do cargo de %s.", nickname, cInfo[pInfo[playerid][pBus]][i][cName]);
 				SendClientMessage(playerid, -1, str);
 				new query[100];
-				mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = '' WHERE sqlid = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
+				mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `emp` = 0 WHERE sqlid = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
 				mysql_query(conn, query, false);
 				mysql_format(conn, query, 100, "UPDATE `playerinfo` SET `pbus` = -1 WHERE nickname = '%i'", nickname);
 				mysql_query(conn, query, false);
-				format(cInfo[pInfo[playerid][pBus]][i][cEmp], 24, "");
+				cInfo[pInfo[playerid][pBus]][i][cEmp] = 0;
 				new id = GetPlayerIDByNickname(nickname);
 				if(id != -1) { // Connected
 					format(str, 128, "Você foi demitido da sua empresa por %s.", pNick(playerid));
@@ -331,100 +325,102 @@ CMD:remvbusiness(playerid) {
 	return 1;
 }
 
-CMD:pagarsalario(playerid, params[]) { // /PagarSalario [Nome_do_Cargo]
-	for(new b = 0; b < MAX_BUSINESS; b++) {
-		if(!bInfo[b][bSQL]) continue;
-		if(strcmp(bInfo[b][bOwner], pNick(playerid), false)) continue;
+/*
+	CMD:pagarsalario(playerid, params[]) { // /PagarSalario [Nome_do_Cargo]
+		for(new b = 0; b < MAX_BUSINESS; b++) {
+			if(!bInfo[b][bSQL]) continue;
+			if(strcmp(bInfo[b][bOwner], pNick(playerid), false)) continue;
+			new nomedocargo[25];
+			if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
+			for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
+			new i = 0;
+			while(i < MAX_CARGOS) {
+				if(!strcmp(cInfo[b][i][cName], nomedocargo, true) && !isnull(cInfo[b][i][cName])) break;
+				else i++;
+			}
+			if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "Não existe um cargo com este nome.");
+			if(!cInfo[b][i][cEmp]) return SendClientMessage(playerid, -1, "Este cargo está desocupado.");
+
+			new nickname[24];
+			format(nickname, 24, "%s", cInfo[b][i][cEmp]);
+			for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
+			new id = GetPlayerIDByNickname(nickname);
+			if(id == -1) return SendClientMessage(playerid, -1, "O funcionário que ocupa este cargo está desconectado.");
+			new Float:P[3];
+			GetPlayerPos(playerid, P[0], P[1], P[2]);
+			if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "Você deve estar próximo à pessoa que estiver pagando.");
+			if(cInfo[b][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcionário não tem nada a receber.");
+			if(bInfo[b][bReceita] < cInfo[b][i][cMon]) {
+				new str[128];
+				format(str, 128, "Os fundos da empresa ($%i) não são suficientes para pagar o salário deste funcionário ($%i)", bInfo[b][bReceita], cInfo[b][i][cMon]);
+				SendClientMessage(playerid, -1, str);
+				return 1;
+			}
+			new str[128];
+			format(str, 128, "O funcionário %s de cargo %s foi pago em $%i pelos seus serviços.", cInfo[b][i][cEmp], cInfo[b][i][cName], cInfo[b][i][cMon]);
+			SendClientMessage(playerid, -1, str);
+			format(str, 128, "Você foi pago por %s na quantia de $%i pelos serviços prestados.", pNick(playerid), cInfo[b][i][cMon]);
+			SendClientMessage(id, -1, str);
+			GivePlayerMoney(id, cInfo[b][i][cMon]);
+			bInfo[b][bReceita] -= cInfo[b][i][cMon];
+			cInfo[b][i][cMon] = 0;
+			new query[100];
+			mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[b][bReceita], bInfo[b][bSQL]);
+			mysql_query(conn, query, false);
+			mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[b][i][cSQL]);
+			mysql_query(conn, query, false);
+		}
+		if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
+		new Name[24], p = 0;
+		GetPlayerName(playerid, Name, 24);
+		for(new j = 0; j < 24; j ++) { if(Name[j] == '_') { Name[j] = ' '; } }
+		while(p < MAX_CARGOS) {
+			if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
+			else p++;
+		}
+		if(!cInfo[pInfo[playerid][pBus]][p][cPay]) return SendClientMessage(playerid, -1, "Você não tem permissão para pagar salário.");
 		new nomedocargo[25];
 		if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
 		for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
 		new i = 0;
 		while(i < MAX_CARGOS) {
-			if(!strcmp(cInfo[b][i][cName], nomedocargo, true) && !isnull(cInfo[b][i][cName])) break;
+			if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
 			else i++;
 		}
 		if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "Não existe um cargo com este nome.");
-		if(isnull(cInfo[b][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo está desocupado.");
+		if(isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo está desocupado.");
 
 		new nickname[24];
-		format(nickname, 24, "%s", cInfo[b][i][cEmp]);
+		format(nickname, 24, "%s", cInfo[pInfo[playerid][pBus]][i][cEmp]);
 		for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
 		new id = GetPlayerIDByNickname(nickname);
 		if(id == -1) return SendClientMessage(playerid, -1, "O funcionário que ocupa este cargo está desconectado.");
 		new Float:P[3];
 		GetPlayerPos(playerid, P[0], P[1], P[2]);
 		if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "Você deve estar próximo à pessoa que estiver pagando.");
-		if(cInfo[b][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcionário não tem nada a receber.");
-		if(bInfo[b][bReceita] < cInfo[b][i][cMon]) {
+		if(cInfo[pInfo[playerid][pBus]][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcionário não tem nada a receber.");
+		if(bInfo[pInfo[playerid][pBus]][bReceita] < cInfo[pInfo[playerid][pBus]][i][cMon]) {
 			new str[128];
-			format(str, 128, "Os fundos da empresa ($%i) não são suficientes para pagar o salário deste funcionário ($%i)", bInfo[b][bReceita], cInfo[b][i][cMon]);
+			format(str, 128, "Os fundos da empresa ($%i) não são suficientes para pagar o salário deste funcionário ($%i)", bInfo[pInfo[playerid][pBus]][bReceita], cInfo[pInfo[playerid][pBus]][i][cMon]);
 			SendClientMessage(playerid, -1, str);
 			return 1;
 		}
 		new str[128];
-		format(str, 128, "O funcionário %s de cargo %s foi pago em $%i pelos seus serviços.", cInfo[b][i][cEmp], cInfo[b][i][cName], cInfo[b][i][cMon]);
+		format(str, 128, "O funcionário %s de cargo %s foi pago em $%i pelos seus serviços.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName], cInfo[pInfo[playerid][pBus]][i][cMon]);
 		SendClientMessage(playerid, -1, str);
-		format(str, 128, "Você foi pago por %s na quantia de $%i pelos serviços prestados.", pNick(playerid), cInfo[b][i][cMon]);
+		format(str, 128, "Você foi pago por %s na quantia de $%i pelos serviços prestados.", pNick(playerid), cInfo[pInfo[playerid][pBus]][i][cMon]);
 		SendClientMessage(id, -1, str);
-		GivePlayerMoney(id, cInfo[b][i][cMon]);
-		bInfo[b][bReceita] -= cInfo[b][i][cMon];
-		cInfo[b][i][cMon] = 0;
+		GivePlayerMoney(id, cInfo[pInfo[playerid][pBus]][i][cMon]);
+		bInfo[pInfo[playerid][pBus]][bReceita] -= cInfo[pInfo[playerid][pBus]][i][cMon];
+		cInfo[pInfo[playerid][pBus]][i][cMon] = 0;
 		new query[100];
-		mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[b][bReceita], bInfo[b][bSQL]);
+		mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[pInfo[playerid][pBus]][bReceita], bInfo[pInfo[playerid][pBus]][bSQL]);
 		mysql_query(conn, query, false);
-		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[b][i][cSQL]);
+		mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
 		mysql_query(conn, query, false);
-	}
-	if(pInfo[playerid][pBus] == -1) return SendClientMessage(playerid, -1, "Você é desempregado.");
-	new Name[24], p = 0;
-	GetPlayerName(playerid, Name, 24);
-	for(new j = 0; j < 24; j ++) { if(Name[j] == '_') { Name[j] = ' '; } }
-	while(p < MAX_CARGOS) {
-		if(!strcmp(Name, cInfo[pInfo[playerid][pBus]][p][cEmp], false) && !isnull(cInfo[pInfo[playerid][pBus]][p][cEmp])) break;
-		else p++;
-	}
-	if(!cInfo[pInfo[playerid][pBus]][p][cPay]) return SendClientMessage(playerid, -1, "Você não tem permissão para pagar salário.");
-	new nomedocargo[25];
-	if(sscanf(params, "s[25]", nomedocargo)) return SendClientMessage(playerid, -1, "Use /PagarSalario [Nome_do_Cargo].");
-	for(new i = 0; i < 25; i ++) { if(nomedocargo[i] == '_') { nomedocargo[i] = ' '; } }
-	new i = 0;
-	while(i < MAX_CARGOS) {
-		if(!strcmp(cInfo[pInfo[playerid][pBus]][i][cName], nomedocargo, true) && !isnull(cInfo[pInfo[playerid][pBus]][i][cName])) break;
-		else i++;
-	}
-	if(i == MAX_CARGOS) return SendClientMessage(playerid, -1, "Não existe um cargo com este nome.");
-	if(isnull(cInfo[pInfo[playerid][pBus]][i][cEmp])) return SendClientMessage(playerid, -1, "Este cargo está desocupado.");
-
-	new nickname[24];
-	format(nickname, 24, "%s", cInfo[pInfo[playerid][pBus]][i][cEmp]);
-	for(new j = 0; j < 24; j ++) { if(nickname[j] == ' ') { nickname[j] = '_'; } }
-	new id = GetPlayerIDByNickname(nickname);
-	if(id == -1) return SendClientMessage(playerid, -1, "O funcionário que ocupa este cargo está desconectado.");
-	new Float:P[3];
-	GetPlayerPos(playerid, P[0], P[1], P[2]);
-	if(!IsPlayerInRangeOfPoint(id, 5.0, P[0], P[1], P[2])) return SendClientMessage(playerid, -1, "Você deve estar próximo à pessoa que estiver pagando.");
-	if(cInfo[pInfo[playerid][pBus]][i][cMon] < 1) return SendClientMessage(playerid, -1, "Este funcionário não tem nada a receber.");
-	if(bInfo[pInfo[playerid][pBus]][bReceita] < cInfo[pInfo[playerid][pBus]][i][cMon]) {
-		new str[128];
-		format(str, 128, "Os fundos da empresa ($%i) não são suficientes para pagar o salário deste funcionário ($%i)", bInfo[pInfo[playerid][pBus]][bReceita], cInfo[pInfo[playerid][pBus]][i][cMon]);
-		SendClientMessage(playerid, -1, str);
 		return 1;
 	}
-	new str[128];
-	format(str, 128, "O funcionário %s de cargo %s foi pago em $%i pelos seus serviços.", cInfo[pInfo[playerid][pBus]][i][cEmp], cInfo[pInfo[playerid][pBus]][i][cName], cInfo[pInfo[playerid][pBus]][i][cMon]);
-	SendClientMessage(playerid, -1, str);
-	format(str, 128, "Você foi pago por %s na quantia de $%i pelos serviços prestados.", pNick(playerid), cInfo[pInfo[playerid][pBus]][i][cMon]);
-	SendClientMessage(id, -1, str);
-	GivePlayerMoney(id, cInfo[pInfo[playerid][pBus]][i][cMon]);
-	bInfo[pInfo[playerid][pBus]][bReceita] -= cInfo[pInfo[playerid][pBus]][i][cMon];
-	cInfo[pInfo[playerid][pBus]][i][cMon] = 0;
-	new query[100];
-	mysql_format(conn, query, 100, "UPDATE `businessinfo` SET `receita` = %i WHERE `sqlid` = %i", bInfo[pInfo[playerid][pBus]][bReceita], bInfo[pInfo[playerid][pBus]][bSQL]);
-	mysql_query(conn, query, false);
-	mysql_format(conn, query, 100, "UPDATE `cargoinfo` SET `mon` = 0 WHERE `sqlid` = %i", cInfo[pInfo[playerid][pBus]][i][cSQL]);
-	mysql_query(conn, query, false);
-	return 1;
-}
+*/
 
 CMD:empresas(playerid) {
 	new str[700];
@@ -588,8 +584,7 @@ public LoadCargoData() {
 					cInfo[j][k][cSQL] = x;
 					cache_get_value_name(i, "name", str);
 					if(strcmp(str, "NULL", true)) { format(cInfo[j][k][cName], 25, "%s", str); }
-					cache_get_value_name(i, "emp", str);
-					if(strcmp(str, "NULL", true)) { format(cInfo[j][k][cEmp], 25, "%s", str); }
+					cache_get_value_name_int(i, "emp", cInfo[j][k][cEmp]);
 					cache_get_value_name_int(i, "sal", cInfo[j][k][cSal]);
 					cache_get_value_name_int(i, "hire", cInfo[j][k][cHire]);
 					cache_get_value_name_int(i, "pay", cInfo[j][k][cPay]);
@@ -653,7 +648,7 @@ public OnPlayerClickTextDraw@bus(playerid, Text:clickedid) {
 					mysql_format(conn, query, 200, "UPDATE businessinfo SET `cargo%i` = 0 WHERE sqlid = %i", i, bInfo[GerenciandoEmpresa[playerid][geID]-1][bSQL]);
 					mysql_query(conn, query, false);
 					format(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cName], 20, "");
-					format(cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cEmp], 20, "");
+					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cEmp] = 0;
 					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSQL] = 0;
 					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cSal] = 0;
 					cInfo[GerenciandoEmpresa[playerid][geID]-1][i][cHire] = 0;
@@ -757,7 +752,7 @@ Dialog:DialogContratar(playerid, response, listitem, inputtext[]) {
 	} else {
 		Act(playerid, "assina o contrato de trabalho e devolve a caneta de volta.");
 		pInfo[playerid][pBus] = pInfo[playerid][pDialogParam][1];
-		format(cInfo[pInfo[playerid][pBus]][pInfo[playerid][pDialogParam][2]][cEmp], 24, "%s", pName(playerid));
+		cInfo[pInfo[playerid][pBus]][pInfo[playerid][pDialogParam][2]][cEmp] = pInfo[playerid][pSQL];
 	}
 	ResetDialogParams(playerid);
 	return 1;
@@ -901,7 +896,7 @@ stock BusinessManager(playerid, businessid) {
 				if(!cInfo[businessid][j][cSQL]) {
 					format(TDMParams[playerid][(j*7) + 1][tdmpValue], 24, "");
 				} else {
-					format(TDMParams[playerid][(j*7) + 1][tdmpValue], 24, "%s", cInfo[businessid][j][cEmp]);
+					format(TDMParams[playerid][(j*7) + 1][tdmpValue], 24, "%s", GetpNickBySQL(cInfo[businessid][j][cEmp]));
 					TextEncoding(TDMParams[playerid][(j*7) + 1][tdmpValue]);
 				}
 			} else if(i == 2) { // Salário
@@ -917,7 +912,7 @@ stock BusinessManager(playerid, businessid) {
 			} else if(i == 5) { // Permissão 3
 				format(TDMParams[playerid][(j*7) + 5][tdmpValue], 24, "Desenvolvendo");
 			} else if(i == 6) { // Ficha Pessoal
-				if(isnull(cInfo[businessid][j][cEmp])) {
+				if(!cInfo[businessid][j][cEmp]) {
 					format(TDMParams[playerid][(j*7) + 6][tdmpValue][0], 24, "");
 				} else {
 					format(TDMParams[playerid][(j*7) + 6][tdmpValue][0], 24, "Ficha Pessoal");
