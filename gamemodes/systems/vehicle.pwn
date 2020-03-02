@@ -497,7 +497,7 @@ CMD:bootd(playerid, params[]) {
 }
 
 CMD:setgas(playerid, params[]) {
-	if(pInfo[playerid][pAdmin] < Administrador) return 1;
+	if(pInfo[playerid][pAdmin] < Ajudante) return 1;
 	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return Advert(playerid, "Você precisa conduzir o veículo que deseja setar a gasolina.");
 	new gas;
 	if(sscanf(params, "i", gas)) return AdvertCMD(playerid, "/SetGas [Quantidade de Gasolina em Litros]");

@@ -2,6 +2,8 @@
 #include <zcmd>
 #include <sscanf2>
 #include <colors>
+#include <streamer>
+#include <mobmove>
 
 #define Gamemode
 
@@ -31,6 +33,18 @@ public OnPlayerConnect(playerid) {
 		//KickPlayer(playerid);
 		return 1;
 	}
+	return 1;
+}
+
+CMD:testmove(playerid) {
+	new Float:P[6];
+	GetPlayerPos(playerid, P[0], P[1], P[2]);
+	GetPlayerFacingAngle(playerid, P[3]);
+	new obj = CreateDynamicObject(3799, P[0], P[1], P[2], 0.0, 0.0, P[3]);
+	new time = MoveDynamicObject(obj, P[0], P[1]+5.0, P[2], 1.0);
+	new str[144];
+	format(str, 144, "Objeto ID %05i sendo movido em %ims.", obj, time);
+	Info(playerid, str);
 	return 1;
 }
 

@@ -31,6 +31,7 @@
 #include <	colors 		>
 #include < 	streamer 	>
 #include <	windosi		>
+#include <	mobmove		>
 
 #define GameMode
 
@@ -1182,15 +1183,17 @@ CMD:s(playerid, params[]) {
 	return 1;
 }
 
-/*Dialog:Tab(playerid, response, listitem, inputtext[]) {
-	if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_Tab")) return ResetDialogParams(playerid);
-	new page = pInfo[playerid][pDialogParam][2];
-	if(page == 1 && response) return 1;
-	for(new i = pInfo[playerid][pDialogParam][1]; i < MAX_PLAYERS; i++) {
+/*
+	Dialog:Tab(playerid, response, listitem, inputtext[]) {
+		if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_Tab")) return ResetDialogParams(playerid);
+		new page = pInfo[playerid][pDialogParam][2];
+		if(page == 1 && response) return 1;
+		for(new i = pInfo[playerid][pDialogParam][1]; i < MAX_PLAYERS; i++) {
 
+		}
+		return 1;
 	}
-	return 1;
-}*/
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////// DIALOGS ////////////////////////////////////////////////////////////////
@@ -1634,8 +1637,9 @@ public OnVehicleDeath(vehicleid, killerid) {
 	return 1;
 }
 
-/*forward OnPlayerFinishedDownloading(playerid, virtualworld);
-public OnPlayerFinishedDownloading(playerid, virtualworld) {
+/*
+	forward OnPlayerFinishedDownloading(playerid, virtualworld);
+	public OnPlayerFinishedDownloading(playerid, virtualworld) {
 	pInfo[playerid][pFinishedDownload] = 1;
 	Info(playerid, "a");
 	return 1;

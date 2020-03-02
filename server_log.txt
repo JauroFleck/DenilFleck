@@ -1035,3 +1035,280 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [03:27:42] [connection] 127.0.0.1:65482 requests connection cookie.
 [03:27:43] [connection] incoming connection: 127.0.0.1:65482 id: 0
 [03:27:43] [join] John_Black has joined the server (0:127.0.0.1)
+Console input: exit
+[03:57:05] --- Server Shutting Down.
+[03:57:06] [part] John_Black has left the server (0:0)
+[03:57:06] 
+
+[03:57:06]  ===============================
+
+[03:57:06]      sscanf plugin unloaded.    
+
+[03:57:06]  ===============================
+
+[03:57:06] plugin.mysql: Unloading plugin...
+[03:57:06] plugin.mysql: Plugin unloaded.
+[03:57:06] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[15:57:36] filterscripts = ""  (string)
+[15:57:36] 
+[15:57:36] Server Plugins
+[15:57:36] --------------
+[15:57:36]  Loading plugin: sscanf
+[15:57:36] 
+
+[15:57:36]  ===============================
+
+[15:57:36]       sscanf plugin loaded.     
+
+[15:57:36]          Version:  2.8.3        
+
+[15:57:36]   (c) 2018 Alex "Y_Less" Cole  
+
+[15:57:36]  ===============================
+
+[15:57:36]   Loaded.
+[15:57:36]  Loading plugin: mysql
+[15:57:36]  >> plugin.mysql: R41-4 successfully loaded.
+[15:57:36]   Loaded.
+[15:57:36]  Loading plugin: streamer
+[15:57:36] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[15:57:36]   Loaded.
+[15:57:36]  Loaded 3 plugins.
+
+[15:57:36] 
+[15:57:36] Filterscripts
+[15:57:36] ---------------
+[15:57:36]   Loaded 0 filterscripts.
+
+[15:57:36] Number of vehicle models: 0
+[15:57:59] [connection] 127.0.0.1:52584 requests connection cookie.
+[15:58:00] [connection] incoming connection: 127.0.0.1:52584 id: 0
+[15:58:00] [join] John_Black has joined the server (0:127.0.0.1)
+[16:00:00] RCON (In-Game): Player #0 (John_Black) has logged in.
+[16:00:01] RCON (In-Game): Player [John_Black] sent command: gmx
+[16:00:13] Number of vehicle models: 0
+[16:00:36] [part] John_Black has left the server (0:1)
+Console input: exit
+[16:05:49] --- Server Shutting Down.
+[16:05:50] 
+
+[16:05:50]  ===============================
+
+[16:05:50]      sscanf plugin unloaded.    
+
+[16:05:50]  ===============================
+
+[16:05:50] plugin.mysql: Unloading plugin...
+[16:05:50] plugin.mysql: Plugin unloaded.
+[16:05:50] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[16:05:52] filterscripts = ""  (string)
+[16:05:52] 
+[16:05:52] Server Plugins
+[16:05:52] --------------
+[16:05:52]  Loading plugin: sscanf
+[16:05:52] 
+
+[16:05:52]  ===============================
+
+[16:05:52]       sscanf plugin loaded.     
+
+[16:05:52]          Version:  2.8.3        
+
+[16:05:52]   (c) 2018 Alex "Y_Less" Cole  
+
+[16:05:52]  ===============================
+
+[16:05:52]   Loaded.
+[16:05:52]  Loading plugin: mysql
+[16:05:52]  >> plugin.mysql: R41-4 successfully loaded.
+[16:05:52]   Loaded.
+[16:05:52]  Loading plugin: streamer
+[16:05:52] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[16:05:52]   Loaded.
+[16:05:52]  Loaded 3 plugins.
+
+[16:05:52] 
+[16:05:52] Filterscripts
+[16:05:52] ---------------
+[16:05:52]   Loaded 0 filterscripts.
+
+[16:05:52] Number of vehicle models: 0
+[16:06:09] [connection] 127.0.0.1:58582 requests connection cookie.
+[16:06:10] [connection] incoming connection: 127.0.0.1:58582 id: 0
+[16:06:11] [join] John_Black has joined the server (0:127.0.0.1)
+[16:06:58] [part] John_Black has left the server (0:1)
+Console input: exit
+[16:07:02] --- Server Shutting Down.
+[16:07:02] 
+
+[16:07:02]  ===============================
+
+[16:07:02]      sscanf plugin unloaded.    
+
+[16:07:02]  ===============================
+
+[16:07:02] plugin.mysql: Unloading plugin...
+[16:07:02] plugin.mysql: Plugin unloaded.
+[16:07:02] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[16:07:52] filterscripts = ""  (string)
+[16:07:52] 
+[16:07:52] Server Plugins
+[16:07:52] --------------
+[16:07:52]  Loading plugin: sscanf
+[16:07:52] 
+
+[16:07:52]  ===============================
+
+[16:07:52]       sscanf plugin loaded.     
+
+[16:07:52]          Version:  2.8.3        
+
+[16:07:52]   (c) 2018 Alex "Y_Less" Cole  
+
+[16:07:52]  ===============================
+
+[16:07:52]   Loaded.
+[16:07:52]  Loading plugin: mysql
+[16:07:52]  >> plugin.mysql: R41-4 successfully loaded.
+[16:07:52]   Loaded.
+[16:07:52]  Loading plugin: streamer
+[16:07:52] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[16:07:52]   Loaded.
+[16:07:52]  Loaded 3 plugins.
+
+[16:07:52] 
+[16:07:52] Filterscripts
+[16:07:52] ---------------
+[16:07:52]   Loaded 0 filterscripts.
+
+[16:08:08] SEM CONEXAO A BASE DE DADOS
+[16:08:08] Carregando mapas...
+[16:08:08] Mapas carregados com sucesso.
+[16:08:08] Number of vehicle models: 1
+Console input: exit
+[16:08:11] --- Server Shutting Down.
+[16:08:11] 
+
+[16:08:11]  ===============================
+
+[16:08:11]      sscanf plugin unloaded.    
+
+[16:08:11]  ===============================
+
+[16:08:11] plugin.mysql: Unloading plugin...
+[16:08:11] plugin.mysql: Plugin unloaded.
+[16:08:11] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[16:08:23] filterscripts = ""  (string)
+[16:08:23] 
+[16:08:23] Server Plugins
+[16:08:23] --------------
+[16:08:23]  Loading plugin: sscanf
+[16:08:23] 
+
+[16:08:23]  ===============================
+
+[16:08:23]       sscanf plugin loaded.     
+
+[16:08:23]          Version:  2.8.3        
+
+[16:08:23]   (c) 2018 Alex "Y_Less" Cole  
+
+[16:08:23]  ===============================
+
+[16:08:23]   Loaded.
+[16:08:23]  Loading plugin: mysql
+[16:08:23]  >> plugin.mysql: R41-4 successfully loaded.
+[16:08:23]   Loaded.
+[16:08:23]  Loading plugin: streamer
+[16:08:23] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[16:08:23]   Loaded.
+[16:08:23]  Loaded 3 plugins.
+
+[16:08:23] 
+[16:08:23] Filterscripts
+[16:08:23] ---------------
+[16:08:23]   Loaded 0 filterscripts.
+
+[16:08:23] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[16:08:23] Carregando mapas...
+[16:08:23] Mapas carregados com sucesso.
+[16:08:23] Number of vehicle models: 1
+[16:08:47] [connection] 127.0.0.1:58899 requests connection cookie.
+[16:08:49] [connection] incoming connection: 127.0.0.1:58899 id: 0
+[16:08:49] [join] John_Black has joined the server (0:127.0.0.1)
+[16:11:02] [part] John_Black has left the server (0:2)
+[16:11:03] --- Server Shutting Down.
+[16:11:04] 
+
+[16:11:04]  ===============================
+
+[16:11:04]      sscanf plugin unloaded.    
+
+[16:11:04]  ===============================
+
+[16:11:04] plugin.mysql: Unloading plugin...
+[16:11:04] plugin.mysql: Plugin unloaded.
+[16:11:04] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+

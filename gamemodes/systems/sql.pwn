@@ -1,13 +1,10 @@
-#define HOST 		"localhost"
-#define USER 		"denilfleck"
-#define DATABASE 	"zdenilfleck0"
-#define PASS 		"JauDen2020"
+#define MYSQLCONNECTINGDATA 		"localhost", "denilfleck", "JauDen2020", "zdenilfleck0"
 
 new MySQL:conn;
 
 forward OnGameModeInit@sql();
 public OnGameModeInit@sql() {
-	conn = mysql_connect(HOST, USER, PASS, DATABASE);
+	conn = mysql_connect(MYSQLCONNECTINGDATA);
 
 	if(mysql_errno(conn)) { print("SEM CONEXAO A BASE DE DADOS"); return 0; } else { print("CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO"); }
 	return 1;
