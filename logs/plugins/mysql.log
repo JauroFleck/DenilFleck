@@ -29479,3 +29479,64 @@
 [16:08:08] [ERROR] cache_delete: invalid cache id '0'
 [16:09:04] [ERROR] cache_get_value_name_int: field 'mp' not found
 [16:11:02] [ERROR] error #1054 while executing query "UPDATE `playerinfo` SET `mp` = 1, `ip` = '255.255.255.255', `org` = 0, `tprisao` = 0, `hab` = 1,`comp` = 1, `xp` = 3854, `interior` = 0, `vw` = 0, `idv` = 1, `admin` = 6, `score` = 10, `skinid` = 59, `money` = 17885, `pbus` = 10, `sX` = 18.973068, `sY` = -1181.738037, `sZ` = 7.239212, `sA` = 161.031540 WHERE `sqlid` = 11": Unknown column 'mp' in 'field list'
+[21:42:46] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:42:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:42:54] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:42:58] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_value_name_int: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_row_count: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_row_count: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_row_count: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:42:58] [ERROR] cache_get_row_count: no active cache
+[21:42:58] [ERROR] cache_delete: invalid cache id '0'
+[21:45:16] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:45:20] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:47:50] [ERROR] cache_get_value_name_int: field 'mp' not found
+[21:58:41] [ERROR] error #1054 while executing query "UPDATE `playerinfo` SET `mp` = 1, `ip` = '255.255.255.255', `org` = 0, `tprisao` = 0, `hab` = 1,`comp` = 1, `xp` = 3865, `interior` = 0, `vw` = 0, `idv` = 1, `admin` = 6, `score` = 10, `skinid` = 59, `money` = 17885, `pbus` = 6, `sX` = 253.828873, `sY` = 16.892725, `sZ` = 2.443956, `sA` = 112.581680 WHERE `sqlid` = 11": Unknown column 'mp' in 'field list'
+[11:52:38] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[12:00:32] [ERROR] error #2002 while executing query "UPDATE produtoinfo SET quant = 500000 WHERE name = 'Gasolina T1'": Can't connect to MySQL server on 'localhost' (10061)
+[12:00:36] [ERROR] error #2002 while executing query "UPDATE produtoinfo SET quant = 500000 WHERE name = 'Gasolina T2'": Can't connect to MySQL server on 'localhost' (10061)
+[12:00:40] [ERROR] error #2002 while executing query "UPDATE produtoinfo SET quant = 500000 WHERE name = 'Gasolina T3'": Can't connect to MySQL server on 'localhost' (10061)
+[12:00:44] [ERROR] error #2002 while executing query "UPDATE produtoinfo SET quant = 500000 WHERE name = 'Gasolina T4'": Can't connect to MySQL server on 'localhost' (10061)
+[16:42:14] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[16:42:18] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_value_name_int: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_row_count: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_row_count: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_row_count: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[16:42:19] [ERROR] cache_get_row_count: no active cache
+[16:42:19] [ERROR] cache_delete: invalid cache id '0'

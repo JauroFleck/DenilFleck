@@ -66,7 +66,7 @@
 #define Senior 					5
 #define Fundador				6
 
-main() {}
+main() { }
 
 native IsValidVehicle(vehicleid);
 
@@ -210,6 +210,7 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 #include "systems/bbliquor.pwn"
 #include "systems/org.pwn"
 #include "systems/taxibb.pwn"
+#include "systems/versioncontrol.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
@@ -1462,6 +1463,7 @@ Dialog:SelectCaller(playerid, response, listitem, inputtext[]) {
 public OnGameModeInit() {
 
 	CallLocalFunction("OnGameModeInit@sql", "");
+	CallLocalFunction("OnGameModeInit@version", "");
 	CallLocalFunction("OnGameModeInit@vehicle", "");
 	CallLocalFunction("OnGameModeInit@time", "");
 	CallLocalFunction("OnGameModeInit@business", "");
@@ -1512,18 +1514,17 @@ public OnGameModeInit() {
 
 	ManualVehicleEngineAndLights();
 	DisableInteriorEnterExits();
-	SetGameModeText("[DF:RP] PT-BR (vBeta)");
 
 	EnableStuntBonusForAll(0);
 	//ShowNameTags(0);
 	ShowPlayerMarkers(PLAYER_MARKERS_MODE_OFF);
 	SetNameTagDrawDistance(15.0);
 
-	CreateDynamicPickup(1239, 1, 1490.7520,1306.3990,1093.2964);							// Estação de ônibus Blueberry
+	CreateDynamicPickup(1239, 1, 1490.7520,1306.3990,1093.2964);						// Estação de ônibus Blueberry
 	CreateDynamic3DTextLabel("/Info", Amarelo, 1490.7520,1306.3990,1093.2964, 3.0);
-	CreateDynamicPickup(1239, 1, 260.3185,34.9675,2.4587);							// Transportadora de Blueberry
+	CreateDynamicPickup(1239, 1, 260.3185,34.9675,2.4587);								// Transportadora de Blueberry
 	CreateDynamic3DTextLabel("/Info", Amarelo, 260.3185,34.9675,2.4587, 3.0);
-	CreateDynamicPickup(1239, 1, 267.7446,18.9372,2.4412);							// Transportadora de Blueberry (APK)
+	CreateDynamicPickup(1239, 1, 267.7446,18.9372,2.4412);								// Transportadora de Blueberry (APK)
 	CreateDynamic3DTextLabel("/Info", Amarelo, 267.7446,18.9372,2.4412, 3.0);
 	CreateDynamicPickup(1239, 1, 577.6893,-337.5042,1484.8677);							// Imobiliária de Palomino Creek
 	CreateDynamic3DTextLabel("/Info", Amarelo, 577.6893,-337.5042,1484.8677, 3.0);

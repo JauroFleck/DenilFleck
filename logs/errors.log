@@ -1,2 +1,0 @@
-[16:09:04] [plugins/mysql] cache_get_value_name_int: field 'mp' not found
-[16:11:02] [plugins/mysql] error #1054 while executing query "UPDATE `playerinfo` SET `mp` = 1, `ip` = '255.255.255.255', `org` = 0, `tprisao` = 0, `hab` = 1,`comp` = 1, `xp` = 3854, `interior` = 0, `vw` = 0, `idv` = 1, `admin` = 6, `score` = 10, `skinid` = 59, `money` = 17885, `pbus` = 10, `sX` = 18.973068, `sY` = -1181.738037, `sZ` = 7.239212, `sA` = 161.031540 WHERE `sqlid` = 11": Unknown column 'mp' in 'field list'
