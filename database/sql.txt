@@ -1,0 +1,48 @@
+INSERIR NA BASE DE DADOS APENAS DADOS DINÂMICOS
+
+V BUSINESSINFO businessid
+V BUSROUTEINFO busrouteid
+V CARGOINFO chargeid
+V CONTASBANCO bankaccid
+X 	ENTRADAINFO
+V FICHASINFO fileid
+X 	HOUSEDATA
+V HOUSEINFO houseid
+V KICKBANS kickbansid
+V MEMBERINFO memberid
+V ORGINFO orgid
+DEL	PLAYERINFO
+V POLICEINFO copid
+V PRODUTOINFO prodid
+DEL	SERVERTIME
+V TELEPORTINFO tpid
+V TRANSFERENCIAS transferid
+V VEHICLEDATA vehdatid
+V VEHICLEINFO vehinfid
+V VSTAFFINFO vstaffid
+
+CHARACTERS charid name lastname skinid bornin money job X Y Z A interior vworld payment driver prision org state fk_accid
+ACCOUNTS accid master level xp pass admin idv invited mp ip registerdate whitelist
+BUSINESS businessid ownerid bankaccid name value type cash X Y Z
+BUSROUTES busrouteid businessid value numstops s0 s1 s2 s3 s4 .. s19
+CHARGES chargeid businessid charid name salary permission receive
+BANKACCOUNTS bankaccid sold name pass
+FILES fileid value gasoline destiny
+HOUSES houseid ownerid price city neighbourhood number
+DOORS doorid enterX enterY enterZ enterA exitX exitY exitZ exitA interior vworld
+DOORKEYS doorkeyid doorid charid
+FILES
+HOUSES
+KICKBANS
+MEMBERS
+ORGS
+PRODUCTS
+SERVERTIME timestamp
+TELEPORT tpid x y z a i vw name
+VEHPARAMS modelid gasCapacity gasSpent bootDistance
+VEHICLES vehid ownerid modelid color1 color2 x y z a key  gas gps
+VEHICLEKEYS vehkeyid vehid charid locationid
+VSTAFF vstaffid charid modelid color1 color2 x y z a vworld interior status
+
+
+change: SERVERTIME (create a parallel unix timestamp based on 1/1/2020 00:00:00)

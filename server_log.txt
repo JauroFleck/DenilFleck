@@ -2247,3 +2247,213 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [16:42:27] Carregando mapas...
 [16:42:27] Mapas carregados com sucesso.
 [16:42:27] Number of vehicle models: 1
+Console input: exit
+[16:50:08] --- Server Shutting Down.
+[16:50:08] 
+
+[16:50:08]  ===============================
+
+[16:50:08]      sscanf plugin unloaded.    
+
+[16:50:08]  ===============================
+
+[16:50:08] plugin.mysql: Unloading plugin...
+[16:50:08] plugin.mysql: Plugin unloaded.
+[16:50:08] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[04:48:03] filterscripts = ""  (string)
+[04:48:03] 
+[04:48:03] Server Plugins
+[04:48:03] --------------
+[04:48:03]  Loading plugin: sscanf
+[04:48:03] 
+
+[04:48:03]  ===============================
+
+[04:48:03]       sscanf plugin loaded.     
+
+[04:48:03]          Version:  2.8.3        
+
+[04:48:03]   (c) 2018 Alex "Y_Less" Cole  
+
+[04:48:03]  ===============================
+
+[04:48:03]   Loaded.
+[04:48:03]  Loading plugin: mysql
+[04:48:03]  >> plugin.mysql: R41-4 successfully loaded.
+[04:48:03]   Loaded.
+[04:48:03]  Loading plugin: streamer
+[04:48:03] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[04:48:03]   Loaded.
+[04:48:03]  Loaded 3 plugins.
+
+[04:48:03] 
+[04:48:03] Filterscripts
+[04:48:03] ---------------
+[04:48:03]   Loaded 0 filterscripts.
+
+[04:48:03] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[04:48:04] Carregando mapas...
+[04:48:04] Mapas carregados com sucesso.
+[04:48:04] Number of vehicle models: 1
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[21:28:57] filterscripts = ""  (string)
+[21:28:57] 
+[21:28:57] Server Plugins
+[21:28:57] --------------
+[21:28:57]  Loading plugin: sscanf
+[21:28:58] 
+
+[21:28:58]  ===============================
+
+[21:28:58]       sscanf plugin loaded.     
+
+[21:28:58]          Version:  2.8.3        
+
+[21:28:58]   (c) 2018 Alex "Y_Less" Cole  
+
+[21:28:58]  ===============================
+
+[21:28:58]   Loaded.
+[21:28:58]  Loading plugin: mysql
+[21:28:58]  >> plugin.mysql: R41-4 successfully loaded.
+[21:28:58]   Loaded.
+[21:28:58]  Loading plugin: streamer
+[21:28:58] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[21:28:58]   Loaded.
+[21:28:58]  Loaded 3 plugins.
+
+[21:28:58] 
+[21:28:58] Filterscripts
+[21:28:58] ---------------
+[21:28:58]   Loaded 0 filterscripts.
+
+[21:29:14] SEM CONEXAO A BASE DE DADOS
+[21:29:14] Carregando mapas...
+[21:29:14] Mapas carregados com sucesso.
+[21:29:14] Number of vehicle models: 1
+Console input: exit
+[21:29:18] --- Server Shutting Down.
+[21:29:18] 
+
+[21:29:18]  ===============================
+
+[21:29:18]      sscanf plugin unloaded.    
+
+[21:29:18]  ===============================
+
+[21:29:18] plugin.mysql: Unloading plugin...
+[21:29:18] plugin.mysql: Plugin unloaded.
+[21:29:18] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[21:29:28] filterscripts = ""  (string)
+[21:29:28] 
+[21:29:28] Server Plugins
+[21:29:28] --------------
+[21:29:28]  Loading plugin: sscanf
+[21:29:28] 
+
+[21:29:28]  ===============================
+
+[21:29:28]       sscanf plugin loaded.     
+
+[21:29:28]          Version:  2.8.3        
+
+[21:29:28]   (c) 2018 Alex "Y_Less" Cole  
+
+[21:29:28]  ===============================
+
+[21:29:28]   Loaded.
+[21:29:28]  Loading plugin: mysql
+[21:29:28]  >> plugin.mysql: R41-4 successfully loaded.
+[21:29:28]   Loaded.
+[21:29:28]  Loading plugin: streamer
+[21:29:28] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[21:29:28]   Loaded.
+[21:29:28]  Loaded 3 plugins.
+
+[21:29:28] 
+[21:29:28] Filterscripts
+[21:29:28] ---------------
+[21:29:28]   Loaded 0 filterscripts.
+
+[21:29:30] CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO
+[21:29:30] Carregando mapas...
+[21:29:30] Mapas carregados com sucesso.
+[21:29:30] Number of vehicle models: 1
+[21:30:24] [connection] 127.0.0.1:54679 requests connection cookie.
+[21:30:25] [connection] incoming connection: 127.0.0.1:54679 id: 0
+[21:30:26] [join] John_Black has joined the server (0:127.0.0.1)
+[21:30:29] [connection] 26.71.25.27:62623 requests connection cookie.
+[21:30:30] [connection] incoming connection: 26.71.25.27:62623 id: 1
+[21:30:30] [join] John_Philip has joined the server (1:26.71.25.27)
+[21:35:48] [chat] [John_Black]: Ara
+[21:43:17] [chat] [John_Black]: @Stan
+[21:47:26] [chat] [John_Black]: @3877/5500
+[21:49:42] [part] John_Philip has left the server (1:0)
+[21:49:50] [connection] 26.71.25.27:58553 requests connection cookie.
+[21:49:51] [connection] incoming connection: 26.71.25.27:58553 id: 1
+[21:49:51] [join] John_Philip has joined the server (1:26.71.25.27)
+[22:13:00] [death] John_Philip died 54
+[22:13:30] [part] John_Philip has left the server (1:0)
+[22:13:38] [connection] 26.71.25.27:51625 requests connection cookie.
+[22:13:39] [connection] incoming connection: 26.71.25.27:51625 id: 1
+[22:13:39] [join] John_Philip has joined the server (1:26.71.25.27)
+[22:23:33] [chat] [John_Black]: @/vData
+[22:24:27] [part] John_Black has left the server (0:1)
+[22:25:20] [part] John_Philip has left the server (1:1)
+Console input: exit
+[22:25:22] --- Server Shutting Down.
+[22:25:22] 
+
+[22:25:22]  ===============================
+
+[22:25:22]      sscanf plugin unloaded.    
+
+[22:25:22]  ===============================
+
+[22:25:22] plugin.mysql: Unloading plugin...
+[22:25:22] plugin.mysql: Plugin unloaded.
+[22:25:22] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+

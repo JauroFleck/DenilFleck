@@ -29540,3 +29540,30 @@
 [16:42:19] [ERROR] cache_delete: invalid cache id '0'
 [16:42:19] [ERROR] cache_get_row_count: no active cache
 [16:42:19] [ERROR] cache_delete: invalid cache id '0'
+[21:29:02] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:29:06] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:29:10] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:29:14] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_value_name_int: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_row_count: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_row_count: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_row_count: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[21:29:14] [ERROR] cache_get_row_count: no active cache
+[21:29:14] [ERROR] cache_delete: invalid cache id '0'

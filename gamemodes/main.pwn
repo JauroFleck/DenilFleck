@@ -66,7 +66,7 @@
 #define Senior 					5
 #define Fundador				6
 
-main() { }
+main() {}
 
 native IsValidVehicle(vehicleid);
 
@@ -196,21 +196,21 @@ new PlayerText:PTDManager[MAX_PLAYERS][70];
 #include "systems/time.pwn"
 #include "systems/animations.pwn"
 #include "systems/business.pwn"
-#include "systems/bus.pwn"
-#include "systems/posto.pwn"
-#include "systems/refinaria.pwn"
-#include "systems/bancopalomino.pwn"
 #include "systems/casa.pwn"
-#include "systems/autoescola.pwn"
-#include "systems/concessionaria.pwn"
 #include "systems/rcsd.pwn"
-#include "systems/transp.pwn"
-#include "systems/imobiliaria.pwn"
-#include "systems/lixeiro.pwn"
-#include "systems/bbliquor.pwn"
 #include "systems/org.pwn"
-#include "systems/taxibb.pwn"
 #include "systems/versioncontrol.pwn"
+#include "systems/business/taxibb.pwn"
+#include "systems/business/bus.pwn"
+#include "systems/business/posto.pwn"
+#include "systems/business/refinaria.pwn"
+#include "systems/business/bancopalomino.pwn"
+#include "systems/business/autoescola.pwn"
+#include "systems/business/concessionaria.pwn"
+#include "systems/business/transp.pwn"
+#include "systems/business/imobiliaria.pwn"
+#include "systems/business/lixeiro.pwn"
+#include "systems/business/bbliquor.pwn"
 
 stock ResetVars(playerid) {
 	pInfo[playerid][pSQL] = 0;
