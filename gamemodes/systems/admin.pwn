@@ -11,13 +11,13 @@ new AvailablevStaff[] = { 461,463,475,474,479,480,489,507,527,529,534,554,579 };
 
 new BlockSV;
 new Teleporte[MAX_TELEPORTES][TELEPORTES_INFO];
-new HUDMsg[5][41] = {
-	{"Visite-nos em: www.denilfleck.com.br"},
-	{"Precisa de assistência? Use /Ajuda."},
-	{"Atualmente estamos na versao Beta."},
-	{"O roleplay sempre é soberano."},
-	{"Convide seus amigos para nos conhecerem."}
-};
+// new HUDMsg[5][41] = {
+// 	{"Visite-nos em: www.denilfleck.com.br"},
+// 	{"Precisa de assistência? Use /Ajuda."},
+// 	{"Atualmente estamos na versao Beta."},
+// 	{"O roleplay sempre é soberano."},
+// 	{"Convide seus amigos para nos conhecerem."}
+// };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////// COMANDOS ////////////////////////////////////////////////////////////////
@@ -693,15 +693,15 @@ CMD:test(playerid, params[]) {
 	return 1;
 }
 
-CMD:msghud(playerid) {
-	if(pInfo[playerid][pAdmin] < Senior) return 1;
-	new str[300];
-	for(new i = 0; i < 5; i++) {
-		format(str, 300, "%s%s\n", str, HUDMsg[i]);
-	}
-	Dialog_Show(playerid, "DialogHUDMsg", DIALOG_STYLE_LIST, "HUD Message", str, "Editar", "Fechar");
-	return 1;
-}
+// CMD:msghud(playerid) {
+// 	if(pInfo[playerid][pAdmin] < Senior) return 1;
+// 	new str[300];
+// 	for(new i = 0; i < 5; i++) {
+// 		format(str, 300, "%s%s\n", str, HUDMsg[i]);
+// 	}
+// 	Dialog_Show(playerid, "DialogHUDMsg", DIALOG_STYLE_LIST, "HUD Message", str, "Editar", "Fechar");
+// 	return 1;
+// }
 
 CMD:clima(playerid, params[]) {
 	if(pInfo[playerid][pAdmin] < Senior) return 1;
@@ -839,29 +839,29 @@ CMD:desempregar(playerid, params[]) {
 ///////////////////////////////////////////////////////////// DIALOGS ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Dialog:DialogHUDMsg(playerid, response, listitem, inputtext[]) {
-	if(!response) return 1;
-	Dialog_Show(playerid, "EditHUDMSG", DIALOG_STYLE_INPUT, "HUD Message", "Insira abaixo a mensagem que deseja substituir", "Editar", "Voltar");
-	pInfo[playerid][pDialogParam][0] = funcidx("dialog_EditHUDMSG");
-	pInfo[playerid][pDialogParam][1] = listitem;
-	return 1;
-}
+// Dialog:DialogHUDMsg(playerid, response, listitem, inputtext[]) {
+// 	if(!response) return 1;
+// 	Dialog_Show(playerid, "EditHUDMSG", DIALOG_STYLE_INPUT, "HUD Message", "Insira abaixo a mensagem que deseja substituir", "Editar", "Voltar");
+// 	pInfo[playerid][pDialogParam][0] = funcidx("dialog_EditHUDMSG");
+// 	pInfo[playerid][pDialogParam][1] = listitem;
+// 	return 1;
+// }
 
-Dialog:EditHUDMSG(playerid, response, listitem, inputtext[]) {
-	if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_EditHUDMSG")) return ResetDialogParams(playerid);
-	if(!response) {
-		cmd_msghud(playerid);
-	} else {
-		if(strlen(inputtext) > 40) {
-			Advert(playerid, "A mensagem não pode ultrapassar o limite de 40 caracteres.");
-		} else {
-			format(HUDMsg[pInfo[playerid][pDialogParam][1]], 41, "%s", inputtext);
-			Info(playerid, "Mensagem HUD modificada:");
-			Info(playerid, inputtext);
-		}
-	}
-	return ResetDialogParams(playerid);
-}
+// Dialog:EditHUDMSG(playerid, response, listitem, inputtext[]) {
+// 	if(pInfo[playerid][pDialogParam][0] != funcidx("dialog_EditHUDMSG")) return ResetDialogParams(playerid);
+// 	if(!response) {
+// 		cmd_msghud(playerid);
+// 	} else {
+// 		if(strlen(inputtext) > 40) {
+// 			Advert(playerid, "A mensagem não pode ultrapassar o limite de 40 caracteres.");
+// 		} else {
+// 			format(HUDMsg[pInfo[playerid][pDialogParam][1]], 41, "%s", inputtext);
+// 			Info(playerid, "Mensagem HUD modificada:");
+// 			Info(playerid, inputtext);
+// 		}
+// 	}
+// 	return ResetDialogParams(playerid);
+// }
 
 Dialog:Expulsar(playerid, response, listitem, inputtext[]) {
 	if(!response) return ResetDialogParams(playerid);

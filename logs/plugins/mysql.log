@@ -29567,3 +29567,756 @@
 [21:29:14] [ERROR] cache_delete: invalid cache id '0'
 [21:29:14] [ERROR] cache_get_row_count: no active cache
 [21:29:14] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:38:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:38:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:38:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_value_name_int: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_row_count: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_row_count: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_row_count: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:38:35] [ERROR] cache_get_row_count: no active cache
+[12:38:35] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:50:02] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:50:02] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:50:02] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_value_name_int: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_row_count: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_row_count: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_row_count: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:50:02] [ERROR] cache_get_row_count: no active cache
+[12:50:02] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_value_name_int: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_row_count: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_row_count: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_row_count: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:37] [ERROR] cache_get_row_count: no active cache
+[12:54:37] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_value_name_int: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_row_count: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_row_count: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_row_count: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:54:49] [ERROR] cache_get_row_count: no active cache
+[12:54:49] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:23] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:23] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:23] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_value_name_int: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_row_count: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_row_count: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_row_count: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:23] [ERROR] cache_get_row_count: no active cache
+[12:56:23] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:54] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:54] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:54] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_value_name_int: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_row_count: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_row_count: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_row_count: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:56:54] [ERROR] cache_get_row_count: no active cache
+[12:56:54] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [WARNING] mysql_connect: no password specified
+[12:58:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:58:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:58:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:58:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_value_name_int: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_row_count: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_row_count: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_row_count: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:58:50] [ERROR] cache_get_row_count: no active cache
+[12:58:50] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [WARNING] mysql_connect: no password specified
+[12:59:48] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:59:48] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:59:48] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:59:48] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_value_name_int: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_row_count: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_row_count: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_row_count: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[12:59:48] [ERROR] cache_get_row_count: no active cache
+[12:59:48] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [WARNING] mysql_connect: no password specified
+[13:02:38] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:02:38] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:02:38] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:02:38] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_value_name_int: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_row_count: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_row_count: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_row_count: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:02:38] [ERROR] cache_get_row_count: no active cache
+[13:02:38] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [WARNING] mysql_connect: no password specified
+[13:06:27] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:06:27] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:06:27] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:06:27] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_value_name_int: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_row_count: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_row_count: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_row_count: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:06:27] [ERROR] cache_get_row_count: no active cache
+[13:06:27] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [WARNING] mysql_connect: no password specified
+[13:08:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:08:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:08:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:08:49] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_value_name_int: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_row_count: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_row_count: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_row_count: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:08:49] [ERROR] cache_get_row_count: no active cache
+[13:08:49] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [WARNING] mysql_connect: no password specified
+[13:10:12] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:10:12] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:10:12] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:10:12] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_value_name_int: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_row_count: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_row_count: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_row_count: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:10:12] [ERROR] cache_get_row_count: no active cache
+[13:10:12] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [WARNING] mysql_connect: no password specified
+[13:15:16] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:15:16] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:15:16] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:15:16] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_value_name_int: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_row_count: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_row_count: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_row_count: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:15:16] [ERROR] cache_get_row_count: no active cache
+[13:15:16] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] mysql_set_charset: invalid connection handle '1'
+[13:19:37] [WARNING] mysql_connect: no password specified
+[13:19:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_value_name_int: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_row_count: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_row_count: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_row_count: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:37] [ERROR] cache_get_row_count: no active cache
+[13:19:37] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] mysql_set_charset: invalid connection handle '1'
+[13:19:55] [WARNING] mysql_connect: no password specified
+[13:19:55] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:55] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:55] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:55] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_value_name_int: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_row_count: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_row_count: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_row_count: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:19:55] [ERROR] cache_get_row_count: no active cache
+[13:19:55] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] mysql_set_charset: invalid connection handle '1'
+[13:20:26] [WARNING] mysql_connect: no password specified
+[13:20:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:20:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:20:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:20:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_value_name_int: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_row_count: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_row_count: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_row_count: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:20:26] [ERROR] cache_get_row_count: no active cache
+[13:20:26] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] mysql_set_charset: invalid connection handle '1'
+[13:22:41] [WARNING] mysql_connect: no password specified
+[13:22:41] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:41] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:41] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:41] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_value_name_int: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_row_count: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_row_count: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_row_count: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:41] [ERROR] cache_get_row_count: no active cache
+[13:22:41] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [WARNING] mysql_connect: no password specified
+[13:22:52] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:52] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:52] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:52] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_value_name_int: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_row_count: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_row_count: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_row_count: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:22:52] [ERROR] cache_get_row_count: no active cache
+[13:22:52] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [WARNING] mysql_connect: no password specified
+[13:23:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:23:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:23:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:23:35] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_value_name_int: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_row_count: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_row_count: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_row_count: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:23:35] [ERROR] cache_get_row_count: no active cache
+[13:23:35] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:27:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:27:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:27:50] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_value_name_int: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_row_count: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_row_count: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_row_count: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:27:50] [ERROR] cache_get_row_count: no active cache
+[13:27:50] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:39:58] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:39:58] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:39:58] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_value_name_int: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_row_count: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_row_count: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_row_count: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:39:58] [ERROR] cache_get_row_count: no active cache
+[13:39:58] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:40:47] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:40:47] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:40:47] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2019 'Can't initialize character set unknown (path: compiled_in)'
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_value_name_int: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_row_count: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_row_count: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_row_count: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:40:47] [ERROR] cache_get_row_count: no active cache
+[13:40:47] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:44:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:44:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:44:26] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_value_name_int: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_row_count: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_row_count: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_row_count: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:44:26] [ERROR] cache_get_row_count: no active cache
+[13:44:26] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [WARNING] mysql_connect: no password specified
+[13:46:20] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:46:20] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:46:20] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:46:20] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_value_name_int: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_row_count: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_row_count: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_row_count: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:46:20] [ERROR] cache_get_row_count: no active cache
+[13:46:20] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [WARNING] mysql_connect: no password specified
+[13:52:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:52:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:52:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:52:37] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2059 'Plugin caching_sha2_password could not be loaded: Não foi possível encontrar o módulo especificado.
+'
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_value_name_int: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_row_count: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_row_count: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_row_count: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:37] [ERROR] cache_get_row_count: no active cache
+[13:52:37] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `vehicleinfo`": Table 'db_dfrp.vehicleinfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `vehicledata`": Table 'db_dfrp.vehicledata' doesn't exist
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] cache_get_value_name_int: invalid row index '0' (number of rows: '0')
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `businessinfo`": Table 'db_dfrp.businessinfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT `quant` FROM `produtoinfo` WHERE `name` = 'Gasolina T1'": Table 'db_dfrp.produtoinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_value_name_int: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `produtoinfo`": Table 'db_dfrp.produtoinfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT `quant` FROM `produtoinfo` WHERE `name` = 'Gasolina T2'": Table 'db_dfrp.produtoinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_value_name_int: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `cargoinfo`": Table 'db_dfrp.cargoinfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT `quant` FROM `produtoinfo` WHERE `name` = 'Gasolina T3'": Table 'db_dfrp.produtoinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_value_name_int: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `entradainfo`": Table 'db_dfrp.entradainfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `busrouteinfo`": Table 'db_dfrp.busrouteinfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT `quant` FROM `produtoinfo` WHERE `name` = 'Gasolina T4'": Table 'db_dfrp.produtoinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_value_name_int: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM fichasinfo": Table 'db_dfrp.fichasinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_row_count: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM housedata": Table 'db_dfrp.housedata' doesn't exist
+[13:52:47] [ERROR] cache_get_row_count: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM houseinfo": Table 'db_dfrp.houseinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_row_count: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM teleporteinfo": Table 'db_dfrp.teleporteinfo' doesn't exist
+[13:52:47] [ERROR] cache_get_row_count: no active cache
+[13:52:47] [ERROR] cache_delete: invalid cache id '0'
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `orginfo`": Table 'db_dfrp.orginfo' doesn't exist
+[13:52:47] [ERROR] error #1146 while executing query "SELECT * FROM `memberinfo`": Table 'db_dfrp.memberinfo' doesn't exist
+[13:55:53] [ERROR] error #1054 while executing query "SELECT * FROM kickbans WHERE name = 'John_Black' OR IP = '127.0.0.1'": Unknown column 'name' in 'where clause'
+[13:55:54] [ERROR] error #1146 while executing query "SELECT `sqlid` FROM `playerinfo` WHERE `nickname` = 'John_Black'": Table 'db_dfrp.playerinfo' doesn't exist
+[13:55:54] [ERROR] cache_get_row_count: no active cache
+[13:55:54] [ERROR] cache_delete: invalid cache id '0'
+[13:56:23] [ERROR] error #1146 while executing query "INSERT INTO `playerinfo` (`nickname`, `senha`) VALUES ('John_Black', '123456')": Table 'db_dfrp.playerinfo' doesn't exist
+[18:01:25] [ERROR] error #1364 while executing query "INSERT INTO `vehicleinfo` (`owner`, `model`, `color1`, `color2`, `sX`, `sY`, `sZ`, `sA`, `chave`) VALUES ('John_Black', 463, 1, 1, 1068.110718, -330.655151, 73.992188, 262.968079, 11)": Field 'gps' doesn't have a default value
+[18:01:25] [ERROR] cache_insert_id: no active cache
+[18:01:25] [ERROR] cache_delete: invalid cache id '0'

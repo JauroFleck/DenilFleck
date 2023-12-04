@@ -175,12 +175,12 @@ static const AnimsEnum[][] = {
 new Text:TDLogin;
 new Text:TDGas[4];
 new Text:TDManager[29];
-new Text:TDBarra[15];
-new PlayerText:TDName[MAX_PLAYERS];
-new PlayerText:TDScore[MAX_PLAYERS];
-new PlayerText:TDXPBox[MAX_PLAYERS];
-new PlayerText:TDXPNumber[MAX_PLAYERS];
-new PlayerText:TDXPPercent[MAX_PLAYERS];
+// new Text:TDBarra[15];
+// new PlayerText:TDName[MAX_PLAYERS];
+// new PlayerText:TDScore[MAX_PLAYERS];
+// new PlayerText:TDXPBox[MAX_PLAYERS];
+// new PlayerText:TDXPNumber[MAX_PLAYERS];
+// new PlayerText:TDXPPercent[MAX_PLAYERS];
 new PlayerText:TDGasolina[MAX_PLAYERS];
 new PlayerText:TDVelocidade[MAX_PLAYERS];
 new PlayerText:PTDManager[MAX_PLAYERS][70];
@@ -1099,43 +1099,43 @@ CMD:blockmp(playerid) {
 	return 1;
 }
 
-CMD:hud(playerid) {
-	if(!pInfo[playerid][pHUD]) {
-		for(new i = 0; i < sizeof(TDBarra); i++) {
-			TextDrawShowForPlayer(playerid, TDBarra[i]);
-		}
-		new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
-		format(str, 24, "%s", pName(playerid));
-		SpaceToUnderline(str);
-		PlayerTextDrawSetString(playerid, TDName[playerid], str);
-		PlayerTextDrawShow(playerid, TDName[playerid]);
-		format(str, 5, "%i", pInfo[playerid][pLevel]);
-		PlayerTextDrawSetString(playerid, TDScore[playerid], str);
-		PlayerTextDrawShow(playerid, TDScore[playerid]);
-		PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
-		PlayerTextDrawShow(playerid, TDXPBox[playerid]);
-		format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
-		PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
-		PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
-		format(str, 5, "%i%%", floatround(prop*100));
-		PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
-		PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
-		Info(playerid, "HUD habilitada.");
-		pInfo[playerid][pHUD] = 1;
-	} else {
-		for(new i = 0; i < sizeof(TDBarra); i++) {
-			TextDrawHideForPlayer(playerid, TDBarra[i]);
-		}
-		PlayerTextDrawHide(playerid, TDName[playerid]);
-		PlayerTextDrawHide(playerid, TDScore[playerid]);
-		PlayerTextDrawHide(playerid, TDXPBox[playerid]);
-		PlayerTextDrawHide(playerid, TDXPNumber[playerid]);
-		PlayerTextDrawHide(playerid, TDXPPercent[playerid]);
-		Info(playerid, "HUD desabilitada.");
-		pInfo[playerid][pHUD] = 0;
-	}
-	return 1;
-}
+// CMD:hud(playerid) {
+// 	if(!pInfo[playerid][pHUD]) {
+// 		for(new i = 0; i < sizeof(TDBarra); i++) {
+// 			TextDrawShowForPlayer(playerid, TDBarra[i]);
+// 		}
+// 		new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+// 		format(str, 24, "%s", pName(playerid));
+// 		SpaceToUnderline(str);
+// 		PlayerTextDrawSetString(playerid, TDName[playerid], str);
+// 		PlayerTextDrawShow(playerid, TDName[playerid]);
+// 		format(str, 5, "%i", pInfo[playerid][pLevel]);
+// 		PlayerTextDrawSetString(playerid, TDScore[playerid], str);
+// 		PlayerTextDrawShow(playerid, TDScore[playerid]);
+// 		PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
+// 		PlayerTextDrawShow(playerid, TDXPBox[playerid]);
+// 		format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+// 		PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
+// 		PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
+// 		format(str, 5, "%i%%", floatround(prop*100));
+// 		PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
+// 		PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
+// 		Info(playerid, "HUD habilitada.");
+// 		pInfo[playerid][pHUD] = 1;
+// 	} else {
+// 		for(new i = 0; i < sizeof(TDBarra); i++) {
+// 			TextDrawHideForPlayer(playerid, TDBarra[i]);
+// 		}
+// 		PlayerTextDrawHide(playerid, TDName[playerid]);
+// 		PlayerTextDrawHide(playerid, TDScore[playerid]);
+// 		PlayerTextDrawHide(playerid, TDXPBox[playerid]);
+// 		PlayerTextDrawHide(playerid, TDXPNumber[playerid]);
+// 		PlayerTextDrawHide(playerid, TDXPPercent[playerid]);
+// 		Info(playerid, "HUD desabilitada.");
+// 		pInfo[playerid][pHUD] = 0;
+// 	}
+// 	return 1;
+// }
 
 CMD:id(playerid, params[]) {
 	new id;
@@ -1554,25 +1554,25 @@ public OnPlayerSpawn(playerid) {
 		TextDrawHideForPlayer(playerid, TDLogin);
 		StopAudioStreamForPlayer(playerid);
 		pInfo[playerid][pLogged] = 1;
-		for(new i = 0; i < sizeof(TDBarra); i++) {
-			TextDrawShowForPlayer(playerid, TDBarra[i]);
-		}
-		new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
-		format(str, 24, "%s", pName(playerid));
-		SpaceToUnderline(str);
-		PlayerTextDrawSetString(playerid, TDName[playerid], str);
-		PlayerTextDrawShow(playerid, TDName[playerid]);
-		format(str, 5, "%i", pInfo[playerid][pLevel]);
-		PlayerTextDrawSetString(playerid, TDScore[playerid], str);
-		PlayerTextDrawShow(playerid, TDScore[playerid]);
-		PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
-		PlayerTextDrawShow(playerid, TDXPBox[playerid]);
-		format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
-		PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
-		PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
-		format(str, 5, "%i%%", floatround(prop*100));
-		PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
-		PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
+		// for(new i = 0; i < sizeof(TDBarra); i++) {
+		// 	TextDrawShowForPlayer(playerid, TDBarra[i]);
+		// }
+		// new str[24], Float:prop = floatdiv(pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		// format(str, 24, "%s", pName(playerid));
+		// SpaceToUnderline(str);
+		// PlayerTextDrawSetString(playerid, TDName[playerid], str);
+		// PlayerTextDrawShow(playerid, TDName[playerid]);
+		// format(str, 5, "%i", pInfo[playerid][pLevel]);
+		// PlayerTextDrawSetString(playerid, TDScore[playerid], str);
+		// PlayerTextDrawShow(playerid, TDScore[playerid]);
+		// PlayerTextDrawTextSize(playerid, TDXPBox[playerid], 550.5+prop*49.5, 0.0);
+		// PlayerTextDrawShow(playerid, TDXPBox[playerid]);
+		// format(str, 20, "%i_/_%i", pInfo[playerid][pXP], GetXPNextLevel(pInfo[playerid][pLevel]));
+		// PlayerTextDrawSetString(playerid, TDXPNumber[playerid], str);
+		// PlayerTextDrawShow(playerid, TDXPNumber[playerid]);
+		// format(str, 5, "%i%%", floatround(prop*100));
+		// PlayerTextDrawSetString(playerid, TDXPPercent[playerid], str);
+		// PlayerTextDrawShow(playerid, TDXPPercent[playerid]);
 		return 1;
 	} else if(!pInfo[playerid][pLogged]) { // Conectou-se ao servidor
 		//if(!pInfo[playerid][pFinishedDownload]) return 1;
@@ -1588,7 +1588,7 @@ public OnPlayerSpawn(playerid) {
 		InterpolateCameraLookAt(playerid, 380.4, -143.4, 7.4, 318.4, -198.2, 38.5, 60000, CAMERA_MOVE);
 		SetPlayerVirtualWorld(playerid, 1);
 		SetPlayerColor(playerid, 0xFFFFFFFF);
-		PlayAudioStreamForPlayer(playerid, "http://denilfleck.com.br/login-music.mp3");
+		PlayAudioStreamForPlayer(playerid, "https://www.gamethemesongs.com/uploads/audio/GTA San Andreas - Jerry Reed - Amos Moses.mp3");
 		LimparChat(playerid);
 		TextDrawShowForPlayer(playerid, TDLogin);
 		for(new i = 0; i < MAX_PLAYERS; i++) {

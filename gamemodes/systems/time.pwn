@@ -68,10 +68,10 @@ public ServerTime() {
 		}
 	}
 
-	new randomhud = random(5);
-	SpaceToUnderline(HUDMsg[randomhud]);
-	TextEncoding(HUDMsg[randomhud]);
-	TextDrawSetString(TDBarra[3], HUDMsg[randomhud]);
+	// new randomhud = random(5);
+	// SpaceToUnderline(HUDMsg[randomhud]);
+	// TextEncoding(HUDMsg[randomhud]);
+	// TextDrawSetString(TDBarra[3], HUDMsg[randomhud]);
 	SetWorldTime(sTime[sHora]);
 	for(new i = 0; i < MAX_PLAYERS; i++) {
 		if(!IsPlayerConnected(i)) continue;
@@ -84,7 +84,7 @@ public ServerTime() {
 				SetPlayerVirtualWorld(i, 0);
 				Streamer_UpdateEx(i, 627.0251,-571.7915,17.9145, -1, -1, -1, 1500);
 				SetPlayerFacingAngle(i, 270.0);
-				Info(i, "VocÃª cumpriu seu tempo de prisÃ£o.");
+				Info(i, "Você cumpriu seu tempo de prisão.");
 			}
 		}
 		static quarterxp[MAX_PLAYERS];
@@ -92,16 +92,16 @@ public ServerTime() {
 		if(quarterxp[i] == 3) {
 			pInfo[i][pXP]++;
 
-			if(pInfo[i][pHUD]) {
-				new str[20], Float:prop = floatdiv(pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
-				PlayerTextDrawTextSize(i, TDXPBox[i], 550.5+prop*49.5, 0.0);
-				PlayerTextDrawHide(i, TDXPBox[i]);
-				PlayerTextDrawShow(i, TDXPBox[i]);
-				format(str, 20, "%i_/_%i", pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
-				PlayerTextDrawSetString(i, TDXPNumber[i], str);
-				format(str, 5, "%i%%", floatround(prop*100));
-				PlayerTextDrawSetString(i, TDXPPercent[i], str);
-			}
+			// if(pInfo[i][pHUD]) {
+			// 	new str[20], Float:prop = floatdiv(pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
+			// 	PlayerTextDrawTextSize(i, TDXPBox[i], 550.5+prop*49.5, 0.0);
+			// 	PlayerTextDrawHide(i, TDXPBox[i]);
+			// 	PlayerTextDrawShow(i, TDXPBox[i]);
+			// 	format(str, 20, "%i_/_%i", pInfo[i][pXP], GetXPNextLevel(pInfo[i][pLevel]));
+			// 	PlayerTextDrawSetString(i, TDXPNumber[i], str);
+			// 	format(str, 5, "%i%%", floatround(prop*100));
+			// 	PlayerTextDrawSetString(i, TDXPPercent[i], str);
+			// }
 
 			quarterxp[i] = 0;
 		}
@@ -113,7 +113,7 @@ public ServerTime() {
 
 			new str[5];
 			format(str, 5, "%i", pInfo[i][pLevel]);
-			PlayerTextDrawSetString(i, TDScore[i], str);
+			// PlayerTextDrawSetString(i, TDScore[i], str);
 		}
 	}
 	return 1;
@@ -130,10 +130,10 @@ stock SemanaIntToStr(n) {
 	new str[20];
 	if(n == 1) { str = "domingo"; }
 	else if(n == 2) { str = "segunda-feira"; }
-	else if(n == 3) { str = "terÃ§a-feira"; }
+	else if(n == 3) { str = "terça-feira"; }
 	else if(n == 4) { str = "quarta-feira"; }
 	else if(n == 5) { str = "quinta-feira"; }
 	else if(n == 6) { str = "sexta-feira"; }
-	else if(n == 7) { str = "sÃ¡bado"; }
+	else if(n == 7) { str = "sábado"; }
 	return str;
 }

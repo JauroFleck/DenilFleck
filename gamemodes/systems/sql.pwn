@@ -1,10 +1,8 @@
-#define MYSQLCONNECTINGDATA 		"localhost", "denilfleck", "JauDen2020", "zdenilfleck0"
-
 new MySQL:conn;
 
 forward OnGameModeInit@sql();
 public OnGameModeInit@sql() {
-	conn = mysql_connect(MYSQLCONNECTINGDATA);
+	conn = mysql_connect("localhost", "denilfleck", "denilfleck", "db_dfrp");
 
 	if(mysql_errno(conn)) { print("SEM CONEXAO A BASE DE DADOS"); return 0; } else { print("CONEXAO A BASE DE DADOS REALIZADA COM SUCESSO"); }
 	return 1;
