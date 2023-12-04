@@ -1,9 +1,9 @@
 
-samp/logs/errors.log
-samp/logs/plugins/mysql.log
-samp/server_log.txt
-samp/logs/log-core.log
-samp/logs/warnings.log
-samp/server-readme.txt
-samp/samp-license.txt
+logs/plugins/mysql.log
+logs/errors.log
+logs/log-core.log
+logs/warnings.log
 server_log.txt
+server-readme.txt
+samp-license.txt
+gamemodes/main.amx
